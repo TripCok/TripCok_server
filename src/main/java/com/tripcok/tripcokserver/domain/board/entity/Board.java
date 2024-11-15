@@ -29,8 +29,9 @@ public class Board extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Type type;
 
+    /* 그룹 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
-
 }
+

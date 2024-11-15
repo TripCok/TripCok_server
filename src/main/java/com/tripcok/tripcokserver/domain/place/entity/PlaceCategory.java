@@ -1,6 +1,6 @@
 package com.tripcok.tripcokserver.domain.place.entity;
 
-import com.tripcok.tripcokserver.domain.board.entity.BoardCategory;
+import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class PlaceCategory {
+public class PlaceCategory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,11 +21,11 @@ public class PlaceCategory {
     /* 부모 카테고리 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private BoardCategory parentCategory;
+    private PlaceCategory parentCategory;
 
     /* 자식 카테고리 */
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoardCategory> childCategories;
+    private List<PlaceCategory> childCategories;
 
     /* 깊이 */
     private Integer depth;

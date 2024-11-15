@@ -1,13 +1,17 @@
 package com.tripcok.tripcokserver.domain.place.entity;
 
+import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Getter
-public class Place {
+public class Place extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,15 +26,22 @@ public class Place {
     private String address;
 
     /* 운영 시간 */
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     /* 장소 사진 */
     private String imagePath;
 
-    /* 리뷰 */
-    private String review;
+    /* 카테고리 */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private PlaceCategory category;
 
-    /* 찜 */
-    private String subscribe;
+    /* 리뷰 */
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlaceReview> reviews;
+
+    /* 구독 */
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlaceSubscribe> subscribes;
 }

@@ -1,7 +1,9 @@
 package com.tripcok.tripcokserver.domain.member.entity;
 
-import com.tripcok.tripcokserver.domain.application.entity.ApplicationMember;
-import com.tripcok.tripcokserver.domain.group.controller.GroupMember;
+import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
+import com.tripcok.tripcokserver.domain.place.entity.PlaceReview;
+import com.tripcok.tripcokserver.domain.place.entity.PlaceReviewLike;
+import com.tripcok.tripcokserver.domain.place.entity.PlaceSubscribe;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,7 +17,6 @@ public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
     private Long id;
 
     /* 사용자 이름 */
@@ -47,13 +48,20 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    /* 그룹 참여 */
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupMember> groupMembers;
 
-    /* 신청서 멤버 */
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ApplicationMember> applicationMembers;
+    /* 구독 */
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlaceSubscribe> subscribes;
+
+    /* 좋아요한 리뷰 */
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlaceReviewLike> reviewLikes;
+
+    /* 작성한 리뷰 */
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlaceReview> reviews;
 }
 
 
