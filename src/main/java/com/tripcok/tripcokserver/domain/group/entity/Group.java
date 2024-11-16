@@ -16,7 +16,7 @@ public class Group extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "group_id")
-    private long id;
+    private Long id;
 
     /* 그룹 이름 */
     private String groupName;

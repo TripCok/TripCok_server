@@ -25,4 +25,7 @@ public class GroupMember extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private GroupRole role;
 
+    public Object getMember() {
+        return null; // 수정하세요 하핫
+    }
 }
