@@ -1,5 +1,5 @@
 spring:
-  datasource :
+  datasource:
     url: jdbc:mariadb://localhost:3366/tripcok_db
     username: tripcok
     password: tripcok1234
@@ -11,3 +11,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
+
+save:
+  location:
+    place-thumbnail: ~/
