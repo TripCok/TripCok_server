@@ -13,8 +13,19 @@ import java.util.List;
 @Service
 public class GroupService {
 
+    // import + repository and 생성자 주입
+
     // 1. 모임 생성
     public GroupResponseDto createGroup(@Valid GroupRequestDto requestDto) {
+        //requestDto에서 member_id 추출
+
+        /*
+        *  Group 객체와 requestDto를 연동 -> mygroup 생성
+        * group_id = repository.save(mygroup)
+        * */
+
+        //group_id를 responseDto에 넣어서 반환
+
         return new GroupResponseDto(); // 임시 리턴
     }
 
@@ -50,6 +61,7 @@ public class GroupService {
 
     // 8. 모임 신청 취소
     public void cancelApplication(Long id) {
+
         // 임시로 아무 동작도 하지 않음
     }
 

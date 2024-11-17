@@ -35,6 +35,7 @@ public class GroupController {
     @ApiResponse(responseCode = "201", description = "모임이 생성되었습니다.")
     @PostMapping("/api/v1/group/{id}")
     public ResponseEntity<GroupResponseDto> createGroup(@Valid @RequestBody GroupRequestDto requestDto) {
+        //requestDto에 member_id를 추가
         return ResponseEntity.status(HttpStatus.CREATED).body(groupService.createGroup(requestDto));
     }
 
