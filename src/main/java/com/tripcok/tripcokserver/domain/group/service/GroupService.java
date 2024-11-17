@@ -1,7 +1,14 @@
 package com.tripcok.tripcokserver.domain.group.service;
 
 import com.tripcok.tripcokserver.domain.group.dto.*;
+import com.tripcok.tripcokserver.domain.group.entity.Group;
+import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
+import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
+import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
+import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
+import com.tripcok.tripcokserver.domain.member.entity.Member;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -10,23 +17,48 @@ import java.awt.print.Pageable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.tripcok.tripcokserver.domain.group.entity.GroupRole.ADMIN;
+
 @Service
+@AllArgsConstructor
 public class GroupService {
 
-    // import + repository and 생성자 주입
+    private final GroupRepository groupRepository;
+    private final GroupMemberRepository groupMemberRepository;
 
-    // 1. 모임 생성
+    /**
+     * - 모임 생성
+     * 1. 모임을 생성
+     * 2. 모임 리스트에 사용자와, 모임 추가
+     * */
     public GroupResponseDto createGroup(@Valid GroupRequestDto requestDto) {
-        //requestDto에서 member_id 추출
+
+        /* #1 그룹 생성 */
+        Group group = new Group(requestDto);
+
+        Group newGroup = groupRepository.save(group);
 
         /*
-        *  Group 객체와 requestDto를 연동 -> mygroup 생성
-        * group_id = repository.save(mygroup)
-        * */
+         * 나중에 하람쓰가 추가 하면 대체 해야할 부분
+         * How?
+         * 1. 하람쓰가 만든 Repository를 여기 위에 추가한다.
+         * 2. Member member = memberRepository.findById(requestDto.getUserId);
+         * Ok?
+         * */
+        Member member = new Member();
 
-        //group_id를 responseDto에 넣어서 반환
+        /* #2 그룹을 생성한 사람을 GroupMember에 추가 */
+        GroupMember groupMember = new GroupMember(
+                member,
+                newGroup,
+                ADMIN
+        );
 
-        return new GroupResponseDto(); // 임시 리턴
+        groupMemberRepository.save(groupMember);
+
+        GroupResponseDto responseDto = new GroupResponseDto();
+        responseDto.setGroupName(newGroup.getGroupName());
+        return responseDto;
     }
 
     // 2. 모임 조회 - 단일
