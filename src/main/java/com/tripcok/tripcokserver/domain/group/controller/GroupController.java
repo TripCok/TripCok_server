@@ -33,10 +33,11 @@ public class GroupController {
     /*모임 생성*/
     @Operation(summary = "모임 생성", description = "새로운 모임을 생성합니다.")
     @ApiResponse(responseCode = "201", description = "모임이 생성되었습니다.")
-    @PostMapping("/api/v1/group/{id}")
+    @PostMapping("/api/v1/group")
     public ResponseEntity<GroupResponseDto> createGroup(@Valid @RequestBody GroupRequestDto requestDto) {
         //requestDto에 member_id를 추가
-        return ResponseEntity.status(HttpStatus.CREATED).body(groupService.createGroup(requestDto));
+        GroupResponseDto responseDto = groupService.createGroup(requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     /*모임 조회 - 단일*/

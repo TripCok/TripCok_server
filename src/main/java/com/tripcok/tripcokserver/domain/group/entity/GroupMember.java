@@ -1,6 +1,7 @@
 package com.tripcok.tripcokserver.domain.group.entity;
 
 import com.tripcok.tripcokserver.domain.member.entity.Member;
+import com.tripcok.tripcokserver.domain.member.entity.Role;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 
@@ -24,5 +25,11 @@ public class GroupMember extends BaseEntity {
     /* 멤버의 역할 */
     @Enumerated(EnumType.STRING)
     private GroupRole role;
+
+    public GroupMember(Member member, Group group, GroupRole role) {
+        this.group = group;
+        this.member = member;
+        this.role = role;
+    }
 
 }
