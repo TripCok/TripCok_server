@@ -3,7 +3,6 @@ package com.tripcok.tripcokserver.domain.group.service;
 import com.tripcok.tripcokserver.domain.group.dto.*;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
-import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
@@ -11,10 +10,11 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,8 +74,10 @@ public class GroupService {
     }
 
     // 3. 모임 조회 - 복수 (Pageable)
-    public Page<GroupResponseDto> getGroups(Pageable pageable) {
-        return new PageImpl<>(Collections.emptyList()); // 임시 빈 페이지 리턴
+    public Page<Group> getGroups(Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        Page<Group> all = groupRepository.findAll(pageable);
+        return all;
     }
 
     // 4. 모임 수정
