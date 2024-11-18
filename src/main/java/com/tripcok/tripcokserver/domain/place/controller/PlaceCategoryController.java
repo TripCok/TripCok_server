@@ -24,6 +24,7 @@ public class PlaceCategoryController {
         return pcs.createCategory(request);
     }
 
+    /* 여행지 카테고리 모두 조회 */
     @GetMapping("/all")
     public ResponseEntity<?> getPlaceCategory() {
         return pcs.findByAllCategory();
