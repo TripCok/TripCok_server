@@ -65,7 +65,7 @@ public class GroupService {
     // 2. 모임 조회 - 단일
     public GroupResponseDto getGroup(Long id) {
         Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
         return new GroupResponseDto(
                 group.getGroupName(),
                 group.getDescription(),
@@ -80,14 +80,31 @@ public class GroupService {
 
     // 4. 모임 수정
     public GroupResponseDto updateGroup(Long id, @Valid GroupRequestDto requestDto) {
-        return new GroupResponseDto(); // 임시 리턴
+        // ID로 그룹 조회 (없으면 예외 발생)
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
+
+        // 그룹 정보 업데이트
+        group.setGroupName(requestDto.getGroupName());
+        group.setDescription(requestDto.getDescription());
+        group.setCategory(requestDto.getCategory());
+
+        // 업데이트된 그룹 저장!
+        groupRepository.save(group);
+
+        // 업데이트된 데이터를 DTO로 반환
+        return new GroupResponseDto(
+                group.getGroupName(),
+                group.getDescription(),
+                group.getCategory()
+        );
     }
 
     // 5. 모임 삭제
     public void deleteGroup(Long id) {
         /* 그룹 조회 */
         Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
         /* 그룹 삭제 */
         groupRepository.delete(group);
     }
