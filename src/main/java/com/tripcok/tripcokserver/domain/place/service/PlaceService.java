@@ -1,5 +1,7 @@
 package com.tripcok.tripcokserver.domain.place.service;
 
+import com.tripcok.tripcokserver.domain.file.FileDto;
+import com.tripcok.tripcokserver.domain.file.service.FileService;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.entity.Role;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
@@ -8,6 +10,7 @@ import com.tripcok.tripcokserver.domain.place.dto.PlaceResponse;
 import com.tripcok.tripcokserver.domain.place.entity.Place;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceCategory;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceCategoryMapping;
+import com.tripcok.tripcokserver.domain.place.entity.PlaceImage;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryMappingRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
@@ -18,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -30,6 +34,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final PlaceCategoryRepository categoryRepository;
     private final PlaceCategoryMappingRepository placeCategoryMappingRepository;
+    private final FileService fileService;
 
     @Value("${save.location.place-thumbnail}")
     private String savePath;
@@ -44,6 +49,13 @@ public class PlaceService {
         /* 2. 여행지 엔티티 생성 및 저장 */
         Place place = new Place(request);
         Place newPlace = placeRepository.save(place);
+
+        /* 2-1. 파일 저장 */
+        List<FileDto> fileDtoList = fileService.saveFiles(request.getImageFiles(), savePath);
+        for (FileDto fileDto : fileDtoList) {
+            PlaceImage placeImage = new PlaceImage(fileDto.getName(), fileDto.getPath());
+            newPlace.addImage(placeImage);
+        }
 
         /* 3. 카테고리 매핑 생성 */
         List<PlaceCategoryMapping> mappings = request.getCategoryIds().stream()
