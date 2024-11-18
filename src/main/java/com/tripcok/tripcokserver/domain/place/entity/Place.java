@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,19 +30,20 @@ public class Place extends BaseEntity {
     private LocalTime startTime;
     private LocalTime endTime;
 
-    private String imagePath;
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlaceImage> images = new ArrayList<>();
 
     /* 리뷰 */
-    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceReview> reviews;
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<PlaceReview> reviews = new ArrayList<>();
 
     /* 구독 */
-    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceSubscribe> subscribes;
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<PlaceSubscribe> subscribes = new ArrayList<>();
 
     /* 카테고리 매핑 */
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceCategoryMapping> categoryMappings;
+    private List<PlaceCategoryMapping> categoryMappings = new ArrayList<>();
 
     public Place(PlaceRequest.save request) {
         this.name = request.getName();
@@ -49,6 +51,15 @@ public class Place extends BaseEntity {
         this.address = request.getAddress();
         this.startTime = request.getStartTime();
         this.endTime = request.getEndTime();
-        this.imagePath = ""; /* 임시 저장 목적 */
+    }
+
+    public void addImage(PlaceImage image) {
+        images.add(image);
+        image.setPlace(this);
+    }
+
+    public void removeImage(PlaceImage image) {
+        images.remove(image);
+        image.setPlace(null);
     }
 }
