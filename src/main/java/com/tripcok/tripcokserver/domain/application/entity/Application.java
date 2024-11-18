@@ -29,6 +29,9 @@ public class Application extends BaseEntity {
     /* 신청서 제목 */
     private String title;
 
+    /* 신청서 내용 */
+    private String description;
+
     /* 진행 과정 */
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;

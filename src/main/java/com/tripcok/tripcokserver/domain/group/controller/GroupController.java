@@ -95,7 +95,7 @@ public class GroupController {
     /*모임 신청 취소*/
     @Operation(summary = "모임 신청 취소", description = "모임 신청을 취소합니다.")
     @ApiResponse(responseCode = "200", description = "모임 신청 취소 성공")
-    @DeleteMapping("/api/v1/group/{id}/apply")
+    @DeleteMapping("/api/v1/group/{id}/")
     public ResponseEntity<Void> cancelApplication(@PathVariable Long id) {
         groupService.cancelApplication(id);
         return ResponseEntity.ok().build();
