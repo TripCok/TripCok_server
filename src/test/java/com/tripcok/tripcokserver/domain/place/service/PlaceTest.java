@@ -11,6 +11,9 @@ import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -26,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @DisplayName("PlaceService 테스트")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PlaceServiceTest {
+class PlaceTest {
 
     @Autowired
     private MemberRepository memberRepository;
@@ -138,5 +141,97 @@ class PlaceServiceTest {
         Assertions.assertThrows(NoSuchElementException.class, () -> {
             placeService.savePlace(placeRequest);
         });
+    }
+
+    @Test
+    @DisplayName("여행지 상세 조회 테스트")
+    void getPlaceDetailsTest() throws AccessDeniedException {
+
+        // 여행지 생성 요청
+        PlaceRequest.save placeRequest = new PlaceRequest.save();
+        placeRequest.setName("해운대");
+        placeRequest.setMemberId(adminMemberId);
+        placeRequest.setAddress("test-address");
+        placeRequest.setDescription("test-description");
+        placeRequest.setStartTime(LocalTime.of(8, 0));
+        placeRequest.setEndTime(LocalTime.of(20, 0));
+        placeRequest.setCategoryIds(List.of(childCategoryId));
+
+        ResponseEntity<?> createResponse = placeService.savePlace(placeRequest);
+        PlaceResponse createdPlace = (PlaceResponse) createResponse.getBody();
+        assertNotNull(createdPlace);
+
+        ResponseEntity<?> detailResponse = placeService.getPlaceDetails(createdPlace.getId());
+
+        assertEquals(HttpStatus.OK, detailResponse.getStatusCode());
+        PlaceResponse placeResponse = (PlaceResponse) detailResponse.getBody();
+        assertNotNull(placeResponse);
+        assertEquals("해운대", placeResponse.getName());
+        assertEquals("test-description", placeResponse.getDescription());
+    }
+
+    @Test
+    @DisplayName("여행지 삭제 테스트")
+    void deletePlaceTest() throws AccessDeniedException {
+        // 여행지 생성 요청
+        PlaceRequest.save placeRequest = new PlaceRequest.save();
+        placeRequest.setName("해운대");
+        placeRequest.setMemberId(adminMemberId);
+        placeRequest.setAddress("test-address");
+        placeRequest.setDescription("test-description");
+        placeRequest.setStartTime(LocalTime.of(8, 0));
+        placeRequest.setEndTime(LocalTime.of(20, 0));
+        placeRequest.setCategoryIds(List.of(childCategoryId));
+
+        ResponseEntity<?> createResponse = placeService.savePlace(placeRequest);
+        PlaceResponse createdPlace = (PlaceResponse) createResponse.getBody();
+        assertNotNull(createdPlace);
+
+        // 삭제 요청
+        ResponseEntity<?> deleteResponse = placeService.deletePlace(createdPlace.getId(), adminMemberId);
+
+        // 검증
+        assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
+        assertEquals("성공적으로 여행지를 삭제 했습니다.", deleteResponse.getBody().toString());
+
+        // 삭제된 여행지 조회 시도
+        Assertions.assertThrows(NoSuchElementException.class, () -> {
+            placeService.getPlaceDetails(createdPlace.getId());
+        });
+    }
+
+    @Test
+    @DisplayName("필터링된 여행지 목록 페이징 조회 테스트")
+    void getFilteredPlacesTest() throws AccessDeniedException {
+        // 여행지 생성 요청
+        PlaceRequest.save placeRequest1 = new PlaceRequest.save();
+        placeRequest1.setName("해운대");
+        placeRequest1.setMemberId(adminMemberId);
+        placeRequest1.setAddress("test-address-1");
+        placeRequest1.setDescription("test-description-1");
+        placeRequest1.setStartTime(LocalTime.of(8, 0));
+        placeRequest1.setEndTime(LocalTime.of(20, 0));
+        placeRequest1.setCategoryIds(List.of(childCategoryId));
+        placeService.savePlace(placeRequest1);
+
+        PlaceRequest.save placeRequest2 = new PlaceRequest.save();
+        placeRequest2.setName("광안리");
+        placeRequest2.setMemberId(adminMemberId);
+        placeRequest2.setAddress("test-address-2");
+        placeRequest2.setDescription("test-description-2");
+        placeRequest2.setStartTime(LocalTime.of(9, 0));
+        placeRequest2.setEndTime(LocalTime.of(22, 0));
+        placeRequest2.setCategoryIds(List.of(childCategoryId));
+        placeService.savePlace(placeRequest2);
+
+        // 필터링된 목록 요청
+        Pageable pageable = PageRequest.of(0, 5); // 첫 번째 페이지, 페이지 크기 5
+        Page<PlaceResponse> placeResponses = placeService.getAllPlaces(List.of(childCategoryId), pageable);
+
+        // 검증
+        assertNotNull(placeResponses);
+        assertEquals(2, placeResponses.getContent().size());
+        assertEquals("해운대", placeResponses.getContent().get(0).getName());
+        assertEquals("광안리", placeResponses.getContent().get(1).getName());
     }
 }

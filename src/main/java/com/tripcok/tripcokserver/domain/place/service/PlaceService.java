@@ -16,12 +16,13 @@ import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -36,8 +37,8 @@ public class PlaceService {
     private final PlaceCategoryMappingRepository placeCategoryMappingRepository;
     private final FileService fileService;
 
-    @Value("${save.location.place-thumbnail}")
-    private String savePath;
+    @Value("${save.location.place}")
+    private String savePathDirectory;
 
     /* 여행지 생성 */
     @Transactional(rollbackFor = {NoSuchElementException.class, AccessDeniedException.class})
@@ -51,11 +52,16 @@ public class PlaceService {
         Place newPlace = placeRepository.save(place);
 
         /* 2-1. 파일 저장 */
-        List<FileDto> fileDtoList = fileService.saveFiles(request.getImageFiles(), savePath);
-        for (FileDto fileDto : fileDtoList) {
-            PlaceImage placeImage = new PlaceImage(fileDto.getName(), fileDto.getPath());
-            newPlace.addImage(placeImage);
+        if (request.getImageFiles() != null) {
+            String savePath = System.getProperty("user.home") + savePathDirectory;
+
+            List<FileDto> fileDtoList = fileService.saveFiles(request.getImageFiles(), savePath);
+            for (FileDto fileDto : fileDtoList) {
+                PlaceImage placeImage = new PlaceImage(fileDto.getName(), fileDto.getPath());
+                newPlace.addImage(placeImage);
+            }
         }
+
 
         /* 3. 카테고리 매핑 생성 */
         List<PlaceCategoryMapping> mappings = request.getCategoryIds().stream()
@@ -88,4 +94,46 @@ public class PlaceService {
 
         return member;
     }
+
+    /* 여행지 상세 조회 */
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getPlaceDetails(Long placeId) {
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new NoSuchElementException("여행지를 찾을 수 없습니다. ID: " + placeId));
+        return ResponseEntity.status(HttpStatus.OK).body(new PlaceResponse(place, place.getCategoryMappings()));
+    }
+
+    /* 필터별 여행지 조회 */
+    @Transactional(readOnly = true)
+    public Page<PlaceResponse> getAllPlaces(List<Long> categoryIds, Pageable pageable) {
+        Page<Place> places;
+
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            // 특정 카테고리 ID에 해당하는 여행지 조회
+            places = placeRepository.findByCategoryIds(categoryIds, pageable);
+        } else {
+            // 모든 여행지 조회
+            places = placeRepository.findAll(pageable);
+        }
+
+        // Place -> PlaceResponse 변환
+        return places.map(place -> new PlaceResponse(place, place.getCategoryMappings()));
+    }
+
+    /* 여행지 삭제 */
+    public ResponseEntity<?> deletePlace(Long placeId, Long memberId) throws AccessDeniedException {
+        // 권한 검사
+        checkRole(memberId);
+
+        // 여행지 조회
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new NoSuchElementException("여행지를 찾을 수 없습니다. ID: " + placeId));
+
+        // 여행지 삭제
+        placeRepository.delete(place);
+
+        return ResponseEntity.status(HttpStatus.OK).body("성공적으로 여행지를 삭제 했습니다.");
+    }
+
+
 }

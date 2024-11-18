@@ -14,4 +14,4 @@ spring:
 
 save:
   location:
-    place-thumbnail: ~/
+    place: place-image

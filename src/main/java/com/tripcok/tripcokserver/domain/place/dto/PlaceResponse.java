@@ -15,7 +15,7 @@ public class PlaceResponse {
     private String address;
     private LocalTime startTime;
     private LocalTime endTime;
-    private List<String> categories; // 카테고리 이름 목록
+    private List<String> categories;
 
     public PlaceResponse(Place place, List<PlaceCategoryMapping> mappings) {
         this.id = place.getId();
