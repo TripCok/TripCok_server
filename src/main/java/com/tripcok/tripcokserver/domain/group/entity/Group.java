@@ -1,9 +1,9 @@
 package com.tripcok.tripcokserver.domain.group.entity;
 
+import com.tripcok.tripcokserver.domain.application.dto.ApplicationRequestDto;
 import com.tripcok.tripcokserver.domain.application.entity.Application;
 import com.tripcok.tripcokserver.domain.board.entity.Board;
 import com.tripcok.tripcokserver.domain.group.dto.GroupRequestDto;
-import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

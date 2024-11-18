@@ -10,6 +10,7 @@ public class ApplicationRequestDto {
     @Data
     public static class save {
         private Long member_id;
+        private Long group_id;
         private Group group;
         private String title;
         private String description;

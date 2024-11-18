@@ -21,7 +21,7 @@ public class Application extends BaseEntity {
     @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationMember> applicationMembers;
 
-    /* 그룹 */
+    /* 모임 이름 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
