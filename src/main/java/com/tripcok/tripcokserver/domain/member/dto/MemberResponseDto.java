@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Getter
 public class MemberResponseDto {
 
+    /* 회원 정보 조회 */
     @Data
     public static class Info {
         private String name;
@@ -23,6 +24,7 @@ public class MemberResponseDto {
         private String address;
         private Role role;
 
+        /* 회원 정보 수정 */
         public Info(Member member) {
             this.name = member.getName();
             this.email = member.getEmail();

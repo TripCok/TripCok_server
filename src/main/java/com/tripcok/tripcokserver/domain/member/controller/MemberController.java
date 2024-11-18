@@ -48,4 +48,6 @@ public class MemberController {
     public ResponseEntity<?> getAllMemberInfo(@PathVariable Long memberId) {
         return memberService.getAllMemberInfo(memberId);
     }
+
+    /* 프로필 이미지 저장 */
 }

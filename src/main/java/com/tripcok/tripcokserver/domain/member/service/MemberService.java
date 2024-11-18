@@ -27,8 +27,6 @@ public class MemberService {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 가입된 이메일입니다.");
         }
 
-
-
         Member member = new Member(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(memberRepository.save(member));
