@@ -28,4 +28,8 @@ public class PlaceCategoryMapping extends BaseEntity {
         this.place = place;
         this.category = category;
     }
+
+    public PlaceCategoryMapping() {
+
+    }
 }
