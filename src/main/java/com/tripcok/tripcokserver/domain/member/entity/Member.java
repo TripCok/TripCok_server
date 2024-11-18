@@ -1,5 +1,6 @@
 package com.tripcok.tripcokserver.domain.member.entity;
 
+import com.tripcok.tripcokserver.domain.board.entity.BoardMember;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceReview;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceReviewLike;
@@ -62,6 +63,10 @@ public class Member extends BaseEntity {
     /* 작성한 리뷰 */
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaceReview> reviews;
+
+    /* 게시글 */
+    @OneToMany(mappedBy = "member", fetch =FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardMember> boardMembers;
 }
 
 
