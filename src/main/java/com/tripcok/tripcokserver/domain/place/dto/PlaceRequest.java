@@ -33,6 +33,6 @@ public class PlaceRequest {
         private List<Long> categoryIds;
 
         /* 장소 사진 */
-        private MultipartFile imageFile;
+        private List<MultipartFile> imageFiles;
     }
 }

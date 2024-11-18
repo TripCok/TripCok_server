@@ -4,6 +4,7 @@ import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.entity.Role;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.place.dto.PlaceRequest;
+import com.tripcok.tripcokserver.domain.place.dto.PlaceResponse;
 import com.tripcok.tripcokserver.domain.place.entity.Place;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceCategory;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceCategoryMapping;
@@ -12,12 +13,14 @@ import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,32 +35,31 @@ public class PlaceService {
     private String savePath;
 
     /* 여행지 생성 */
+    @Transactional(rollbackFor = {NoSuchElementException.class, AccessDeniedException.class})
     public ResponseEntity<?> savePlace(PlaceRequest.save request) throws AccessDeniedException {
 
-        /* 여행지 등록 사용자 권환 검사 */
+        /* 1. 여행지 등록 사용자 권한 검사 */
         Member member = checkRole(request.getMemberId());
 
-        /*여행지 Entity 생성 */
+        /* 2. 여행지 엔티티 생성 및 저장 */
         Place place = new Place(request);
-
         Place newPlace = placeRepository.save(place);
 
-        /* 여행지에 대한 카테고리 추가 */
-        for (Long categoryId : request.getCategoryIds()) {
+        /* 3. 카테고리 매핑 생성 */
+        List<PlaceCategoryMapping> mappings = request.getCategoryIds().stream()
+                .map(categoryId -> {
+                    PlaceCategory category = categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new NoSuchElementException("유효하지 않은 카테고리 ID: " + categoryId));
+                    return new PlaceCategoryMapping(newPlace, category);
+                })
+                .toList();
 
-            Optional<PlaceCategory> byId = categoryRepository.findById(categoryId);
+        placeCategoryMappingRepository.saveAll(mappings);
 
-            /* 추후 개선 방안 생각 해봐야함*/
-            if (byId.isEmpty()) {
-                continue;
-            } else {
-                PlaceCategory category = byId.get();
-                PlaceCategoryMapping pcm = new PlaceCategoryMapping(newPlace, category);
+        /* 4. 응답 데이터 생성 */
+        PlaceResponse response = new PlaceResponse(newPlace, mappings);
 
-                placeCategoryMappingRepository.save(pcm);
-            }
-        }
-        return ResponseEntity.ok(placeRepository.findById(newPlace.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /* 여행지 등록 사용자 권환 검사 */
@@ -65,7 +67,7 @@ public class PlaceService {
 
         /* 사용자 정보 조회 */
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("사용자의 정보가 옳바르지 않습니다. Member ID : " + memberId));
+                .orElseThrow(() -> new IllegalArgumentException("사용자의 정보가 옳바르지 않습니다. Member ID : " + memberId));
 
 
         if (!member.getRole().equals(Role.MANAGER)) {
@@ -73,6 +75,5 @@ public class PlaceService {
         }
 
         return member;
-
     }
 }
