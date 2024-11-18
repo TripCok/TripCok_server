@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.file.AccessDeniedException;
+
 @RestController
 @RequestMapping("/api/v1/place")
 @RequiredArgsConstructor
@@ -18,7 +20,7 @@ public class PlaceController {
 
     /* 여행지 생성 */
     @PostMapping
-    public ResponseEntity<?> createPlace(@RequestBody PlaceRequest.save request) {
-        return placeService.save(request);
+    public ResponseEntity<?> createPlace(@RequestBody PlaceRequest.save request) throws AccessDeniedException {
+        return placeService.savePlace(request);
     }
 }

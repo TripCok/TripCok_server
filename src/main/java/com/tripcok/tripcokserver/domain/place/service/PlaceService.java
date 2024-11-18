@@ -1,5 +1,8 @@
 package com.tripcok.tripcokserver.domain.place.service;
 
+import com.tripcok.tripcokserver.domain.member.entity.Member;
+import com.tripcok.tripcokserver.domain.member.entity.Role;
+import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.place.dto.PlaceRequest;
 import com.tripcok.tripcokserver.domain.place.entity.Place;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceCategory;
@@ -11,62 +14,65 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.nio.file.AccessDeniedException;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PlaceService {
 
+    private final MemberRepository memberRepository;
     private final PlaceRepository placeRepository;
-    private final PlaceCategoryRepository placeCategoryRepository;
+    private final PlaceCategoryRepository categoryRepository;
     private final PlaceCategoryMappingRepository placeCategoryMappingRepository;
 
     @Value("${save.location.place-thumbnail}")
     private String savePath;
 
-    @Transactional
-    public ResponseEntity<?> save(PlaceRequest.save request) {
+    /* 여행지 생성 */
+    public ResponseEntity<?> savePlace(PlaceRequest.save request) throws AccessDeniedException {
 
-        if (validatePlaceRequest(request)) {
+        /* 여행지 등록 사용자 권환 검사 */
+        Member member = checkRole(request.getMemberId());
 
-        }
+        /*여행지 Entity 생성 */
+        Place place = new Place(request);
 
-        try {
-            // 1. Place 엔티티 생성
-            Place place = Place.builder()
-                    .name(request.getName())
-                    .description(request.getDescription())
-                    .address(request.getAddress())
-                    .startTime(request.getStartTime())
-                    .endTime(request.getEndTime())
-                    .build();
+        Place newPlace = placeRepository.save(place);
 
-            Place savedPlace = placeRepository.save(place);
+        /* 여행지에 대한 카테고리 추가 */
+        for (Long categoryId : request.getCategoryIds()) {
 
-            // 2. 카테고리 매핑 저장
-            if (request.getCategoryIds() != null) {
-                for (Long categoryId : request.getCategoryIds()) {
-                    PlaceCategory category = placeCategoryRepository.findById(categoryId)
-                            .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카테고리 ID: " + categoryId));
+            Optional<PlaceCategory> byId = categoryRepository.findById(categoryId);
 
-                    PlaceCategoryMapping mapping = new PlaceCategoryMapping(savedPlace, category);
+            /* 추후 개선 방안 생각 해봐야함*/
+            if (byId.isEmpty()) {
+                continue;
+            } else {
+                PlaceCategory category = byId.get();
+                PlaceCategoryMapping pcm = new PlaceCategoryMapping(newPlace, category);
 
-                    placeCategoryMappingRepository.save(mapping);
-                }
+                placeCategoryMappingRepository.save(pcm);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
-
-        return ResponseEntity.ok(savedPlace);
+        return ResponseEntity.ok(placeRepository.findById(newPlace.getId()));
     }
 
-    /**/
-    private boolean validatePlaceRequest(PlaceRequest.save request) {
-        if (request.getName() || request.getName()) {
-            return false;
+    /* 여행지 등록 사용자 권환 검사 */
+    private Member checkRole(Long memberId) throws AccessDeniedException {
+
+        /* 사용자 정보 조회 */
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NoSuchElementException("사용자의 정보가 옳바르지 않습니다. Member ID : " + memberId));
+
+
+        if (!member.getRole().equals(Role.MANAGER)) {
+            throw new AccessDeniedException("올바르지 않은 권한입니다. Member ID: " + memberId);
         }
-        return true;
+
+        return member;
+
     }
 }

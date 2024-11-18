@@ -1,19 +1,15 @@
 package com.tripcok.tripcokserver.domain.place.entity;
 
+import com.tripcok.tripcokserver.domain.place.dto.PlaceCategoryRequest;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class PlaceCategory extends BaseEntity {
 
     @Id
@@ -28,10 +24,27 @@ public class PlaceCategory extends BaseEntity {
     private PlaceCategory parentCategory;
 
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceCategory> childCategories;
+    private List<PlaceCategory> childCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaceCategoryMapping> categoryMappings;
 
     private Integer depth;
+
+    public PlaceCategory(PlaceCategoryRequest request) {
+        this.name = request.getName();
+        this.depth = 0; // 기본 값, setParentCategory 호출 시 업데이트
+    }
+
+    public void setParentCategory(PlaceCategory parent) {
+        this.parentCategory = parent;
+        this.depth = parent.getDepth() + 1;
+        if (!parent.getChildCategories().contains(this)) {
+            parent.getChildCategories().add(this);
+        }
+    }
+
+    public PlaceCategory() {
+
+    }
 }

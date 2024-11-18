@@ -10,8 +10,11 @@ import java.util.List;
 @Data
 public class PlaceRequest {
 
-    @Getter
+    @Data
     public static class save {
+
+        /* 장소 등록자 */
+        private Long memberId;
 
         /* 장소 이름 */
         private String name;

@@ -8,6 +8,7 @@ import com.tripcok.tripcokserver.domain.place.entity.PlaceSubscribe;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -47,6 +48,7 @@ public class Member extends BaseEntity {
     private String address;
 
     /* 역할 */
+    @Setter
     @Enumerated(EnumType.STRING)
     private Role role;
 
