@@ -49,5 +49,4 @@ public class MemberController {
         return memberService.getAllMemberInfo(memberId);
     }
 
-    /* 프로필 이미지 저장 */
 }
