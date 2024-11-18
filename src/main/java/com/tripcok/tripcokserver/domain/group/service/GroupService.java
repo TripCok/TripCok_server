@@ -7,6 +7,7 @@ import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,7 +31,7 @@ public class GroupService {
      * - 모임 생성
      * 1. 모임을 생성
      * 2. 모임 리스트에 사용자와, 모임 추가
-     * */
+     */
     public GroupResponseDto createGroup(@Valid GroupRequestDto requestDto) {
 
         /* #1 그룹 생성 */
@@ -63,7 +64,13 @@ public class GroupService {
 
     // 2. 모임 조회 - 단일
     public GroupResponseDto getGroup(Long id) {
-        return new GroupResponseDto(); // 임시 리턴
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
+        return new GroupResponseDto(
+                group.getGroupName(),
+                group.getDescription(),
+                group.getCategory()
+        );
     }
 
     // 3. 모임 조회 - 복수 (Pageable)
@@ -78,7 +85,11 @@ public class GroupService {
 
     // 5. 모임 삭제
     public void deleteGroup(Long id) {
-        // 임시로 아무 동작도 하지 않음
+        /* 그룹 조회 */
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
+        /* 그룹 삭제 */
+        groupRepository.delete(group);
     }
 
     // 6. 모임 공지 등록
