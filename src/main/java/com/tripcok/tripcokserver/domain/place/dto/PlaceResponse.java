@@ -2,6 +2,7 @@ package com.tripcok.tripcokserver.domain.place.dto;
 
 import com.tripcok.tripcokserver.domain.place.entity.Place;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceCategoryMapping;
+import com.tripcok.tripcokserver.domain.place.entity.PlaceImage;
 import lombok.Data;
 
 import java.time.LocalTime;
@@ -16,6 +17,7 @@ public class PlaceResponse {
     private LocalTime startTime;
     private LocalTime endTime;
     private List<String> categories;
+    private List<PlaceImageResponse> images;
 
     public PlaceResponse(Place place, List<PlaceCategoryMapping> mappings) {
         this.id = place.getId();
@@ -26,6 +28,9 @@ public class PlaceResponse {
         this.endTime = place.getEndTime();
         this.categories = mappings.stream()
                 .map(mapping -> mapping.getCategory().getName())
+                .toList();
+        this.images = place.getImages().stream()
+                .map(PlaceImageResponse::new)
                 .toList();
     }
 }
