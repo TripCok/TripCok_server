@@ -7,7 +7,7 @@ public class ApplicationResponse {
 
     /* 모임 신청 완료 */
     @Data
-    public static class complete {
+    public static class applicationcomplete {
         private String message;
         private String group_id;
     }
