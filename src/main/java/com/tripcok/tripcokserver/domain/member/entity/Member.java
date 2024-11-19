@@ -89,7 +89,6 @@ public class Member extends BaseEntity {
         this.profileImage = memberRequest.getProfileImage();
         this.gender = memberRequest.getGender();
         this.address = memberRequest.getAddress();
-        this.role = memberRequest.getRole();
         return this;
     }
 
