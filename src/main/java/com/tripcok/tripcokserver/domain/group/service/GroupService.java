@@ -1,7 +1,5 @@
 package com.tripcok.tripcokserver.domain.group.service;
 
-import com.tripcok.tripcokserver.domain.board.dto.BoardRequestDto;
-import com.tripcok.tripcokserver.domain.board.dto.BoardResponseDto;
 import com.tripcok.tripcokserver.domain.group.dto.*;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;

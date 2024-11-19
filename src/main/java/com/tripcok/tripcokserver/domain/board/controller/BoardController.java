@@ -25,10 +25,15 @@ public class BoardController {
     /*모임 게시글 작성*/
     @Operation(summary = "모임 게시글 작성", description = "모임에 게시글을 작성합니다.")
     @ApiResponse(responseCode = "201", description = "게시글 작성 성공")
-    @PostMapping("/api/v1/group/{id}/boards")
+    @PostMapping("/api/v1/user/{user_id}/group/{group_id}/boards")
     public ResponseEntity<BoardResponseDto> createBoard(
-            @PathVariable Long id, @Valid @RequestBody BoardRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createBoard(id, requestDto));
+            @PathVariable("user_id") Long userId,
+            @PathVariable("group_id") Long groupId,
+            @Valid @RequestBody BoardRequestDto requestDto) {
+
+        BoardResponseDto responseDto = boardService.createBoard(userId, groupId, requestDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     /*모임 게시글 댓글 작성*/
