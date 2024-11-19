@@ -86,7 +86,7 @@ class PlaceTest {
     @DisplayName("여행지 생성 성공 테스트")
     void createPlaceSuccessTest() throws AccessDeniedException {
         // 여행지 생성 요청
-        PlaceRequest.save placeRequest = new PlaceRequest.save();
+        PlaceRequest.placeSave placeRequest = new PlaceRequest.placeSave();
         placeRequest.setName("해운대");
         placeRequest.setMemberId(adminMemberId);
         placeRequest.setAddress("test-address");
@@ -109,7 +109,7 @@ class PlaceTest {
     @DisplayName("권한 없는 사용자에 의한 여행지 생성 실패 테스트")
     void createPlaceFailTest() {
         // 여행지 생성 요청
-        PlaceRequest.save placeRequest = new PlaceRequest.save();
+        PlaceRequest.placeSave placeRequest = new PlaceRequest.placeSave();
         placeRequest.setName("해운대");
         placeRequest.setMemberId(commonMemberId);
         placeRequest.setAddress("test-address");
@@ -128,7 +128,7 @@ class PlaceTest {
     @DisplayName("유효하지 않은 카테고리 ID로 여행지 생성 실패 테스트")
     void createPlaceInvalidCategoryTest() {
         // 여행지 생성 요청
-        PlaceRequest.save placeRequest = new PlaceRequest.save();
+        PlaceRequest.placeSave placeRequest = new PlaceRequest.placeSave();
         placeRequest.setName("해운대");
         placeRequest.setMemberId(adminMemberId);
         placeRequest.setAddress("test-address");
@@ -148,7 +148,7 @@ class PlaceTest {
     void getPlaceDetailsTest() throws AccessDeniedException {
 
         // 여행지 생성 요청
-        PlaceRequest.save placeRequest = new PlaceRequest.save();
+        PlaceRequest.placeSave placeRequest = new PlaceRequest.placeSave();
         placeRequest.setName("해운대");
         placeRequest.setMemberId(adminMemberId);
         placeRequest.setAddress("test-address");
@@ -174,7 +174,7 @@ class PlaceTest {
     @DisplayName("여행지 삭제 테스트")
     void deletePlaceTest() throws AccessDeniedException {
         // 여행지 생성 요청
-        PlaceRequest.save placeRequest = new PlaceRequest.save();
+        PlaceRequest.placeSave placeRequest = new PlaceRequest.placeSave();
         placeRequest.setName("해운대");
         placeRequest.setMemberId(adminMemberId);
         placeRequest.setAddress("test-address");
@@ -204,7 +204,7 @@ class PlaceTest {
     @DisplayName("필터링된 여행지 목록 페이징 조회 테스트")
     void getFilteredPlacesTest() throws AccessDeniedException {
         // 여행지 생성 요청
-        PlaceRequest.save placeRequest1 = new PlaceRequest.save();
+        PlaceRequest.placeSave placeRequest1 = new PlaceRequest.placeSave();
         placeRequest1.setName("해운대");
         placeRequest1.setMemberId(adminMemberId);
         placeRequest1.setAddress("test-address-1");
@@ -214,7 +214,7 @@ class PlaceTest {
         placeRequest1.setCategoryIds(List.of(childCategoryId));
         placeService.savePlace(placeRequest1);
 
-        PlaceRequest.save placeRequest2 = new PlaceRequest.save();
+        PlaceRequest.placeSave placeRequest2 = new PlaceRequest.placeSave();
         placeRequest2.setName("광안리");
         placeRequest2.setMemberId(adminMemberId);
         placeRequest2.setAddress("test-address-2");

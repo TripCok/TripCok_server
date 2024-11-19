@@ -22,8 +22,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -42,7 +44,7 @@ public class PlaceService {
 
     /* 여행지 생성 */
     @Transactional(rollbackFor = {NoSuchElementException.class, AccessDeniedException.class})
-    public ResponseEntity<?> savePlace(PlaceRequest.save request) throws AccessDeniedException {
+    public ResponseEntity<?> savePlace(PlaceRequest.placeSave request, List<MultipartFile> files) throws AccessDeniedException {
 
         /* 1. 여행지 등록 사용자 권한 검사 */
         Member member = checkRole(request.getMemberId());
@@ -52,10 +54,10 @@ public class PlaceService {
         Place newPlace = placeRepository.save(place);
 
         /* 2-1. 파일 저장 */
-        if (request.getImageFiles() != null) {
+        if (files != null) {
             String savePath = System.getProperty("user.home") + savePathDirectory;
 
-            List<FileDto> fileDtoList = fileService.saveFiles(request.getImageFiles(), savePath);
+            List<FileDto> fileDtoList = fileService.saveFiles(files, savePath);
             for (FileDto fileDto : fileDtoList) {
                 PlaceImage placeImage = new PlaceImage(fileDto.getName(), fileDto.getPath());
                 newPlace.addImage(placeImage);

@@ -6,15 +6,20 @@ import com.tripcok.tripcokserver.domain.place.service.PlaceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/place")
 @RequiredArgsConstructor
@@ -26,9 +31,14 @@ public class PlaceController {
     /* 여행지 생성 */
     @PostMapping
     @Operation(summary = "여행지 생성", description = "새로운 여행지를 등록합니다.")
-    @ApiResponse(responseCode = "201", description = "여행지가 생성 되었습니다.")
-    public ResponseEntity<?> createPlace(@RequestBody PlaceRequest.save request) throws AccessDeniedException {
-        return placeService.savePlace(request);
+    @ApiResponse(responseCode = "201", description = "여행지가 생성되었습니다.")
+    public ResponseEntity<?> createPlace(
+            @RequestPart("request") @Valid PlaceRequest.placeSave request,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
+    ) throws AccessDeniedException {
+        request.convertToLocalTime();
+
+        return placeService.savePlace(request, files);
     }
 
     /* 여행지 상세 조회 */

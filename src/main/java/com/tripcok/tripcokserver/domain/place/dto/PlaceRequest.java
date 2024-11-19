@@ -1,8 +1,8 @@
 package com.tripcok.tripcokserver.domain.place.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -11,28 +11,38 @@ import java.util.List;
 public class PlaceRequest {
 
     @Data
-    public static class save {
+    @Schema(description = "요청 데이터(JSON)")
+    public static class placeSave {
 
-        /* 장소 등록자 */
+        @NotNull
         private Long memberId;
 
-        /* 장소 이름 */
+        @NotNull
         private String name;
 
-        /* 장소 설명 */
+        @NotNull
         private String description;
 
-        /* 장소 주소 */
+        @NotNull
         private String address;
 
         /* 운영 시간 */
+        @NotNull
+        private String strStartTime;
+
+        @NotNull
+        private String strEndTime;
+
         private LocalTime startTime;
         private LocalTime endTime;
 
-        /* 카테고리 아이디 리스트*/
         private List<Long> categoryIds;
 
-        /* 장소 사진 */
-        private List<MultipartFile> imageFiles;
+        // JSON 데이터를 LocalTime으로 변환
+        public void convertToLocalTime() {
+            this.startTime = LocalTime.parse(strStartTime);
+            this.endTime = LocalTime.parse(strEndTime);
+        }
     }
+
 }

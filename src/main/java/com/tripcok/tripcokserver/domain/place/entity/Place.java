@@ -45,7 +45,7 @@ public class Place extends BaseEntity {
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaceCategoryMapping> categoryMappings = new ArrayList<>();
 
-    public Place(PlaceRequest.save request) {
+    public Place(PlaceRequest.placeSave request) {
         this.name = request.getName();
         this.description = request.getDescription();
         this.address = request.getAddress();
