@@ -21,4 +21,7 @@ public class GroupRequestDto {
     /* 카테고리 */
     private String category;
 
+
+
+
 }

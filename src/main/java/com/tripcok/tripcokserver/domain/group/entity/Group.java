@@ -55,6 +55,11 @@ public class Group extends BaseEntity {
     /* 구인 상태 */
     private boolean recruiting = true; // 기본값은 구인 중~
 
+
+    /* 모암 초대 인원 */
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupMemberInvite> groupMemberInvites;
+
     public Boolean getRecruiting() {
         return recruiting;
     }
