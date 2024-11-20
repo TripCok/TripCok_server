@@ -1,4 +1,4 @@
-package com.tripcok.tripcokserver.domain.board.entity;
+package com.tripcok.tripcokserver.domain.board;
 
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,7 +27,7 @@ public class Board extends BaseEntity {
     private Group group;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();
 
     public void addPosts(Post post) {
         posts.add(post);

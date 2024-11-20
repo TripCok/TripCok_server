@@ -1,13 +1,14 @@
 package com.tripcok.tripcokserver.domain.post.entity;
 
-import com.tripcok.tripcokserver.domain.board.entity.Board;
-import com.tripcok.tripcokserver.domain.boardcomment.entity.BoardComment;
+import com.tripcok.tripcokserver.domain.board.Board;
+import com.tripcok.tripcokserver.domain.postcomment.entity.PostComment;
+import com.tripcok.tripcokserver.domain.post.dto.PostRequestDto;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,15 +35,18 @@ public class Post extends BaseEntity {
     private Board board;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<BoardComment> comments;
+    private List<PostComment> comments = new ArrayList<>();
 
     public Post(PostRequestDto requestDto, Board board) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.board = board;
+        if (requestDto.getType() == Type.NOTICE) {
+            this.type = Type.NOTICE;
+        }
     }
 
-    public void addComment(BoardComment comment) {
+    public void addComment(PostComment comment) {
         comments.add(comment);
     }
 

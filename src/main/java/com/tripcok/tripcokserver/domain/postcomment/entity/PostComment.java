@@ -1,14 +1,17 @@
-package com.tripcok.tripcokserver.domain.boardcomment.entity;
+package com.tripcok.tripcokserver.domain.postcomment.entity;
 
+import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentRequestDto;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
+import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "comment")
-public class BoardComment {
+@Table(name = "post_comment")
+public class PostComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,5 +28,13 @@ public class BoardComment {
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member; // 댓글 작성자
+
+    public PostComment() {}
+    public PostComment(@Valid PostCommentRequestDto requestDto, Post post, Member member) {
+        this.content = requestDto.getContent();
+        this.post = post;
+        this.member = member;
+    }
+
 
 }
