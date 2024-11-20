@@ -71,8 +71,8 @@ public class GroupPlaceService {
         );
     }
 
-    public ResponseEntity<?> getGroupInPlace(Pageable pageable) {
-        Page<GroupPlace> all = groupPlaceRepository.findAll(pageable);
+    public ResponseEntity<?> getGroupInPlace(Long groupId,Pageable pageable) {
+        Page<GroupPlace> all = groupPlaceRepository.findByGroup_IdOrderByOrdersAsc(groupId,pageable);
         return ResponseEntity.status(HttpStatus.OK).body(all.map(GroupPlaceResponse::new));
     }
 }

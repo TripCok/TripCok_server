@@ -22,18 +22,18 @@ public class GroupPlaceController {
     }
 
     /* 그룹의 여행지 조회 - 모두 조회 */
-    @GetMapping("/all")
+    @GetMapping("/{groupId}/all")
     public ResponseEntity<?> groupAllGroupInPlaces(
+            @PathVariable("groupId") Long groupId,
             @RequestParam("size") Integer pageSize,
             @RequestParam("page") Integer pageNum) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
-        return groupPlaceService.getGroupInPlace(pageable);
+        return groupPlaceService.getGroupInPlace(groupId, pageable);
     }
 
 
-    /* 그룹의 여행지 조회 - 단일 조회 */
-
     /* 그룹에 여행지 삭제 */
+
 
     /* 그룹에 여행지 순서 변경 */
 }

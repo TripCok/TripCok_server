@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 public class GroupPlaceResponse {
 
+    private Long id;
     private Long placeId;
     private String placeThumbnail;
     private String placeName;
@@ -18,9 +19,11 @@ public class GroupPlaceResponse {
     private String placeAddress;
     private LocalTime placeStartTime;
     private LocalTime placeEndTime;
+    private Integer orders;
     private List<PlaceCategoryResponse> placeCategories;
 
     public GroupPlaceResponse(GroupPlace groupPlace) {
+        this.id = groupPlace.getId();
         this.placeId = groupPlace.getPlace().getId();
         this.placeThumbnail = groupPlace.getPlace().getImages().get(0).getImagePath();
         this.placeName = groupPlace.getPlace().getName();
@@ -28,6 +31,7 @@ public class GroupPlaceResponse {
         this.placeAddress = groupPlace.getPlace().getAddress();
         this.placeStartTime = groupPlace.getPlace().getStartTime();
         this.placeEndTime = groupPlace.getPlace().getEndTime();
+        this.orders = groupPlace.getOrders();
         this.placeCategories = groupPlace.getPlace().getCategoryMappings().stream()
                 .map(mapping -> new PlaceCategoryResponse(mapping.getCategory()))
                 .toList();
