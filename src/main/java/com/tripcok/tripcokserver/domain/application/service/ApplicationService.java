@@ -32,10 +32,10 @@ public class ApplicationService {
 
     /* 모임 신청 */
     @Transactional
-    public ResponseEntity<?> createApplication(ApplicationRequestDto.applicationsave request) {
+    public ResponseEntity<?> createApplication(ApplicationRequestDto.applicationSave request) {
 
         /* 신청을 넣으려는 그룹을 찾기 */
-        Optional<Group> findGroup = groupRepository.findById(request.getGroup_id());
+        Optional<Group> findGroup = groupRepository.findById(request.getGroupId());
 
         if (findGroup.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("모임을 찾을 수 없습니다.");
@@ -44,7 +44,7 @@ public class ApplicationService {
         Group group = findGroup.get();
 
         /* 새로운 Application 을 생성 */
-        Optional<Member> findMember = memberRepository.findById(request.getMember_id());
+        Optional<Member> findMember = memberRepository.findById(request.getMemberId());
 
         if (findMember.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원을 찾을 수 없습니다.");
@@ -81,7 +81,7 @@ public class ApplicationService {
     }
 
     /* 모임 가입 완료 */
-    public ResponseEntity<?> acceptApplication(ApplicationRequestDto.applicationaccept request) {
+    public ResponseEntity<?> acceptApplication(ApplicationRequestDto.applicationAccept request) {
 
         /* 수락에 필요한 데이터 얻어 오기 */
         Application application = applicationRepository.findById(request.getApplicationId()).orElseThrow(
@@ -90,6 +90,13 @@ public class ApplicationService {
 
         Member member = application.getMember();
         Group group = application.getGroup();
+
+        /* 수락 버튼을 누른 사람이 관리자인가? */
+        Optional<GroupMember> byGroupInAdminMember = groupMemberRepository.findByGroupInAdminMember(group.getId(), GroupRole.ADMIN, request.getGroupAdminId());
+
+        if (byGroupInAdminMember.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
+        }
 
         /* 모임에 가입 시키기 */
         GroupMember newgroupMember = new GroupMember(member, group, GroupRole.MEMBER);
@@ -105,7 +112,7 @@ public class ApplicationService {
     }
 
     /* 모임 신청 수락 */
-    public ResponseEntity<?> acceptedApplication(ApplicationRequestDto.applicationaccept request) {
+    public ResponseEntity<?> acceptedApplication(ApplicationRequestDto.applicationAccept request) {
 
         Application application = applicationRepository.findById(request.getApplicationId()).orElseThrow(
                 () -> new NotFoundException("옳바르지 않은 요청입니다.")
