@@ -124,10 +124,10 @@ public class GroupController {
     /*모임 초대*/
     @Operation(summary = "모임 초대", description = "모임에 회원을 초대합니다.")
     @ApiResponse(responseCode = "200", description = "모임 초대 성공")
-    @PostMapping("/api/v1/group/{id}/invite")
-    public ResponseEntity<Void> inviteMember(@PathVariable Long id, @RequestParam Long userId) {
-        groupService.inviteMember(id, userId);
-        return ResponseEntity.ok().build();
+    @PostMapping("/api/v1/group/invite")
+    public ResponseEntity<?> inviteMember(@RequestBody GroupInviteDto inviteDto) {
+
+        return groupService.inviteMember(inviteDto);
     }
 
     /*모임 초대 수락*/

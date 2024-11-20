@@ -3,9 +3,13 @@ package com.tripcok.tripcokserver.domain.group.service;
 import com.tripcok.tripcokserver.domain.group.dto.*;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
+import com.tripcok.tripcokserver.domain.group.entity.GroupMemberInvite;
+import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
+import com.tripcok.tripcokserver.domain.group.repository.GroupMemberInviteRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
+import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -13,10 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.tripcok.tripcokserver.domain.group.entity.GroupRole.ADMIN;
 
@@ -26,6 +33,8 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final MemberRepository memberRepository;
+    private final GroupMemberInviteRepository groupMemberInviteRepository;
 
     /**
      * - 모임 생성
@@ -39,13 +48,6 @@ public class GroupService {
 
         Group newGroup = groupRepository.save(group);
 
-        /*
-         * 나중에 하람쓰가 추가 하면 대체 해야할 부분
-         * How?
-         * 1. 하람쓰가 만든 Repository를 여기 위에 추가한다.
-         * 2. Member member = memberRepository.findById(requestDto.getUserId);
-         * Ok?
-         * */
         Member member = new Member();
 
         /* #2 그룹을 생성한 사람을 GroupMember에 추가 */
@@ -108,7 +110,7 @@ public class GroupService {
     public void updateRecruitingStatus(Long id, Boolean recruiting) {
         // 그룹 조회
         Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new  EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
         // 모임 상태 변경
         group.setRecruiting(recruiting);
 
@@ -147,8 +149,39 @@ public class GroupService {
     }
 
     // 10. 모임 초대
-    public void inviteMember(Long id, Long userId) {
-        // 임시로 아무 동작도 하지 않음
+    public ResponseEntity<?> inviteMember(GroupInviteDto groupInviteDto) {
+
+        /* 초대한 사람의 역할 확인*/
+        Optional<Member> byId = memberRepository.findById(groupInviteDto.getGroupAdminId());
+
+        if (byId.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Member member = byId.get();
+
+        GroupMember groupMember = groupMemberRepository.findByGroup_IdAndMember_Id(groupInviteDto.getGroupId(), member.getId()).orElseThrow(
+                () -> new EntityNotFoundException("옳바르지 않은 요청입니다.")
+        );
+
+        if (!groupMember.getRole().equals(ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("사용자를 초대할 수 있는 권환이 없습니다.");
+        }
+
+        Group group = groupRepository.findById(groupInviteDto.getGroupId()).orElseThrow(
+                () -> new EntityNotFoundException("옳바르지 않은 요청입니다.")
+        );
+
+        /* 초대 받는 사람 검색 */
+        Optional<Member> byEmail = memberRepository.findByEmail(groupInviteDto.getEmail());
+
+        if (byEmail.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 회원입니다.");
+        }
+        GroupMemberInvite groupMemberInvite = new GroupMemberInvite(byEmail.get(), group);
+        groupMemberInviteRepository.save(groupMemberInvite);
+
+        return ResponseEntity.status(HttpStatus.OK).body("모임 초대에 성공하였습니다.");
     }
 
     // 11. 모임 초대 수락
