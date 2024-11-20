@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalTime;
@@ -44,6 +45,9 @@ class PlaceTest {
     private Long commonMemberId;
     private Long rootCategoryId;
     private Long childCategoryId;
+    private Long files;
+
+
 
     @BeforeEach
     @DisplayName("테스트 데이터 준비")
@@ -233,5 +237,39 @@ class PlaceTest {
         assertEquals(2, placeResponses.getContent().size());
         assertEquals("해운대", placeResponses.getContent().get(0).getName());
         assertEquals("광안리", placeResponses.getContent().get(1).getName());
+    }
+
+    @Test
+    @DisplayName("여행지 수정 성공 테스트")
+    void updatePlaceSuccessTest() throws AccessDeniedException {
+        // 1. 여행지 생성
+        PlaceRequest.placeSave placeRequest = new PlaceRequest.placeSave();
+        placeRequest.setName("Original Name");
+        placeRequest.setMemberId(adminMemberId);
+        placeRequest.setAddress("Original Address");
+        placeRequest.setDescription("Original Description");
+        placeRequest.setCategoryIds(List.of(childCategoryId));
+        placeRequest.setStrStartTime("08:00");
+        placeRequest.setStrEndTime("20:00");
+        ResponseEntity<?> createResponse = placeService.savePlace(placeRequest, null);
+        PlaceResponse createdPlace = (PlaceResponse) createResponse.getBody();
+
+        // 2. 수정 요청
+        PlaceRequest.placeUpdate updateRequest = new PlaceRequest.placeUpdate();
+        updateRequest.setMemberId(adminMemberId);
+        updateRequest.setName("Updated Name");
+        updateRequest.setDescription("Updated Description");
+        updateRequest.setStrStartTime("09:00");
+        updateRequest.setStrEndTime("22:00");
+
+        ResponseEntity<?> updateResponse = placeService.updatePlace(createdPlace.getId(), updateRequest, null);
+
+        // 3. 검증
+        assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
+        PlaceResponse updatedPlace = (PlaceResponse) updateResponse.getBody();
+        assertEquals("Updated Name", updatedPlace.getName());
+        assertEquals("Updated Description", updatedPlace.getDescription());
+        assertEquals(LocalTime.of(9, 0), updatedPlace.getStartTime());
+        assertEquals(LocalTime.of(22, 0), updatedPlace.getEndTime());
     }
 }

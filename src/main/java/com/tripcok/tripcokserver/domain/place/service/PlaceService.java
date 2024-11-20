@@ -14,6 +14,7 @@ import com.tripcok.tripcokserver.domain.place.entity.PlaceImage;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryMappingRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -121,6 +122,55 @@ public class PlaceService {
         // Place -> PlaceResponse 변환
         return places.map(place -> new PlaceResponse(place, place.getCategoryMappings()));
     }
+    
+    /* 여행지 업데이트 */
+    @Transactional(rollbackFor = {NoSuchElementException.class, AccessDeniedException.class})
+    public ResponseEntity<?> updatePlace(Long placeId, PlaceRequest.placeUpdate request, List<MultipartFile> files) throws AccessDeniedException {
+
+        request.convertToLocalTime();
+
+        /* 1. 권한 검사 */
+        Member member = checkRole(request.getMemberId());
+
+        /* 2. 여행지 조회 */
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new NoSuchElementException("여행지를 찾을 수 없습니다. ID: " + placeId));
+
+        /* 3. 요청 데이터로 필드 업데이트 */
+        place.update(request);
+
+
+        /* 4. 카테고리 매핑 업데이트 */
+        if (request.getCategoryIds() != null && !request.getCategoryIds().isEmpty()) {
+            List<PlaceCategoryMapping> mappings = request.getCategoryIds().stream()
+                    .map(categoryId -> {
+                        PlaceCategory category = categoryRepository.findById(categoryId)
+                                .orElseThrow(() -> new NoSuchElementException("유효하지 않은 카테고리 ID: " + categoryId));
+                        return new PlaceCategoryMapping(place, category);
+                    })
+                    .toList();
+
+            // 기존 매핑 삭제 및 새 매핑 추가
+            placeCategoryMappingRepository.deleteByPlaceId(placeId);
+            placeCategoryMappingRepository.saveAll(mappings);
+        }
+
+        /* 5. 파일 처리 (기존 파일 유지 or 업데이트) */
+        if (files != null) {
+            String savePath = System.getProperty("user.home") + savePathDirectory;
+
+            List<FileDto> fileDtoList = fileService.saveFiles(files, savePath);
+            for (FileDto fileDto : fileDtoList) {
+                PlaceImage placeImage = new PlaceImage(fileDto.getName(), fileDto.getPath());
+                place.addImage(placeImage);
+            }
+        }
+
+        /* 6. 업데이트된 데이터 응답 생성 */
+        PlaceResponse response = new PlaceResponse(place, place.getCategoryMappings());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
     /* 여행지 삭제 */
     public ResponseEntity<?> deletePlace(Long placeId, Long memberId) throws AccessDeniedException {
@@ -136,6 +186,4 @@ public class PlaceService {
 
         return ResponseEntity.status(HttpStatus.OK).body("성공적으로 여행지를 삭제 했습니다.");
     }
-
-
 }

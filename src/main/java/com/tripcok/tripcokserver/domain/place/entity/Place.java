@@ -62,4 +62,23 @@ public class Place extends BaseEntity {
         images.remove(image);
         image.setPlace(null);
     }
+
+    public void update(PlaceRequest.placeUpdate request) {
+        if (request.getName() != null) {
+            this.name = request.getName();
+        }
+        if (request.getDescription() != null) {
+            this.description = request.getDescription();
+        }
+        if (request.getAddress() != null) {
+            this.address = request.getAddress();
+        }
+        if (request.getStartTime() != null) {
+            this.startTime = request.getStartTime();
+        }
+        if (request.getEndTime() != null) {
+            this.endTime = request.getEndTime();
+        }
+
+    }
 }

@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 
 public interface PlaceCategoryMappingRepository extends JpaRepository<PlaceCategoryMapping, Long> {
 
+    void deleteByPlaceId(Long placeId);
 }

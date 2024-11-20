@@ -45,4 +45,33 @@ public class PlaceRequest {
         }
     }
 
+    @Data
+    @Schema(description = "여행지 수정 요청 데이터")
+    public static class placeUpdate {
+        @NotNull
+        private Long memberId; // 요청한 사용자 ID
+
+        private String name;
+        private String description;
+        private String address;
+
+        /* 운영 시간 */
+        private String strStartTime;
+        private String strEndTime;
+
+        private LocalTime startTime;
+        private LocalTime endTime;
+
+        private List<Long> categoryIds;
+
+        // 시간 데이터를 LocalTime으로 변환
+        public void convertToLocalTime() {
+            if (strStartTime != null) {
+                this.startTime = LocalTime.parse(strStartTime);
+            }
+            if (strEndTime != null) {
+                this.endTime = LocalTime.parse(strEndTime);
+            }
+        }
+    }
 }
