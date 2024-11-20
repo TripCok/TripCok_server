@@ -32,7 +32,7 @@ public class PlaceCategory extends BaseEntity {
     private Integer depth;
 
     public PlaceCategory(PlaceCategoryRequest request) {
-        this.name = request.getName();
+        this.name = request.getPlaceName();
         this.depth = 0; // 기본 값, setParentCategory 호출 시 업데이트
     }
 

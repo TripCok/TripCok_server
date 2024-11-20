@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalTime;
@@ -73,14 +72,14 @@ class PlaceTest {
         // 루트 카테고리 생성
         PlaceCategoryRequest rootCategoryRequest = new PlaceCategoryRequest();
         rootCategoryRequest.setMemberId(adminMemberId);
-        rootCategoryRequest.setName("여행지 유형");
+        rootCategoryRequest.setPlaceName("여행지 유형");
         PlaceCategory rootCategory = placeCategoryRepository.save(new PlaceCategory(rootCategoryRequest));
         rootCategoryId = rootCategory.getId();
 
         // 자식 카테고리 생성
         PlaceCategoryRequest childCategoryRequest = new PlaceCategoryRequest();
         childCategoryRequest.setMemberId(adminMemberId);
-        childCategoryRequest.setName("해변");
+        childCategoryRequest.setPlaceName("해변");
         childCategoryRequest.setParentId(rootCategoryId);
         PlaceCategory childCategory = placeCategoryRepository.save(new PlaceCategory(childCategoryRequest));
         childCategoryId = childCategory.getId();
