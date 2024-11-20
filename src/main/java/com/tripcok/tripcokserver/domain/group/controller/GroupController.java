@@ -76,6 +76,15 @@ public class GroupController {
         return ResponseEntity.noContent().build();
     }
 
+    /*모임 구인 상태 변경*/
+    @Operation(summary = "모임 구인 상태 변경", description = "모임의 구인 상태를 변경합니다.")
+    @ApiResponse(responseCode = "200", description = "모임 구인 상태 변경 성공")
+    @PatchMapping("/api/v1/group/{id}/recruiting")
+    public ResponseEntity<Void> updateRecruitingStatus(@PathVariable Long id, @RequestParam boolean recruiting) {
+        groupService.updateRecruitingStatus(id, recruiting);
+        return ResponseEntity.ok().build();
+    }
+
     /*모임 공지 등록*/
     @Operation(summary = "모임 공지 등록", description = "모임에 공지를 등록합니다.")
     @ApiResponse(responseCode = "201", description = "공지 등록 성공")
