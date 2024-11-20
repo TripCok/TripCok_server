@@ -11,6 +11,8 @@ import com.tripcok.tripcokserver.domain.place.entity.Place;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -56,7 +58,7 @@ public class GroupPlaceService {
         GroupPlace groupPlace = new GroupPlace(groupMember.getGroup(), place, order);
         GroupPlace save = groupPlaceRepository.save(groupPlace);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new GroupPlaceResponse(save.getPlace()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GroupPlaceResponse(save));
     }
 
     private GroupMember checkMemberGroupInRole(Long requestMemberId, Long groupId) throws AccessDeniedException {
@@ -67,5 +69,10 @@ public class GroupPlaceService {
                                 + ", groupId = : " + groupId
                 )
         );
+    }
+
+    public ResponseEntity<?> getGroupInPlace(Pageable pageable) {
+        Page<GroupPlace> all = groupPlaceRepository.findAll(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(all.map(GroupPlaceResponse::new));
     }
 }
