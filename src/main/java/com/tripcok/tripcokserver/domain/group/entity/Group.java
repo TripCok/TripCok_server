@@ -48,6 +48,7 @@ public class Group extends BaseEntity {
     private List<Application> applications;
 
 
+
     public Group(GroupRequestDto requestDto) {
 
         this.groupName = requestDto.getGroupName();
