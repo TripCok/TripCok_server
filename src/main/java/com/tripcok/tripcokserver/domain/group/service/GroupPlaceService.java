@@ -2,6 +2,7 @@ package com.tripcok.tripcokserver.domain.group.service;
 
 import com.tripcok.tripcokserver.domain.group.dto.groupPlace.GroupPlaceRequest;
 import com.tripcok.tripcokserver.domain.group.dto.groupPlace.GroupPlaceResponse;
+import com.tripcok.tripcokserver.domain.group.dto.groupPlace.GroupPlaceUpdateRequest;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.entity.GroupPlace;
 import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
@@ -88,4 +89,28 @@ public class GroupPlaceService {
                 + groupPlace.getPlace().getName()
                 + " 여행지를 삭제하였습니다.");
     }
+
+    /* EntityNotFoundException이 발생하면 이전 업데이트한 순서 다시 Rollback */
+    @Transactional(rollbackFor = {EntityNotFoundException.class})
+    public ResponseEntity<?> groupInPlaceUpdateOrders(GroupPlaceUpdateRequest groupPlaceUpdateRequests) throws AccessDeniedException {
+        // 그룹 권한 체크
+        checkMemberGroupInRole(groupPlaceUpdateRequests.getMemberId(), groupPlaceUpdateRequests.getGroupId());
+
+        try {
+            // 모든 요청된 여행지에 대해 순서 업데이트
+            for (GroupPlaceUpdateRequest.GroupPlace groupPlaceUpdateRequest : groupPlaceUpdateRequests.getGroupPlaceList()) {
+                GroupPlace groupPlace = groupPlaceRepository.findById(groupPlaceUpdateRequest.getGroupPlaceId())
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                groupPlaceUpdateRequest.getGroupPlaceId() + "의 정보를 찾을 수 없습니다."
+                        ));
+                groupPlace.updateOrder(groupPlaceUpdateRequest.getOrders());
+            }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("페이지를 새로 고침 후 다시 실행 해주세요.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("성공적으로 여행지를 수정하였습니다.");
+    }
+
+
 }

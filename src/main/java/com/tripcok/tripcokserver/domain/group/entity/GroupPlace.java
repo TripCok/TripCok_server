@@ -23,6 +23,10 @@ public class GroupPlace {
 
     private Integer orders; // 순서
 
+    public void updateOrder(Integer order) {
+        this.orders = order;
+    }
+
     public GroupPlace(Group group, Place place, Integer order) {
         this.group = group;
         this.place = place;
