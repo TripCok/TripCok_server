@@ -1,16 +1,14 @@
-package com.tripcok.tripcokserver.domain.comment.entity;
+package com.tripcok.tripcokserver.domain.boardcomment.entity;
 
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Table(name = "comment")
-public class Comment {
+public class BoardComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -99,6 +99,7 @@ public class Member extends BaseEntity {
 
     public Member() {
     }
+
 }
 
 

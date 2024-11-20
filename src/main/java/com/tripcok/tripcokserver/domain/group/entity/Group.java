@@ -34,7 +34,7 @@ public class Group extends BaseEntity {
     private List<GroupMember> groupMembers;
 
     /* 그룹 1 - N 게시물 */
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "board_id", unique = true)
     private Board board;
 
@@ -71,6 +71,14 @@ public class Group extends BaseEntity {
 
     }
 
+    public Group(GroupRequestDto requestDto, Board board) {
+
+        this.groupName = requestDto.getGroupName();
+        this.description = requestDto.getDescription();
+        this.category = requestDto.getCategory();
+        this.board = board;
+
+    }
 
 }
 

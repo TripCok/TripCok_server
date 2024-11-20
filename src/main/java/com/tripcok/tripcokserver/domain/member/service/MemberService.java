@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -89,5 +90,10 @@ public class MemberService {
         return ResponseEntity.status(HttpStatus.OK).body(findMember.get());
     }
 
+    /* 특정 모임에 멤버 - 복수 */
+    public List<Member> getMembersByGroup(Long groupId) {
+        // 그룹 ID로 해당 그룹에 속한 모든 멤버를 조회
+        return memberRepository.findByGroupMembersGroupId(groupId);
+    }
 
 }
