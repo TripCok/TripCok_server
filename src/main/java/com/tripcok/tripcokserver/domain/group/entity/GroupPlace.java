@@ -18,15 +18,15 @@ public class GroupPlace {
     private Group group;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false)
+    @JoinColumn(name = "place_id", nullable = false)
     private Place place; // 장소
 
-    private Integer order; // 순서
+    private Integer orders; // 순서
 
     public GroupPlace(Group group, Place place, Integer order) {
         this.group = group;
         this.place = place;
-        this.order = order;
+        this.orders = order;
     }
 
     public GroupPlace() {

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GroupPlaceRepository extends JpaRepository<GroupPlace, Long> {
 
-    List<GroupPlace> findByGroup_IdOrderByOrderDesc(Long groupId);
+    List<GroupPlace> findByGroup_IdOrderByOrdersDesc(Long groupId);
 }

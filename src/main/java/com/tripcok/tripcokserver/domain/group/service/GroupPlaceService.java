@@ -7,7 +7,6 @@ import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupPlaceRepository;
 import com.tripcok.tripcokserver.domain.place.entity.Place;
-import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -38,13 +37,13 @@ public class GroupPlaceService {
         }
 
         /* 해당 그룹에 추가된 여행지가 있는지 없는지 검사 */
-        List<GroupPlace> groupPlaces = groupPlaceRepository.findByGroup_IdOrderByOrderDesc(request.getGroupId());
+        List<GroupPlace> groupPlaces = groupPlaceRepository.findByGroup_IdOrderByOrdersDesc(request.getGroupId());
 
         /* 여행지 추가 할때 순서 정의 */
-        Integer order = 1;
+        int order = 1;
 
         if (!groupPlaces.isEmpty()) {
-            order = groupPlaces.get(0).getOrder() + 1;
+            order = groupPlaces.get(0).getOrders() + 1;
         }
 
         /* 여행지 추출 */
