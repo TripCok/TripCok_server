@@ -1,5 +1,6 @@
 package com.tripcok.tripcokserver.domain.place.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tripcok.tripcokserver.domain.place.dto.PlaceCategoryRequest;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -21,9 +22,11 @@ public class PlaceCategory extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
+    @JsonIgnore
     private PlaceCategory parentCategory;
 
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<PlaceCategory> childCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)

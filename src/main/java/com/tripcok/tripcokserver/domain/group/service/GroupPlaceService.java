@@ -1,6 +1,7 @@
 package com.tripcok.tripcokserver.domain.group.service;
 
 import com.tripcok.tripcokserver.domain.group.dto.groupPlace.GroupPlaceRequest;
+import com.tripcok.tripcokserver.domain.group.dto.groupPlace.GroupPlaceResponse;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.entity.GroupPlace;
 import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
@@ -55,7 +56,7 @@ public class GroupPlaceService {
         GroupPlace groupPlace = new GroupPlace(groupMember.getGroup(), place, order);
         GroupPlace save = groupPlaceRepository.save(groupPlace);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(save);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GroupPlaceResponse(save.getPlace()));
     }
 
     private GroupMember checkMemberGroupInRole(Long requestMemberId, Long groupId) throws AccessDeniedException {

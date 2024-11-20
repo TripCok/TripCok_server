@@ -1,7 +1,6 @@
 package com.tripcok.tripcokserver.domain.group.controller;
 
 import com.tripcok.tripcokserver.domain.group.dto.groupPlace.GroupPlaceRequest;
-import com.tripcok.tripcokserver.domain.group.entity.GroupPlace;
 import com.tripcok.tripcokserver.domain.group.service.GroupPlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,8 @@ public class GroupPlaceController {
         return groupPlaceService.groupAddPlace(groupPlaceRequest);
     }
 
-    /* 그룹의 여행지 조회 */
+
+    /* 그룹의 여행지 조회 - 단일 조회 */
 
     /* 그룹에 여행지 삭제 */
 
