@@ -60,9 +60,16 @@ public class GroupService {
 
         groupMemberRepository.save(groupMember);
 
-        GroupResponseDto responseDto = new GroupResponseDto();
+        return new GroupResponseDto(
+                newGroup.getGroupName(),
+                newGroup.getDescription(),
+                newGroup.getCategory(),
+                newGroup.isRecruiting()
+        );
+
+        /*GroupResponseDto responseDto = new GroupResponseDto();
         responseDto.setGroupName(newGroup.getGroupName());
-        return responseDto;
+        return responseDto;*/
     }
 
     // 2. 모임 조회 - 단일
@@ -73,7 +80,7 @@ public class GroupService {
                 group.getGroupName(),
                 group.getDescription(),
                 group.getCategory(),
-                group.getRecruiting()
+                group.isRecruiting()
         );
     }
 
@@ -103,7 +110,7 @@ public class GroupService {
                 group.getGroupName(),
                 group.getDescription(),
                 group.getCategory(),
-                group.getRecruiting()
+                group.isRecruiting()
         );
     }
 

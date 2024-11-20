@@ -17,6 +17,6 @@ public class GroupAllResponseDto {
         this.groupName = group.getGroupName();
         this.description = group.getDescription();
         this.category = group.getCategory();
-        this.recruiting = group.getRecruiting();
+        this.recruiting = group.isRecruiting();
     }
 }
