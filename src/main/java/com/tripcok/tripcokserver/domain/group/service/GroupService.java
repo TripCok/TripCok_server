@@ -69,7 +69,8 @@ public class GroupService {
         return new GroupResponseDto(
                 group.getGroupName(),
                 group.getDescription(),
-                group.getCategory()
+                group.getCategory(),
+                group.getRecruiting()
         );
     }
 
@@ -98,8 +99,21 @@ public class GroupService {
         return new GroupResponseDto(
                 group.getGroupName(),
                 group.getDescription(),
-                group.getCategory()
+                group.getCategory(),
+                group.getRecruiting()
         );
+    }
+
+    // 4. 모임 구인상태 변경
+    public void updateRecruitingStatus(Long id, Boolean recruiting) {
+        // 그룹 조회
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new  EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
+        // 모임 상태 변경
+        group.setRecruiting(recruiting);
+
+        // 변경된 상태 저장
+        groupRepository.save(group);
     }
 
     // 5. 모임 삭제

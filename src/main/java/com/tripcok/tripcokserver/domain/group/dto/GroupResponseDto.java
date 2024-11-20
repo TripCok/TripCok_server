@@ -16,4 +16,7 @@ public class GroupResponseDto {
 
     /* 그룹 카테고리 */
     private String category;
+
+    /* 그룹 구인 상태 */
+    private boolean recruiting;
 }
