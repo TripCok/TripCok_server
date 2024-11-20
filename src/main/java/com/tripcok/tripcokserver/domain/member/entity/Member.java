@@ -1,5 +1,6 @@
 package com.tripcok.tripcokserver.domain.member.entity;
 
+import com.tripcok.tripcokserver.domain.board.entity.Board;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.member.dto.MemberRequestDto;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceReview;
@@ -51,20 +52,21 @@ public class Member extends BaseEntity {
     private Role role;
 
     /* 모임 */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GroupMember> groupMembers;
 
     /* 구독 */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<PlaceSubscribe> subscribes;
 
     /* 좋아요한 리뷰 */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<PlaceReviewLike> reviewLikes;
 
     /* 작성한 리뷰 */
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<PlaceReview> reviews;
+
 
     /* 회원가입 */
     public Member(MemberRequestDto.save member) {
@@ -89,9 +91,12 @@ public class Member extends BaseEntity {
         this.profileImage = memberRequest.getProfileImage();
         this.gender = memberRequest.getGender();
         this.address = memberRequest.getAddress();
+        this.role = memberRequest.getRole();
         return this;
     }
 
     public Member() {
     }
 }
+
+

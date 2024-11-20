@@ -30,11 +30,11 @@ public class Group extends BaseEntity {
     private String groupName;
 
     /* 그룹 내 인원 */
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GroupMember> groupMembers;
 
     /* 그룹 1 - N 게시물 */
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Board> boardlist;
 
     /* 설명 */
@@ -44,8 +44,9 @@ public class Group extends BaseEntity {
     private String category;
 
     /* 신청서 */
-    @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Application application;
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Application> applications;
+
 
     /* 구인 상태 */
     private boolean recruiting = true; // 기본값은 구인 중~

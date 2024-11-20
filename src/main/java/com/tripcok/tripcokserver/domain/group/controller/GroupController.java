@@ -148,33 +148,6 @@ public class GroupController {
         return ResponseEntity.ok().build();
     }
 
-    /*모임 게시글 작성*/
-    @Operation(summary = "모임 게시글 작성", description = "모임에 게시글을 작성합니다.")
-    @ApiResponse(responseCode = "201", description = "게시글 작성 성공")
-    @PostMapping("/api/v1/group/{id}/boards")
-    public ResponseEntity<BoardResponseDto> createBoard(
-            @PathVariable Long id, @Valid @RequestBody BoardRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(groupService.createBoard(id, requestDto));
-    }
-
-    /*모임 게시글 댓글 작성*/
-    @Operation(summary = "모임 게시글 댓글 작성", description = "게시글에 댓글을 작성합니다.")
-    @ApiResponse(responseCode = "201", description = "댓글 작성 성공")
-    @PostMapping("/api/v1/group/{id}/boards/{boardId}/comments")
-    public ResponseEntity<CommentResponseDto> createComment(
-            @PathVariable Long id, @PathVariable Long boardId, @Valid @RequestBody CommentRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(groupService.createComment(id, boardId, requestDto));
-    }
-
-    /*모임 공지사항 작성*/
-    @Operation(summary = "모임 공지사항 작성", description = "모임에 공지사항을 작성합니다.")
-    @ApiResponse(responseCode = "201", description = "공지사항 작성 성공")
-    @PostMapping("/api/v1/group/{id}/announcements")
-    public ResponseEntity<AnnouncementResponseDto> createAnnouncement(
-            @PathVariable Long id, @Valid @RequestBody AnnouncementRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(groupService.createAnnouncement(id, requestDto));
-    }
-
     /*공지 알림 전송*/
     @Operation(summary = "공지 알림 전송", description = "공지사항 알림을 전송합니다.")
     @ApiResponse(responseCode = "200", description = "공지 알림 전송 성공")
