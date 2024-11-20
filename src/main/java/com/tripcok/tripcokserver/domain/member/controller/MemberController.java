@@ -58,3 +58,4 @@ public class MemberController {
         return memberService.getAllMemberInfo(memberId);
     }
 }
+
