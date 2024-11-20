@@ -7,8 +7,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -32,10 +35,25 @@ public class GroupMember extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private GroupRole role;
 
+    /* 초대 상태 */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private InvitationStatus invitationStatus = InvitationStatus.PENDING;
+
+    /* 상태 변경 */
+    public void acceptInvitation() {
+        this.invitationStatus = InvitationStatus.ACCEPTED;
+    }
+
+    public void rejectInvitation() {
+        this.invitationStatus = InvitationStatus.REJECTED;
+    }
+
     public GroupMember(Member member, Group group, GroupRole role) {
         this.group = group;
         this.member = member;
         this.role = role;
+        this.invitationStatus = InvitationStatus.PENDING;
     }
 
 }

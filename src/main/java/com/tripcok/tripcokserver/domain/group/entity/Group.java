@@ -47,13 +47,25 @@ public class Group extends BaseEntity {
     @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Application application;
 
+    /* 구인 상태 */
+    private boolean recruiting = true; // 기본값은 구인 중~
+    public Boolean getRecruiting() {
+        return recruiting;
+    }
+
+    public void setRecruiting(Boolean recruiting) {
+        this.recruiting = recruiting;
+    }
 
     public Group(GroupRequestDto requestDto) {
 
         this.groupName = requestDto.getGroupName();
         this.description = requestDto.getDescription();
+        this.category = requestDto.getCategory();
 
     }
+
+
 
 }
 
