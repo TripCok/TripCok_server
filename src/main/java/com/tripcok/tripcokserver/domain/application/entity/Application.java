@@ -14,7 +14,7 @@ import java.util.List;
 public class Application extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "application_id")
     private Long id;
 
@@ -26,4 +26,13 @@ public class Application extends BaseEntity {
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
+
+    public Application(Member member, Group group) {
+        this.member = member;
+        this.group = group;
+    }
+
+    public Application() {
+
+    }
 }
