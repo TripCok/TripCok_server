@@ -33,6 +33,10 @@ public class GroupPlaceController {
 
 
     /* 그룹에 여행지 삭제 */
+    @DeleteMapping("{groupPlaceId}")
+    public ResponseEntity<?> groupRemovePlace(@PathVariable("groupPlaceId") Long id) {
+        return groupPlaceService.groupInPlaceRemove(id);
+    }
 
 
     /* 그룹에 여행지 순서 변경 */

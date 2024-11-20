@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -28,6 +29,7 @@ public class GroupPlaceService {
     private final GroupMemberRepository groupMemberRepository;
     private final PlaceRepository placeRepository;
 
+    @Transactional
     public ResponseEntity<?> groupAddPlace(GroupPlaceRequest request) {
 
         GroupMember groupMember;
@@ -71,8 +73,19 @@ public class GroupPlaceService {
         );
     }
 
-    public ResponseEntity<?> getGroupInPlace(Long groupId,Pageable pageable) {
-        Page<GroupPlace> all = groupPlaceRepository.findByGroup_IdOrderByOrdersAsc(groupId,pageable);
+    public ResponseEntity<?> getGroupInPlace(Long groupId, Pageable pageable) {
+        Page<GroupPlace> all = groupPlaceRepository.findByGroup_IdOrderByOrdersAsc(groupId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(all.map(GroupPlaceResponse::new));
+    }
+
+    public ResponseEntity<?> groupInPlaceRemove(Long id) {
+        GroupPlace groupPlace = groupPlaceRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("찾을수 없는 그룹에 포함 된 여행지 입니다. id = " + id)
+        );
+
+        groupPlaceRepository.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("성공적으로 "
+                + groupPlace.getPlace().getName()
+                + " 여행지를 삭제하였습니다.");
     }
 }
