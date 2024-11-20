@@ -3,17 +3,18 @@ package com.tripcok.tripcokserver.domain.group.service;
 import com.tripcok.tripcokserver.domain.group.dto.*;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
-import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class GroupService {
      * - 모임 생성
      * 1. 모임을 생성
      * 2. 모임 리스트에 사용자와, 모임 추가
-     * */
+     */
     public GroupResponseDto createGroup(@Valid GroupRequestDto requestDto) {
 
         /* #1 그룹 생성 */
@@ -63,22 +64,51 @@ public class GroupService {
 
     // 2. 모임 조회 - 단일
     public GroupResponseDto getGroup(Long id) {
-        return new GroupResponseDto(); // 임시 리턴
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
+        return new GroupResponseDto(
+                group.getGroupName(),
+                group.getDescription(),
+                group.getCategory()
+        );
     }
 
     // 3. 모임 조회 - 복수 (Pageable)
-    public Page<GroupResponseDto> getGroups(Pageable pageable) {
-        return new PageImpl<>(Collections.emptyList()); // 임시 빈 페이지 리턴
+    public Page<Group> getGroups(Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        Page<Group> all = groupRepository.findAll(pageable);
+        return all;
     }
 
     // 4. 모임 수정
     public GroupResponseDto updateGroup(Long id, @Valid GroupRequestDto requestDto) {
-        return new GroupResponseDto(); // 임시 리턴
+        // ID로 그룹 조회 (없으면 예외 발생)
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
+
+        // 그룹 정보 업데이트
+        group.setGroupName(requestDto.getGroupName());
+        group.setDescription(requestDto.getDescription());
+        group.setCategory(requestDto.getCategory());
+
+        // 업데이트된 그룹 저장!
+        groupRepository.save(group);
+
+        // 업데이트된 데이터를 DTO로 반환
+        return new GroupResponseDto(
+                group.getGroupName(),
+                group.getDescription(),
+                group.getCategory()
+        );
     }
 
     // 5. 모임 삭제
     public void deleteGroup(Long id) {
-        // 임시로 아무 동작도 하지 않음
+        /* 그룹 조회 */
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
+        /* 그룹 삭제 */
+        groupRepository.delete(group);
     }
 
     // 6. 모임 공지 등록

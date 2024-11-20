@@ -52,8 +52,10 @@ public class GroupController {
     @Operation(summary = "모임 조회", description = "모든 모임을 페이징 처리하여 조회합니다.")
     @ApiResponse(responseCode = "200", description = "모임 목록 조회 성공")
     @GetMapping("/api/v1/groups")
-    public ResponseEntity<Page<GroupResponseDto>> getGroups(Pageable pageable) {
-        return ResponseEntity.ok(groupService.getGroups(pageable));
+    public ResponseEntity<?> getGroups(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size) {
+        return ResponseEntity.ok(groupService.getGroups(page, size));
     }
 
     /*모임 수정*/
