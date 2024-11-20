@@ -60,6 +60,18 @@ public class PlaceController {
         return ResponseEntity.ok(responsePage);
     }
 
+    /* 여행지 수정 */
+    @PutMapping("/{placeId}")
+    @Operation(summary = "여행지 수정", description = "기존 여행지 정보를 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "여행지 정보가 성공적으로 수정되었습니다.")
+    public ResponseEntity<?> updatePlace(
+            @PathVariable Long placeId,
+            @RequestPart("request") @Valid PlaceRequest.placeUpdate request,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
+    ) throws AccessDeniedException {
+        return placeService.updatePlace(placeId, request, files);
+    }
+
     /* 여행지 삭제*/
     @DeleteMapping("/{placeId}")
     @Operation(summary = "여행지 삭제", description = "여행지를 삭제합니다.")
