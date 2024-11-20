@@ -4,13 +4,11 @@ import com.tripcok.tripcokserver.domain.group.dto.*;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMemberInvite;
-import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberInviteRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
-import com.tripcok.tripcokserver.domain.member.service.MemberService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -49,7 +47,7 @@ public class GroupService {
 
         Group newGroup = groupRepository.save(group);
 
-        Member findMember = memberRepository.findById(requestDto.getUserId()).orElseThrow(
+        Member findMember = memberRepository.findById(requestDto.getMemberId()).orElseThrow(
                 () -> new EntityNotFoundException("찾을수 없는 사용자 입니다.")
         );
 
@@ -80,10 +78,10 @@ public class GroupService {
     }
 
     // 3. 모임 조회 - 복수 (Pageable)
-    public Page<Group> getGroups(Integer pageNum, Integer pageSize) {
+    public Page<GroupAllResponseDto> getGroups(Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
         Page<Group> all = groupRepository.findAll(pageable);
-        return all;
+        return all.map(GroupAllResponseDto::new);
     }
 
     // 4. 모임 수정
