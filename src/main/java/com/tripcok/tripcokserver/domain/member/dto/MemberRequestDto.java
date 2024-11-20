@@ -32,6 +32,7 @@ public class MemberRequestDto {
     /* 회원 정보 수정 */
     @Data
     public static class update {
+        private Long id;
         private String name;
         private String email;
         private String password;
@@ -40,6 +41,7 @@ public class MemberRequestDto {
         private String profileImage;
         private Gender gender;
         private String address;
+        private Role role;
     }
 
 }

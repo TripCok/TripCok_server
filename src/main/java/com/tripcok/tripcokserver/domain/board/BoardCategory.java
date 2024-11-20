@@ -1,4 +1,4 @@
-package com.tripcok.tripcokserver.domain.board.entity;
+package com.tripcok.tripcokserver.domain.board;
 
 import jakarta.persistence.*;
 
