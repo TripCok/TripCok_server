@@ -62,6 +62,7 @@ public class BoardService {
 
     // 14. 모임 게시물 댓글 작성
     public CommentResponseDto createComment(Long id, Long postId, @Valid CommentRequestDto requestDto) {
+
         return new CommentResponseDto(); // 임시 리턴
     }
 

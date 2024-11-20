@@ -25,10 +25,10 @@ public class BoardController {
     /*모임 게시글 작성*/
     @Operation(summary = "모임 게시글 작성", description = "모임에 게시글을 작성합니다.")
     @ApiResponse(responseCode = "201", description = "게시글 작성 성공")
-    @PostMapping("/api/v1/user/{user_id}/group/{group_id}/boards")
+    @PostMapping("/api/v1/user/{userId}/group/{groupId}/boards")
     public ResponseEntity<BoardResponseDto> createBoard(
-            @PathVariable("user_id") Long userId,
-            @PathVariable("group_id") Long groupId,
+            @PathVariable("userId") Long userId,
+            @PathVariable("groupId") Long groupId,
             @Valid @RequestBody BoardRequestDto requestDto) {
 
         BoardResponseDto responseDto = boardService.createBoard(userId, groupId, requestDto);
@@ -39,9 +39,13 @@ public class BoardController {
     /*모임 게시글 댓글 작성*/
     @Operation(summary = "모임 게시글 댓글 작성", description = "게시글에 댓글을 작성합니다.")
     @ApiResponse(responseCode = "201", description = "댓글 작성 성공")
-    @PostMapping("/api/v1/group/{id}/boards/{boardId}/comments")
+    @PostMapping("/api/v1/group/{userId}/boards/{boardId}/comments")
     public ResponseEntity<CommentResponseDto> createComment(
-            @PathVariable Long id, @PathVariable Long boardId, @Valid @RequestBody CommentRequestDto requestDto) {
+            @PathVariable("userId") Long userId,
+            @PathVariable("boardId") Long boardId, @Valid @RequestBody CommentRequestDto requestDto) {
+
+            CommentResponseDto responseDto = boardService.createBoard(userId, boardId, requestDto);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createComment(id, boardId, requestDto));
     }
 
