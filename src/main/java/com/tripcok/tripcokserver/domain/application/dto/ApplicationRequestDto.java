@@ -1,6 +1,5 @@
 package com.tripcok.tripcokserver.domain.application.dto;
 
-import com.tripcok.tripcokserver.domain.group.entity.Group;
 import lombok.Data;
 
 @Data
@@ -11,8 +10,12 @@ public class ApplicationRequestDto {
     public static class applicationsave {
         private Long member_id;
         private Long group_id;
-        private Group group;
-        private String title;
-        private String description;
     }
+
+    /* 모임 가입 완료 */
+    @Data
+    public static class applicationaccept {
+        private Long applicationId;
+    }
+
 }
