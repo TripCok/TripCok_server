@@ -52,24 +52,21 @@ public class Member extends BaseEntity {
     private Role role;
 
     /* 모임 */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GroupMember> groupMembers;
 
     /* 구독 */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<PlaceSubscribe> subscribes;
 
     /* 좋아요한 리뷰 */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<PlaceReviewLike> reviewLikes;
 
     /* 작성한 리뷰 */
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<PlaceReview> reviews;
 
-    /* 게시글 */
-    @OneToMany(mappedBy="member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Board> boards;
 
     /* 회원가입 */
     public Member(MemberRequestDto.save member) {

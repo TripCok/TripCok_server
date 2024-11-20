@@ -1,5 +1,6 @@
 package com.tripcok.tripcokserver.domain.board.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tripcok.tripcokserver.domain.board.dto.BoardRequestDto;
 import com.tripcok.tripcokserver.domain.board.dto.BoardResponseDto;
 import com.tripcok.tripcokserver.domain.board.service.BoardService;
@@ -9,14 +10,17 @@ import com.tripcok.tripcokserver.domain.group.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@Slf4j
 public class BoardController {
     private final BoardService boardService;
 
@@ -32,7 +36,6 @@ public class BoardController {
             @PathVariable("userId") Long userId,
             @PathVariable("groupId") Long groupId,
             @Valid @RequestBody BoardRequestDto requestDto) {
-
         BoardResponseDto responseDto = boardService.createBoard(userId, groupId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);

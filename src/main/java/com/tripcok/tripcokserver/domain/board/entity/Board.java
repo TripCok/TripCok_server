@@ -10,12 +10,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-
 @Entity
 @Getter
 @RequiredArgsConstructor
