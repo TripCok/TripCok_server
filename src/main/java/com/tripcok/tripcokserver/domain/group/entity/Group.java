@@ -44,8 +44,8 @@ public class Group extends BaseEntity {
     private String category;
 
     /* 신청서 */
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Application> applications;
+    @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Application application;
 
     /* 구인 상태 */
     private boolean recruiting = true; // 기본값은 구인 중~
