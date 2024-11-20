@@ -6,6 +6,8 @@ import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
+import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
+import com.tripcok.tripcokserver.domain.member.service.MemberService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.tripcok.tripcokserver.domain.group.entity.GroupRole.ADMIN;
 
@@ -26,6 +29,7 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * - 모임 생성
@@ -39,18 +43,13 @@ public class GroupService {
 
         Group newGroup = groupRepository.save(group);
 
-        /*
-         * 나중에 하람쓰가 추가 하면 대체 해야할 부분
-         * How?
-         * 1. 하람쓰가 만든 Repository를 여기 위에 추가한다.
-         * 2. Member member = memberRepository.findById(requestDto.getUserId);
-         * Ok?
-         * */
-        Member member = new Member();
+        Member findMember = memberRepository.findById(requestDto.getUserId()).orElseThrow(
+                () -> new EntityNotFoundException("찾을수 없는 사용자 입니다.")
+        );
 
         /* #2 그룹을 생성한 사람을 GroupMember에 추가 */
         GroupMember groupMember = new GroupMember(
-                member,
+                findMember,
                 newGroup,
                 ADMIN
         );
