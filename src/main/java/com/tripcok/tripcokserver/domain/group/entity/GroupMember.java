@@ -5,11 +5,13 @@ import com.tripcok.tripcokserver.domain.member.entity.Role;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class GroupMember extends BaseEntity {
 
     @Id
