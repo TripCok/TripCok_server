@@ -14,7 +14,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 public class GroupMember extends BaseEntity {
 
     @Id
@@ -53,7 +52,6 @@ public class GroupMember extends BaseEntity {
         this.group = group;
         this.member = member;
         this.role = role;
-        this.invitationStatus = InvitationStatus.PENDING;
     }
 
 }

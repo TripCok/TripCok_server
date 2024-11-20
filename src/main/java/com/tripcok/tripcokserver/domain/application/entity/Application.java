@@ -18,11 +18,12 @@ public class Application extends BaseEntity {
     @Column(name = "application_id")
     private Long id;
 
-    /* Member 정보 */
-    @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ApplicationMember> applicationMembers;
-
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
 
 }

@@ -9,6 +9,8 @@ import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
+
 @RestController
 @RequestMapping("/api/v1/application")
 @Getter
@@ -29,8 +31,10 @@ public class ApplicationController {
     @Operation(summary = "모임 신청 취소", description = "모임 신청을 취소합니다.")
     @ApiResponse(responseCode = "200", description = "모임 신청 취소 성공")
     @DeleteMapping("/{applicationId}")
-    public ResponseEntity<?> deleteApplication(@PathVariable Long applicationId) {
-        return applicationService.deleteApplication(applicationId);
+    public ResponseEntity<?> deleteApplication(
+            @PathVariable Long applicationId,
+            @RequestParam("memberId") Long memberId) throws AccessDeniedException {
+        return applicationService.deleteApplication(applicationId, memberId);
     }
 
 

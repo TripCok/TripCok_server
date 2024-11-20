@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,11 +46,15 @@ public class Group extends BaseEntity {
 
     /* 신청서 */
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Application> applications;
+    private List<Application> applications = new ArrayList<>();
 
+    public void addApplication(Application application) {
+        applications.add(application);
+    }
 
     /* 구인 상태 */
     private boolean recruiting = true; // 기본값은 구인 중~
+
     public Boolean getRecruiting() {
         return recruiting;
     }
@@ -65,7 +70,6 @@ public class Group extends BaseEntity {
         this.category = requestDto.getCategory();
 
     }
-
 
 
 }

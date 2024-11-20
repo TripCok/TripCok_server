@@ -67,6 +67,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<PlaceReview> reviews;
 
+    /* 사용자가 작성한 모임 */
+
+
 
     /* 회원가입 */
     public Member(MemberRequestDto.save member) {

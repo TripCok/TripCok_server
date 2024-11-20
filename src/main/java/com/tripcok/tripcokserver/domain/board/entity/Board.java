@@ -1,8 +1,6 @@
 package com.tripcok.tripcokserver.domain.board.entity;
 
-import com.tripcok.tripcokserver.domain.application.entity.ApplicationMember;
 import com.tripcok.tripcokserver.domain.board.dto.BoardRequestDto;
-import com.tripcok.tripcokserver.domain.board.dto.BoardResponseDto;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
