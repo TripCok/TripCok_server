@@ -8,7 +8,6 @@ import com.tripcok.tripcokserver.domain.place.entity.PlaceSubscribe;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -48,10 +47,10 @@ public class Member extends BaseEntity {
     private String address;
 
     /* 역할 */
-    @Setter
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    /* 모임 */
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupMember> groupMembers;
 
@@ -67,7 +66,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaceReview> reviews;
 
-    /* save member */
+    /* 회원가입 */
     public Member(MemberRequestDto.save member) {
         this.name = member.getName();
         this.email = member.getEmail();
@@ -80,6 +79,7 @@ public class Member extends BaseEntity {
         this.role = Role.USER;
     }
 
+    /* 회원 정보 수정 */
     public Member update(MemberRequestDto.update memberRequest) {
         this.name = memberRequest.getName();
         this.email = memberRequest.getEmail();
@@ -89,12 +89,9 @@ public class Member extends BaseEntity {
         this.profileImage = memberRequest.getProfileImage();
         this.gender = memberRequest.getGender();
         this.address = memberRequest.getAddress();
-        this.role = memberRequest.getRole();
         return this;
     }
 
     public Member() {
     }
 }
-
-
