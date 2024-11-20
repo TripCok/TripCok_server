@@ -2,14 +2,22 @@ package com.tripcok.tripcokserver.domain.group.entity;
 
 import com.tripcok.tripcokserver.domain.application.entity.Application;
 import com.tripcok.tripcokserver.domain.board.entity.Board;
+import com.tripcok.tripcokserver.domain.group.dto.GroupRequestDto;
+import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "groups")
 public class Group extends BaseEntity {
 
@@ -38,6 +46,14 @@ public class Group extends BaseEntity {
     /* 신청서 */
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Application> applications;
+
+
+    public Group(GroupRequestDto requestDto) {
+
+        this.groupName = requestDto.getGroupName();
+        this.description = requestDto.getDescription();
+
+    }
 
 }
 
