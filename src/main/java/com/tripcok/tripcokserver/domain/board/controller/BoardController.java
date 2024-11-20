@@ -3,6 +3,8 @@ package com.tripcok.tripcokserver.domain.board.controller;
 import com.tripcok.tripcokserver.domain.board.dto.BoardRequestDto;
 import com.tripcok.tripcokserver.domain.board.dto.BoardResponseDto;
 import com.tripcok.tripcokserver.domain.board.service.BoardService;
+import com.tripcok.tripcokserver.domain.boardcomment.dto.BoardCommentRequestDto;
+import com.tripcok.tripcokserver.domain.boardcomment.dto.BoardCommentResponseDto;
 import com.tripcok.tripcokserver.domain.group.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,13 +42,13 @@ public class BoardController {
     @Operation(summary = "모임 게시글 댓글 작성", description = "게시글에 댓글을 작성합니다.")
     @ApiResponse(responseCode = "201", description = "댓글 작성 성공")
     @PostMapping("/api/v1/group/{userId}/boards/{boardId}/comments")
-    public ResponseEntity<CommentResponseDto> createComment(
+    public ResponseEntity<BoardCommentResponseDto> createComment(
             @PathVariable("userId") Long userId,
-            @PathVariable("boardId") Long boardId, @Valid @RequestBody CommentRequestDto requestDto) {
+            @PathVariable("boardId") Long boardId, @Valid @RequestBody BoardCommentRequestDto requestDto) {
 
-            CommentResponseDto responseDto = boardService.createBoard(userId, boardId, requestDto);
+            BoardCommentResponseDto responseDto = boardService.createComment(userId, boardId, requestDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createComment(id, boardId, requestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createComment(userId, boardId, requestDto));
     }
 
     /*모임 공지사항 작성*/

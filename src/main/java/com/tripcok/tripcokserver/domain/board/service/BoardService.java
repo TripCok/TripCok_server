@@ -4,6 +4,8 @@ import com.tripcok.tripcokserver.domain.board.dto.BoardRequestDto;
 import com.tripcok.tripcokserver.domain.board.dto.BoardResponseDto;
 import com.tripcok.tripcokserver.domain.board.entity.Board;
 import com.tripcok.tripcokserver.domain.board.repository.BoardRepository;
+import com.tripcok.tripcokserver.domain.boardcomment.dto.BoardCommentRequestDto;
+import com.tripcok.tripcokserver.domain.boardcomment.dto.BoardCommentResponseDto;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
 
@@ -43,7 +45,7 @@ public class BoardService {
         Board board = new Board(requestDto, group, writerUser);
 
         // 3. Board 정보 저장
-        Optional<Board> savedBoard = boardRepository.save(board);
+        Optional<Board> savedBoard = Optional.of(boardRepository.save(board));
 
         // 4.responseDto 객체 생성
         BoardResponseDto responseDto = new BoardResponseDto();
@@ -61,13 +63,14 @@ public class BoardService {
     }
 
     // 14. 모임 게시물 댓글 작성
-    public CommentResponseDto createComment(Long id, Long postId, @Valid CommentRequestDto requestDto) {
+    public BoardCommentResponseDto createComment(Long id, Long postId, @Valid BoardCommentRequestDto requestDto) {
 
-        return new CommentResponseDto(); // 임시 리턴
+        return new BoardCommentResponseDto(); // 임시 리턴
     }
 
     // 15. 모임 공지사항 작성
     public AnnouncementResponseDto createAnnouncement(Long id, @Valid AnnouncementRequestDto requestDto) {
         return new AnnouncementResponseDto(); // 임시 리턴
     }
+
 }

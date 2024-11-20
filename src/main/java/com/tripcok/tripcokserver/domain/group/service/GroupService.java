@@ -147,21 +147,6 @@ public class GroupService {
         // 임시로 아무 동작도 하지 않음
     }
 
-    // 13. 모임 게시글 작성
-    public BoardResponseDto createBoard(Long id, @Valid BoardRequestDto requestDto) {
-        return new BoardResponseDto();
-    }
-
-    // 14. 모임 게시물 댓글 작성
-    public CommentResponseDto createComment(Long id, Long postId, @Valid CommentRequestDto requestDto) {
-        return new CommentResponseDto(); // 임시 리턴
-    }
-
-    // 15. 모임 공지사항 작성
-    public AnnouncementResponseDto createAnnouncement(Long id, @Valid AnnouncementRequestDto requestDto) {
-        return new AnnouncementResponseDto(); // 임시 리턴
-    }
-
     // 16. 공지 알림 전송
     public void sendAnnouncementNotification(Long id) {
         // 임시로 아무 동작도 하지 않음
