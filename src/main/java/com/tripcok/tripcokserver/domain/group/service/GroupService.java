@@ -213,28 +213,22 @@ public class GroupService {
     }
 
     // 11. 모임 초대 수락
-    public void acceptInvite(InviteRequestDto request) {
+    public ResponseEntity<?> acceptInvite(InviteRequestDto request) {
         GroupMemberInvite invite = groupMemberInviteRepository.findById(request.getInviteId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 초대를 찾을 수 없습니다. ID: " + request.getInviteId()));
+                .orElseThrow(() -> new EntityNotFoundException("해당 초대를 찾을 수 없습니다."));
 
         if (!invite.getMember().getId().equals(request.getMemberId())) {
-            throw new IllegalStateException("해당 초대가 초대한 멤버와 일치하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 초대가 초대한 멤버와 일치하지 않습니다");
         }
-
+        /* 멤버 추가 및 초대 삭제 처리 */
         handleInviteAcceptance(invite);
+        return ResponseEntity.status(HttpStatus.OK).body("모임 초대가 성공적으로 수락되었습니다.");
+
     }
 
     private void handleInviteAcceptance(GroupMemberInvite invite) {
         Group group = invite.getGroup();
         Member member = invite.getMember();
-
-        // 1. 이미 멤버인지 확인
-        boolean alreadyMember = groupMemberRepository.findByGroup_IdAndMember_Id(group.getId(), member.getId()).isPresent();
-        if (alreadyMember) {
-            groupMemberInviteRepository.delete(invite);
-            ResponseEntity.status(HttpStatus.FORBIDDEN).body("사용자는 이미 해당 모임의 멤버입니다.");
-            return;
-        }
 
         // 2. 모임 멤버로 추가
         GroupMember newGroupMember = new GroupMember(member, group, GroupRole.MEMBER);
