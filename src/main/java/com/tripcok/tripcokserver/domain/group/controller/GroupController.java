@@ -19,6 +19,7 @@ public class GroupController {
     private final GroupService groupService;
 
     public GroupController(GroupService groupService) {
+
         this.groupService = groupService;
     }
 
@@ -131,9 +132,9 @@ public class GroupController {
     /*모임 초대 수락*/
     @Operation(summary = "모임 초대 수락", description = "모임 초대를 수락합니다.")
     @ApiResponse(responseCode = "200", description = "모임 초대 수락 성공")
-    @PostMapping("/api/v1/group/{id}/accept-invite")
-    public ResponseEntity<Void> acceptInvite(@PathVariable Long id) {
-        groupService.acceptInvite(id);
+    @PostMapping("/api/v1/group/accept-invite")
+    public ResponseEntity<Void> acceptInvite(@RequestBody InviteRequestDto request) {
+        groupService.acceptInvite(request);
         return ResponseEntity.ok().build();
     }
 
