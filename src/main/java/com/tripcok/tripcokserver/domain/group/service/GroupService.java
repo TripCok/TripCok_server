@@ -214,7 +214,9 @@ public class GroupService {
             // 1. 이미 멤버인지 확인
             boolean alreadyMember = groupMemberRepository.findByGroup_IdAndMember_Id(group.getId(), member.getId()).isPresent();
             if (alreadyMember) {
-                throw new IllegalArgumentException("사용자는 이미 해당 모임의 멤버입니다.");
+                groupMemberInviteRepository.delete(invite);
+                ResponseEntity.status(HttpStatus.FORBIDDEN).body("사용자는 이미 해당 모임의 멤버입니다.");
+                return;
             }
 
             // 2. 모임 멤버로 추가
