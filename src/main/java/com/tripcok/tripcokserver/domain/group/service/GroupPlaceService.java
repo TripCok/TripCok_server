@@ -30,6 +30,7 @@ public class GroupPlaceService {
     private final GroupMemberRepository groupMemberRepository;
     private final PlaceRepository placeRepository;
 
+    /* 그룹에 여행지 추가 */
     @Transactional
     public ResponseEntity<?> groupAddPlace(GroupPlaceRequest request) {
 
@@ -74,11 +75,13 @@ public class GroupPlaceService {
         );
     }
 
+    /* 그룹의 추가된 여행지 조회 */
     public ResponseEntity<?> getGroupInPlace(Long groupId, Pageable pageable) {
         Page<GroupPlace> all = groupPlaceRepository.findByGroup_IdOrderByOrdersAsc(groupId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(all.map(GroupPlaceResponse::new));
     }
 
+    /* 그룹에 추가된 여행지 삭제 */
     public ResponseEntity<?> groupInPlaceRemove(Long id) {
         GroupPlace groupPlace = groupPlaceRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("찾을수 없는 그룹에 포함 된 여행지 입니다. id = " + id)
@@ -90,6 +93,7 @@ public class GroupPlaceService {
                 + " 여행지를 삭제하였습니다.");
     }
 
+    /* 그룹에 추가된 여행지 순서 조절 */
     /* EntityNotFoundException이 발생하면 이전 업데이트한 순서 다시 Rollback */
     @Transactional(rollbackFor = {EntityNotFoundException.class})
     public ResponseEntity<?> groupInPlaceUpdateOrders(GroupPlaceUpdateRequest groupPlaceUpdateRequests) throws AccessDeniedException {
@@ -111,6 +115,5 @@ public class GroupPlaceService {
 
         return ResponseEntity.status(HttpStatus.OK).body("성공적으로 여행지를 수정하였습니다.");
     }
-
 
 }
