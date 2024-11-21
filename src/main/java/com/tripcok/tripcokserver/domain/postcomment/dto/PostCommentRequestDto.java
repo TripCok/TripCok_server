@@ -1,6 +1,4 @@
 package com.tripcok.tripcokserver.domain.postcomment.dto;
-
-
 import lombok.Data;
 
 @Data
