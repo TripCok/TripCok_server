@@ -12,11 +12,12 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
-
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
+        show_sql: true
+        format_sql: true
 
 save:
   location:

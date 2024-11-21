@@ -26,4 +26,13 @@ public class Application extends BaseEntity {
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
+
+    public Application(Member member, Group group) {
+        this.member = member;
+        this.group = group;
+    }
+
+    public Application() {
+
+    }
 }

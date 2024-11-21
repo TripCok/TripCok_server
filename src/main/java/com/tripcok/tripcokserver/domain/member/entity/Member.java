@@ -55,19 +55,18 @@ public class Member extends BaseEntity {
     private List<GroupMember> groupMembers;
 
     /* 구독 */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PlaceSubscribe> subscribes;
 
     /* 좋아요한 리뷰 */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PlaceReviewLike> reviewLikes;
 
     /* 작성한 리뷰 */
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PlaceReview> reviews;
 
     /* 사용자가 작성한 모임 */
-
 
 
     /* 회원가입 */

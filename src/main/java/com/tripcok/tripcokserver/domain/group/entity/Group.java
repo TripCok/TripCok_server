@@ -45,7 +45,7 @@ public class Group extends BaseEntity {
     private String category;
 
     /* 신청서 */
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Application> applications = new ArrayList<>();
 
     public void addApplication(Application application) {
@@ -53,13 +53,20 @@ public class Group extends BaseEntity {
     }
 
     /* 구인 상태 */
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean recruiting = true; // 기본값은 구인 중~
 
-    public Boolean getRecruiting() {
+    /* 모암 초대 인원 */
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupMemberInvite> groupMemberInvites;
+
+    public Boolean isRecruiting() {
+
         return recruiting;
     }
 
     public void setRecruiting(Boolean recruiting) {
+
         this.recruiting = recruiting;
     }
 

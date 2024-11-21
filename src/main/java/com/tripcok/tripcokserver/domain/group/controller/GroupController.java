@@ -6,12 +6,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -21,6 +19,7 @@ public class GroupController {
     private final GroupService groupService;
 
     public GroupController(GroupService groupService) {
+
         this.groupService = groupService;
     }
 
@@ -124,18 +123,18 @@ public class GroupController {
     /*모임 초대*/
     @Operation(summary = "모임 초대", description = "모임에 회원을 초대합니다.")
     @ApiResponse(responseCode = "200", description = "모임 초대 성공")
-    @PostMapping("/api/v1/group/{id}/invite")
-    public ResponseEntity<Void> inviteMember(@PathVariable Long id, @RequestParam Long userId) {
-        groupService.inviteMember(id, userId);
-        return ResponseEntity.ok().build();
+    @PostMapping("/api/v1/group/invite")
+    public ResponseEntity<?> inviteMember(@RequestBody GroupInviteDto inviteDto) {
+
+        return groupService.inviteMember(inviteDto);
     }
 
     /*모임 초대 수락*/
     @Operation(summary = "모임 초대 수락", description = "모임 초대를 수락합니다.")
     @ApiResponse(responseCode = "200", description = "모임 초대 수락 성공")
-    @PostMapping("/api/v1/group/{id}/accept-invite")
-    public ResponseEntity<Void> acceptInvite(@PathVariable Long id) {
-        groupService.acceptInvite(id);
+    @PostMapping("/api/v1/group/accept-invite")
+    public ResponseEntity<Void> acceptInvite(@RequestBody InviteRequestDto request) {
+        groupService.acceptInvite(request);
         return ResponseEntity.ok().build();
     }
 

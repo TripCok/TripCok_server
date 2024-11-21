@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class GroupRequestDto {
 
     /* 사용자 아이디 */
-    private Long userId;
+    private Long memberId;
 
     /* 그룹 이름 */
     private String groupName;
@@ -20,5 +20,8 @@ public class GroupRequestDto {
 
     /* 카테고리 */
     private String category;
+
+
+
 
 }

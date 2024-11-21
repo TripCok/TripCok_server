@@ -68,7 +68,7 @@ public class PlaceCategoryTest {
          *  */
 
         PlaceCategoryRequest newCategory = new PlaceCategoryRequest();
-        newCategory.setName("test");
+        newCategory.setPlaceName("test");
         newCategory.setMemberId(2L);
 
         Assertions.assertThrows(AccessDeniedException.class, () -> {
@@ -84,7 +84,7 @@ public class PlaceCategoryTest {
 
         /* # 1번 사용자는 카테고리 생성을 성공해야한다. */
         PlaceCategoryRequest newCategory = new PlaceCategoryRequest();
-        newCategory.setName("test");
+        newCategory.setPlaceName("test");
         newCategory.setMemberId(1L);
 
         placeCategoryService.createCategory(newCategory);
@@ -92,7 +92,7 @@ public class PlaceCategoryTest {
         PlaceCategory placeCategory = placeCategoryRepository.findById(1L).get();
 
         /* # 생성된 값과 데이터베이스에서 검색된 값이 일치해야한다. */
-        Assertions.assertEquals(newCategory.getName(), placeCategory.getName());
+        Assertions.assertEquals(newCategory.getPlaceName(), placeCategory.getName());
 
     }
 
@@ -102,7 +102,7 @@ public class PlaceCategoryTest {
     public void createCategoryChildTest() throws AccessDeniedException {
         /* 1번 카테고리 */
         PlaceCategoryRequest newCategory = new PlaceCategoryRequest();
-        newCategory.setName("test");
+        newCategory.setPlaceName("test");
         newCategory.setMemberId(1L);
 
         placeCategoryService.createCategory(newCategory);
@@ -112,7 +112,7 @@ public class PlaceCategoryTest {
         /* 2번 카테고리 */
         PlaceCategoryRequest newCategory2 = new PlaceCategoryRequest();
         newCategory2.setMemberId(1L);
-        newCategory2.setName("test2");
+        newCategory2.setPlaceName("test2");
         newCategory2.setParentId(firstCategory.getId());
 
         placeCategoryService.createCategory(newCategory2);
@@ -131,7 +131,7 @@ public class PlaceCategoryTest {
 
         // 부모 카테고리
         PlaceCategoryRequest parentCategoryRequest = new PlaceCategoryRequest();
-        parentCategoryRequest.setName("Parent Category");
+        parentCategoryRequest.setPlaceName("Parent Category");
         parentCategoryRequest.setMemberId(1L);
         placeCategoryService.createCategory(parentCategoryRequest);
 
@@ -142,14 +142,14 @@ public class PlaceCategoryTest {
                 .orElseThrow(() -> new IllegalStateException("부모 카테고리가 생성되지 않았습니다."));
 
         PlaceCategoryRequest childCategoryRequest1 = new PlaceCategoryRequest();
-        childCategoryRequest1.setName("Child Category 1");
+        childCategoryRequest1.setPlaceName("Child Category 1");
         childCategoryRequest1.setParentId(parentCategory.getId());
         childCategoryRequest1.setMemberId(1L);
         placeCategoryService.createCategory(childCategoryRequest1);
 
         // 자식 카테고리 2
         PlaceCategoryRequest childCategoryRequest2 = new PlaceCategoryRequest();
-        childCategoryRequest2.setName("Child Category 2");
+        childCategoryRequest2.setPlaceName("Child Category 2");
         childCategoryRequest2.setParentId(parentCategory.getId());
         childCategoryRequest2.setMemberId(1L);
         placeCategoryService.createCategory(childCategoryRequest2);
