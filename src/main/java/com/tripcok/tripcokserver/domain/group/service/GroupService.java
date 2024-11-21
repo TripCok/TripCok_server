@@ -4,6 +4,7 @@ import com.tripcok.tripcokserver.domain.group.dto.*;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMemberInvite;
+import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberInviteRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +30,7 @@ import static com.tripcok.tripcokserver.domain.group.entity.GroupRole.ADMIN;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class GroupService {
 
     private final GroupRepository groupRepository;
@@ -193,9 +196,35 @@ public class GroupService {
     }
 
     // 11. 모임 초대 수락
-    public void acceptInvite(Long id) {
-        // 임시로 아무 동작도 하지 않음
+    public void acceptInvite(InviteRequestDto request) {
+        GroupMemberInvite invite = groupMemberInviteRepository.findById(request.getInviteId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 초대를 찾을 수 없습니다. ID: " + request.getInviteId()));
+
+        if (!invite.getMember().getId().equals(request.getMemberId())) {
+            throw new IllegalStateException("해당 초대가 초대한 멤버와 일치하지 않습니다.");
+        }
+
+        handleInviteAcceptance(invite);
     }
+
+        private void handleInviteAcceptance(GroupMemberInvite invite) {
+            Group group = invite.getGroup();
+            Member member = invite.getMember();
+
+            // 1. 이미 멤버인지 확인
+            boolean alreadyMember = groupMemberRepository.findByGroup_IdAndMember_Id(group.getId(), member.getId()).isPresent();
+            if (alreadyMember) {
+                throw new IllegalArgumentException("사용자는 이미 해당 모임의 멤버입니다.");
+            }
+
+            // 2. 모임 멤버로 추가
+            GroupMember newGroupMember = new GroupMember(member, group, GroupRole.MEMBER);
+            groupMemberRepository.save(newGroupMember);
+
+            // 3. 초대 행 삭제
+            groupMemberInviteRepository.delete(invite);
+        }
+
 
     // 12. 모임 맴버 추방
     public void expelMember(Long id, Long userId) {
@@ -238,4 +267,7 @@ public class GroupService {
     }
 
 
+    // 이거 왜 들어가지?
+    public void acceptInvite(Long inviteId, Long memberId) {
+    }
 }
