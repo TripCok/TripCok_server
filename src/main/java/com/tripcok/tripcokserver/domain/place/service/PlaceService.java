@@ -14,7 +14,6 @@ import com.tripcok.tripcokserver.domain.place.entity.PlaceImage;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryMappingRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.AccessDeniedException;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -122,7 +120,7 @@ public class PlaceService {
         // Place -> PlaceResponse 변환
         return places.map(place -> new PlaceResponse(place, place.getCategoryMappings()));
     }
-    
+
     /* 여행지 업데이트 */
     @Transactional(rollbackFor = {NoSuchElementException.class, AccessDeniedException.class})
     public ResponseEntity<?> updatePlace(Long placeId, PlaceRequest.placeUpdate request, List<MultipartFile> files) throws AccessDeniedException {

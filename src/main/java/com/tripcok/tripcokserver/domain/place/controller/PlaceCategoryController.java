@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 
@@ -26,7 +23,7 @@ public class PlaceCategoryController {
     @PostMapping
     @Operation(summary = "여행지 카테고리 생성", description = "새로운 카테고리를 생성합니다.")
     @ApiResponse(responseCode = "201", description = "카테고리가 생성 되었습니다.")
-    public ResponseEntity<?> createPlaceCategory(PlaceCategoryRequest request) throws AccessDeniedException {
+    public ResponseEntity<?> createPlaceCategory(@RequestBody PlaceCategoryRequest request) throws AccessDeniedException {
         return pcs.createCategory(request);
     }
 
