@@ -53,20 +53,20 @@ public class Group extends BaseEntity {
     }
 
     /* 구인 상태 */
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean recruiting = true; // 기본값은 구인 중~
 
     /* 모암 초대 인원 */
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupMemberInvite> groupMemberInvites;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GroupPlace> groupPlaces;
+    public Boolean isRecruiting() {
 
-    public Boolean getRecruiting() {
         return recruiting;
     }
 
     public void setRecruiting(Boolean recruiting) {
+
         this.recruiting = recruiting;
     }
 
