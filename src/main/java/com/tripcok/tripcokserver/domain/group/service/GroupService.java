@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import java.util.Collections;
 import java.util.List;
@@ -169,13 +170,34 @@ public class GroupService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Member member = byId.get();
+        Member sender = byId.get();
 
-        GroupMember groupMember = groupMemberRepository.findByGroup_IdAndMember_Id(groupInviteDto.getGroupId(), member.getId()).orElseThrow(
-                () -> new EntityNotFoundException("옳바르지 않은 요청입니다.")
+        /* 초대 받는 사람의 존재 여부 체크 */
+        Optional<Member> receiver = memberRepository.findByEmail(groupInviteDto.getEmail());
+
+        if (receiver.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("초대하려는 사용자를 찾을 수 없습니다.");
+        }
+
+        /* 중복 초대 방지 */
+        Optional<GroupMemberInvite> byMemberIdAndGroupId = groupMemberInviteRepository.findByMember_IdAndGroup_Id(receiver.get().getId(), groupInviteDto.getGroupId());
+        if (byMemberIdAndGroupId.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 초대된 사용자 입니다.");
+        }
+
+        /* 이미 모임에 가입되어 있는 멤버의 경우 초대가 가지 않음 */
+        Optional<GroupMember> receiverInGroup = groupMemberRepository.findByGroup_IdAndMember_Id(groupInviteDto.getGroupId(), receiver.get().getId());
+
+        if (receiverInGroup.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 모임에 가입되어있는 사용자입니다.");
+        }
+
+        /* Receiver의 모임에서의 권한 체크 */
+        GroupMember senderInGroup = groupMemberRepository.findByGroup_IdAndMember_Id(groupInviteDto.getGroupId(), sender.getId()).orElseThrow(
+                () -> new NotFoundException("옳바르지 않은 요청입니다.")
         );
 
-        if (!groupMember.getRole().equals(ADMIN)) {
+        if (!senderInGroup.getRole().equals(ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("사용자를 초대할 수 있는 권환이 없습니다.");
         }
 
@@ -184,12 +206,7 @@ public class GroupService {
         );
 
         /* 초대 받는 사람 검색 */
-        Optional<Member> byEmail = memberRepository.findByEmail(groupInviteDto.getEmail());
-
-        if (byEmail.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 회원입니다.");
-        }
-        GroupMemberInvite groupMemberInvite = new GroupMemberInvite(byEmail.get(), group);
+        GroupMemberInvite groupMemberInvite = new GroupMemberInvite(receiver.get(), group);
         groupMemberInviteRepository.save(groupMemberInvite);
 
         return ResponseEntity.status(HttpStatus.OK).body("모임 초대에 성공하였습니다.");
@@ -207,25 +224,25 @@ public class GroupService {
         handleInviteAcceptance(invite);
     }
 
-        private void handleInviteAcceptance(GroupMemberInvite invite) {
-            Group group = invite.getGroup();
-            Member member = invite.getMember();
+    private void handleInviteAcceptance(GroupMemberInvite invite) {
+        Group group = invite.getGroup();
+        Member member = invite.getMember();
 
-            // 1. 이미 멤버인지 확인
-            boolean alreadyMember = groupMemberRepository.findByGroup_IdAndMember_Id(group.getId(), member.getId()).isPresent();
-            if (alreadyMember) {
-                groupMemberInviteRepository.delete(invite);
-                ResponseEntity.status(HttpStatus.FORBIDDEN).body("사용자는 이미 해당 모임의 멤버입니다.");
-                return;
-            }
-
-            // 2. 모임 멤버로 추가
-            GroupMember newGroupMember = new GroupMember(member, group, GroupRole.MEMBER);
-            groupMemberRepository.save(newGroupMember);
-
-            // 3. 초대 행 삭제
+        // 1. 이미 멤버인지 확인
+        boolean alreadyMember = groupMemberRepository.findByGroup_IdAndMember_Id(group.getId(), member.getId()).isPresent();
+        if (alreadyMember) {
             groupMemberInviteRepository.delete(invite);
+            ResponseEntity.status(HttpStatus.FORBIDDEN).body("사용자는 이미 해당 모임의 멤버입니다.");
+            return;
         }
+
+        // 2. 모임 멤버로 추가
+        GroupMember newGroupMember = new GroupMember(member, group, GroupRole.MEMBER);
+        groupMemberRepository.save(newGroupMember);
+
+        // 3. 초대 행 삭제
+        groupMemberInviteRepository.delete(invite);
+    }
 
 
     // 12. 모임 맴버 추방
