@@ -1,9 +1,8 @@
 package com.tripcok.tripcokserver.domain.group.entity;
 
 import com.tripcok.tripcokserver.domain.application.entity.Application;
-import com.tripcok.tripcokserver.domain.board.entity.Board;
+import com.tripcok.tripcokserver.domain.board.Board;
 import com.tripcok.tripcokserver.domain.group.dto.GroupRequestDto;
-import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,8 +34,9 @@ public class Group extends BaseEntity {
     private List<GroupMember> groupMembers;
 
     /* 그룹 1 - N 게시물 */
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Board> boardlist;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "board_id", unique = true)
+    private Board board;
 
     /* 설명 */
     private String description;
@@ -78,6 +78,14 @@ public class Group extends BaseEntity {
 
     }
 
+    public Group(GroupRequestDto requestDto, Board board) {
+
+        this.groupName = requestDto.getGroupName();
+        this.description = requestDto.getDescription();
+        this.category = requestDto.getCategory();
+        this.board = board;
+
+    }
 
 }
 

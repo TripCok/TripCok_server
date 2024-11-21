@@ -1,5 +1,6 @@
 package com.tripcok.tripcokserver.domain.group.service;
 
+import com.tripcok.tripcokserver.domain.board.Board;
 import com.tripcok.tripcokserver.domain.group.dto.*;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
@@ -47,7 +48,13 @@ public class GroupService {
     public GroupResponseDto createGroup(@Valid GroupRequestDto requestDto) {
 
         /* #1 그룹 생성 */
-        Group group = new Group(requestDto);
+
+        //령래 추가 코드
+        Board board = new Board();
+
+        Group group = new Group(requestDto, board);
+
+        board.addGroup(group);
 
         Group newGroup = groupRepository.save(group);
 
