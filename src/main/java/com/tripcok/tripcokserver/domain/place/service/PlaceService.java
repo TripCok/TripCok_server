@@ -137,7 +137,6 @@ public class PlaceService {
         /* 3. 요청 데이터로 필드 업데이트 */
         place.update(request);
 
-
         /* 4. 카테고리 매핑 업데이트 */
         if (request.getCategoryIds() != null && !request.getCategoryIds().isEmpty()) {
             List<PlaceCategoryMapping> mappings = request.getCategoryIds().stream()

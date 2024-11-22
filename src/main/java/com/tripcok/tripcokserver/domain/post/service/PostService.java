@@ -3,6 +3,7 @@ package com.tripcok.tripcokserver.domain.post.service;
 import com.tripcok.tripcokserver.domain.board.Board;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
+import com.tripcok.tripcokserver.domain.post.dto.PostPageResponseDto;
 import com.tripcok.tripcokserver.domain.post.dto.PostResponseDto;
 import com.tripcok.tripcokserver.domain.postcomment.PostCommentRepository;
 import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentRequestDto;
@@ -16,11 +17,12 @@ import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.post.dto.PostRequestDto;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
 
-import com.tripcok.tripcokserver.domain.post.entity.Type;
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -151,4 +153,45 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    public PostResponseDto getPost(Long postId) {
+        Optional<Post> post =  postRepository.findById(postId);
+
+        if (post.isPresent()) {
+            Post savePost = post.get();
+            return new PostResponseDto(savePost);
+        }
+        else {
+            throw new NullPointerException("해당 Post는 삭제되었습니다.");
+        }
+    }
+
+    public Page<PostPageResponseDto> getPosts(Pageable pageable) {
+        // postRepository로 얻은 Post를 Page 객체에 넣음
+        Page<Post> posts = postRepository.findAll(pageable);
+
+        // Post 객체를 PostPageResponseDto로 변환하여 새로운 Page 객체 생성
+        Page<PostPageResponseDto> pageResponseDtos = posts.map(post ->
+                new PostPageResponseDto(
+                        post.getId(),
+                        post.getTitle(),
+                        post.getContent()
+                )
+        );
+
+        log.info(pageResponseDtos.toString());
+        return  pageResponseDtos;
+    }
+
+    public PostResponseDto putPost(Long postId) {
+        Optional<Post> post =  postRepository.findById(postId);
+
+        if (post.isPresent()) {
+            Post savePost = post.get();
+
+            return new PostResponseDto(savePost);
+        }
+        else {
+            throw new NullPointerException("해당 Post는 삭제되었습니다.");
+        }
+    }
 }
