@@ -71,9 +71,9 @@ public class GroupController {
     /*모임 구인 상태 변경*/
     @Operation(summary = "모임 구인 상태 변경", description = "모임의 구인 상태를 변경합니다.")
     @ApiResponse(responseCode = "200", description = "모임 구인 상태 변경 성공")
-    @PatchMapping("/api/v1/group/{id}/recruiting")
-    public ResponseEntity<Void> updateRecruitingStatus(@PathVariable Long id, @RequestParam boolean recruiting) {
-        groupService.updateRecruitingStatus(id, recruiting);
+    @PatchMapping("/api/v1/group/{groupId}/recruiting")
+    public ResponseEntity<Void> updateRecruitingStatus(@PathVariable Long groupId, @RequestParam Long memberId, @RequestParam boolean recruiting) {
+        groupService.updateRecruitingStatus(groupId, memberId, recruiting);
         return ResponseEntity.ok().build();
     }
 
