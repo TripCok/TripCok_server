@@ -126,10 +126,13 @@ public class GroupService {
     }
 
     // 4. 모임 구인상태 변경
-    public void updateRecruitingStatus(Long id, Boolean recruiting) {
+    public void updateRecruitingStatus(Long groupId, Long memberId,  Boolean recruiting) {
         // 그룹 조회
-        Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + groupId));
+        // 요청한 사용자가 해당 그룹의 ADMIN 인지 권환 확인
+        GroupMember adminGroupMember = groupMemberRepository.findByGroupInAdminMember(groupId, ADMIN, memberId)
+                .orElseThrow(() -> new EntityNotFoundException("상태 변경 권한이 없습니다!"));
         // 모임 상태 변경
         group.setRecruiting(recruiting);
 
