@@ -19,6 +19,11 @@ spring:
         show_sql: false
         format_sql: false
 
+mail:
+  username: 네이버 이메일
+  password: 네이버 비밀번호
+
+
 save:
   location:
     place: /place-image
