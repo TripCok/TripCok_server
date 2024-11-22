@@ -1,5 +1,6 @@
 package com.tripcok.tripcokserver.domain.application.dto;
 
+import com.tripcok.tripcokserver.domain.group.entity.Group;
 import lombok.Data;
 
 @Data

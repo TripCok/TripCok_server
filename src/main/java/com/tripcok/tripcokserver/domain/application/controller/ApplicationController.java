@@ -21,6 +21,7 @@ public class ApplicationController {
 
     private final ApplicationService applicationService;
 
+
     /* 모임 신청 */
     @Operation(summary = "모임 신청", description = "모임에 신청합니다.")
     @ApiResponse(responseCode = "200", description = "모임 신청 성공")

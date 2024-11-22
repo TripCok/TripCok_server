@@ -35,4 +35,5 @@ public class Application extends BaseEntity {
     public Application() {
 
     }
+
 }

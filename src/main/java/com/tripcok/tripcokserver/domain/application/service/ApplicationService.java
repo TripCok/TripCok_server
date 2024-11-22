@@ -7,6 +7,7 @@ import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
+
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
@@ -20,6 +21,7 @@ import org.webjars.NotFoundException;
 import java.nio.file.AccessDeniedException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -74,6 +76,7 @@ public class ApplicationService {
                 .orElseThrow(() -> new NoSuchElementException("신청을 찾을 수 없습니다. ID: " + applicationId));
 
         /* 신청서 삭제 */
+
         applicationRepository.deleteById(applicationId);
 
         return ResponseEntity.status(HttpStatus.OK).body("성공적으로 신청을 취소했습니다.");
@@ -111,4 +114,5 @@ public class ApplicationService {
     }
 
 }
+
 

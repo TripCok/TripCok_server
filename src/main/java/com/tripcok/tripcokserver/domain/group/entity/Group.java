@@ -52,6 +52,7 @@ public class Group extends BaseEntity {
         applications.add(application);
     }
 
+
     /* 구인 상태 */
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean recruiting = true; // 기본값은 구인 중~
