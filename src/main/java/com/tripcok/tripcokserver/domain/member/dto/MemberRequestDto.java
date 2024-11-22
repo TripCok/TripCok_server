@@ -34,14 +34,7 @@ public class MemberRequestDto {
     public static class update {
         private Long id;
         private String name;
-        private String email;
-        private String password;
-        private String phone;
-        private LocalDate birthday;
         private String profileImage;
-        private Gender gender;
-        private String address;
-        private Role role;
     }
 
 }

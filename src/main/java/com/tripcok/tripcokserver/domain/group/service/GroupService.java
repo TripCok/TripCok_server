@@ -146,27 +146,6 @@ public class GroupService {
         groupRepository.delete(group);
     }
 
-    // 6. 모임 공지 등록
-    public NoticeResponseDto createNotice(Long id, @Valid NoticeRequestDto requestDto) {
-        return new NoticeResponseDto(); // 임시 리턴
-    }
-
-    // 7. 모임 신청
-    public void applyToGroup(Long id) {
-        // 임시로 아무 동작도 하지 않음
-    }
-
-    // 8. 모임 신청 취소
-    public void cancelApplication(Long id) {
-
-        // 임시로 아무 동작도 하지 않음
-    }
-
-    // 9. 모임 가입 완료
-    public void completeJoin(Long id) {
-        // 임시로 아무 동작도 하지 않음
-    }
-
     // 10. 모임 초대
     public ResponseEntity<?> inviteMember(GroupInviteDto groupInviteDto) {
 
@@ -245,49 +224,4 @@ public class GroupService {
         groupMemberInviteRepository.delete(invite);
     }
 
-
-    // 12. 모임 맴버 추방
-    public void expelMember(Long id, Long userId) {
-        // 임시로 아무 동작도 하지 않음
-    }
-
-    // 16. 공지 알림 전송
-    public void sendAnnouncementNotification(Long id) {
-        // 임시로 아무 동작도 하지 않음
-    }
-
-    // 17. 모임 신청 수락
-    public void acceptApplication(Long id, Long userId) {
-        // 임시로 아무 동작도 하지 않음
-    }
-
-    // 18. 모임 여행지 선택
-    public void selectPlace(Long id, String place) {
-        // 임시로 아무 동작도 하지 않음
-    }
-
-    // 19. 모임 알림 조회
-    public List<NotificationDto> getNotifications(Long id) {
-        return Collections.emptyList(); // 임시 빈 리스트 리턴
-    }
-
-    // 20. 모임 가입 완료 알림 전송
-    public void sendJoinCompletedNotification(Long id) {
-        // 임시로 아무 동작도 하지 않음
-    }
-
-    // 21. 모임 가입 반려 알림 전송
-    public void sendJoinRejectedNotification(Long id) {
-        // 임시로 아무 동작도 하지 않음
-    }
-
-    // 22. 모임 공지 알림 전송
-    public void sendNoticeNotification(Long id, NoticeRequestDto requestDto) {
-        // 임시로 아무 동작도 하지 않음
-    }
-
-
-    // 이거 왜 들어가지?
-    public void acceptInvite(Long inviteId, Long memberId) {
-    }
 }

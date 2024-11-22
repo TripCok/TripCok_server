@@ -22,6 +22,4 @@ public class GroupRequestDto {
     private String category;
 
 
-
-
 }

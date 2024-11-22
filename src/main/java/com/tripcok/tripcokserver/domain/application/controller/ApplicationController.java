@@ -39,14 +39,6 @@ public class ApplicationController {
         return applicationService.deleteApplication(applicationId, memberId);
     }
 
-    /* 모임 가입 완료 */
-    @Operation(summary = "모임 가입 완료", description = "모임 가입이 완료되었습니다.")
-    @ApiResponse(responseCode = "200", description = "모임 가입 완료")
-    @PutMapping("/accept")
-    public ResponseEntity<?> acceptApplication(@RequestBody ApplicationRequestDto.applicationAccept request) {
-        return applicationService.acceptApplication(request);
-    }
-
     /* 모임 신청 수락 */
     @Operation(summary = "모임 신청 수락", description = "모임 신청을 수락하였습니다.")
     @ApiResponse(responseCode = "200", description = "모임 신청 수락 성공")

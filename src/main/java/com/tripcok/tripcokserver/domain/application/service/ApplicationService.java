@@ -80,8 +80,8 @@ public class ApplicationService {
 
     }
 
-    /* 모임 가입 완료 */
-    public ResponseEntity<?> acceptApplication(ApplicationRequestDto.applicationAccept request) {
+    /* 모임 신청 수락 */
+    public ResponseEntity<?> acceptedApplication(ApplicationRequestDto.applicationAccept request) {
 
         /* 수락에 필요한 데이터 얻어 오기 */
         Application application = applicationRepository.findById(request.getApplicationId()).orElseThrow(
@@ -105,27 +105,6 @@ public class ApplicationService {
         group.getGroupMembers().add(savedGroupMember);
 
         /* 신청서 삭제 */
-        applicationRepository.deleteById(application.getId());
-
-        return ResponseEntity.status(HttpStatus.OK).body("모임에 가입이 완료 되었습니다.");
-
-    }
-
-    /* 모임 신청 수락 */
-    public ResponseEntity<?> acceptedApplication(ApplicationRequestDto.applicationAccept request) {
-
-        Application application = applicationRepository.findById(request.getApplicationId()).orElseThrow(
-                () -> new NotFoundException("옳바르지 않은 요청입니다.")
-        );
-
-        Member member = application.getMember();
-        Group group = application.getGroup();
-
-        GroupMember newgroupMember = new GroupMember(member, group, GroupRole.MEMBER);
-        GroupMember savedGroupMember = groupMemberRepository.save(newgroupMember);
-
-        group.getGroupMembers().add(savedGroupMember);
-
         applicationRepository.deleteById(application.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body("모임에 가입이 완료 되었습니다.");

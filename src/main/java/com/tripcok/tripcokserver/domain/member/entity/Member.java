@@ -85,14 +85,7 @@ public class Member extends BaseEntity {
     /* 회원 정보 수정 */
     public Member update(MemberRequestDto.update memberRequest) {
         this.name = memberRequest.getName();
-        this.email = memberRequest.getEmail();
-        this.password = memberRequest.getPassword();
-        this.phone = memberRequest.getPhone();
-        this.birthday = memberRequest.getBirthday();
         this.profileImage = memberRequest.getProfileImage();
-        this.gender = memberRequest.getGender();
-        this.address = memberRequest.getAddress();
-        this.role = memberRequest.getRole();
         return this;
     }
 

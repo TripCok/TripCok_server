@@ -26,13 +26,13 @@ public class MemberController {
     }
 
     /* 회원 정보 조회 */
-    @GetMapping("/find/{memberId}")
-    public ResponseEntity<?> getMemberInfo(@PathVariable Long memberId) {
-        return memberService.getMemberInfo(memberId);
-    }
+//    @GetMapping("/find/{memberId}")
+//    public ResponseEntity<?> getMemberInfo(@PathVariable Long memberId) {
+//        return memberService.getMemberInfo(memberId);
+//    }
 
     /* 회원 정보 수정*/
-    @PutMapping("/{memberId}")
+    @PutMapping("")
     public ResponseEntity<?> updateMember(@RequestBody MemberRequestDto.update request) {
         return memberService.updateMember(request);
     }
