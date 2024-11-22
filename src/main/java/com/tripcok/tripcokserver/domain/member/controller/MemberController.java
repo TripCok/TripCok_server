@@ -32,7 +32,7 @@ public class MemberController {
     }
 
     /* 회원 정보 수정*/
-    @PutMapping("/{memberId}")
+    @PutMapping
     public ResponseEntity<?> updateMember(@RequestBody MemberRequestDto.update request) {
         return memberService.updateMember(request);
     }
@@ -44,9 +44,9 @@ public class MemberController {
     }
 
     /* 회원 조회 - 복수 */
-    @GetMapping("/finds/{memberId}")
-    public ResponseEntity<?> getAllMemberInfo(@PathVariable Long memberId) {
-        return memberService.getAllMemberInfo(memberId);
+    @GetMapping("/finds")
+    public ResponseEntity<?> getAllMemberInfo() {
+        return memberService.getAllMemberInfo();
     }
 
 }

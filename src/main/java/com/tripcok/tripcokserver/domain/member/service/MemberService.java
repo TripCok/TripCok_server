@@ -57,8 +57,9 @@ public class MemberService {
     }
 
     /* 회원 정보 수정 */
+    @Transactional
     public ResponseEntity<?> updateMember(MemberRequestDto.update memberRequest) {
-        Optional<Member> findMember = memberRepository.findByEmail(memberRequest.getEmail());
+        Optional<Member> findMember = memberRepository.findById(memberRequest.getId());
         if (findMember.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이미 삭제된 회원이거나 존재하지 않는 회원입니다.");
         }
@@ -81,12 +82,11 @@ public class MemberService {
     }
 
     /* 회원 조회 - 복수 */
-    public ResponseEntity<?> getAllMemberInfo(Long memberId) {
-        Optional<Member> findMember = memberRepository.findById(memberId);
-        if (findMember.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이미 삭제된 회원이거나 존재하지 않는 회원입니다.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(findMember.get());
+    public ResponseEntity<?> getAllMemberInfo() {
+//        if (findMember.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이미 삭제된 회원이거나 존재하지 않는 회원입니다.");
+//        }
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
 

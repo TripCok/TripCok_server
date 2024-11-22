@@ -36,7 +36,7 @@ public class PlaceCategory extends BaseEntity {
 
     public PlaceCategory(PlaceCategoryRequest request) {
         this.name = request.getPlaceName();
-        this.depth = 0; // 기본 값, setParentCategory 호출 시 업데이트
+        this.depth = 0;
     }
 
     public void setParentCategory(PlaceCategory parent) {
