@@ -94,4 +94,18 @@ public class PostCrudTest {
         board.addPosts(this.post);
     }
 
+    @Test
+    public void getPost(){
+
+        // 생성한 게시글(Post) 정보와 조회한 게시글(Post)가 같아야 함
+        Long postId = this.post.getId();
+
+        System.out.println("postId = " + postId);
+
+        PostResponseDto.get responseDto = postService.getPost(postId);
+
+        Assertions.assertEquals(postId, responseDto.getId());
+    }
+
+
 }
