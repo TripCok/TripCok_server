@@ -41,8 +41,8 @@ public class PostController {
 
     /*게시글 삭제*/
     @DeleteMapping("/api/v1/post/{postId}")
-    public ResponseEntity<PostResponseDto.delete> deletePost(@PathVariable Long postId) {
-        PostResponseDto.delete responseDto = postService.deletePost(postId);
+    public ResponseEntity<PostResponseDto.delete> deletePost(@PathVariable Long postId, @RequestParam Long memberId) throws UnauthorizedAccessException {
+        PostResponseDto.delete responseDto = postService.deletePost(postId, memberId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 

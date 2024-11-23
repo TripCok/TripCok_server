@@ -171,4 +171,19 @@ public class PostCrudTest {
         });
 
     }
+
+    @Test
+    public void deletePost() throws UnauthorizedAccessException {
+        //given
+        Long postId = this.post.getId();
+        Long memberId = this.member.getId();
+
+        //when
+        postService.deletePost(postId, memberId);
+
+        //then
+        Assertions.assertThrows(Exception.class, () -> {
+            postRepository.findById(postId);
+        });
+    }
 }

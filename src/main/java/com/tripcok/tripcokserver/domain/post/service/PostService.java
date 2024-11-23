@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -215,16 +216,23 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 그룹에 속한 멤버를 찾을 수 없습니다."));
     }
 
-    public PostResponseDto.delete deletePost(Long postId) {
-        Optional<Post> post =  postRepository.findById(postId);
+    public PostResponseDto.delete deletePost(Long postId, Long memberId) throws UnauthorizedAccessException {
+        // 회원 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("해당 회원은 존재하지 않습니다."));
 
-        if (post.isPresent()) {
-            Post savePost = post.get();
-            postRepository.delete(savePost);
-            return new PostResponseDto.delete(postId,"삭제 완료되었습니다.");
-        }
-        else {
-            throw new NullPointerException("해당 Post는 존재하지 않습니다.");
-        }
+        // 게시글 조회
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("해당 Post는 존재하지 않습니다."));
+
+        // 작성자 확인
+        isWriter(memberId, post);
+
+        // 게시글 삭제
+        postRepository.delete(post);
+
+        // 성공 응답 반환
+        return new PostResponseDto.delete(postId, "삭제 완료되었습니다.");
     }
+
 }
