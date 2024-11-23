@@ -119,4 +119,25 @@ public class PostCrudTest {
         //then
         Assertions.assertNotNull(pages);
     }
+
+    @Test
+    public void putPost() throws UnauthorizedAccessException {
+        //dto로 넣은 값과 조회한 값이 일치하는 지 여부
+        //Given
+        Long postId = this.post.getId();
+        Long memberId = this.member.getId();
+        Long groupId = this.group.getId();
+        PostRequestDto.put requestDto = new PostRequestDto.put();
+        requestDto.setTitle("test");
+        requestDto.setContent("test");
+
+        //when
+        PostResponseDto.put response = postService.putPost(postId, memberId, groupId, requestDto);
+
+        //then
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(postId, response.getId());
+        Assertions.assertEquals("post 수정 완료", response.getMessage());
+
+    }
 }
