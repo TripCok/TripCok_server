@@ -5,7 +5,6 @@ import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.post.dto.*;
 import com.tripcok.tripcokserver.domain.postcomment.PostCommentRepository;
-import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentRequestDto;
 import com.tripcok.tripcokserver.domain.postcomment.entity.PostComment;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
@@ -15,7 +14,6 @@ import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
 
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,7 +36,7 @@ public class PostService {
     private final PostCommentRepository postCommentRepository;
 
     /* 게시글 생성 */
-    public PostResponseDto.create createPost(Long userId, Long groupId, @Valid PostRequestDto requestDto) {
+    public PostResponseDto.create createPost(Long userId, Long groupId, PostRequestDto.create requestDto) {
 
         //Notice
         log.info(requestDto.toString());
@@ -58,13 +56,20 @@ public class PostService {
         Board board = group.getBoard();
 
         // 게시글 생성 및 저장
-        Post post = createAndSavePost(requestDto, board);
+        Post post = createAndSavePost(requestDto, board, member);
 
         return new PostResponseDto.create("게시글 추가 완료", post.getId(), post.getType());
     }
 
+    private void validateGroupMembership(Long groupId, Member member) {
+        List<Member> members = memberRepository.findByGroupMembersGroupId(groupId);
+        if (!members.contains(member)) {
+            throw new RuntimeException("사용자가 해당 그룹에 속해 있지 않습니다.");
+        }
+    }
+
     /* 공지 사항 */
-    public PostResponseDto.create createNotice(Long userId, Long groupId, @Valid PostRequestDto requestDto) {
+    public PostResponseDto.create createNotice(Long userId, Long groupId, PostRequestDto.create requestDto) {
 
         // 사용자 조회
         Member member = findMemberById(userId);
@@ -93,12 +98,12 @@ public class PostService {
         log.info("Board ID: {}", board.getId());
 
         // 공지사항 생성 및 저장
-        Post post = createAndSavePostandType(requestDto, board);
+        Post post = createAndSavePostandType(requestDto, board, member);
         return new PostResponseDto.create("공지사항 추가 완료", post.getId(),post.getType());
     }
 
     /* 댓글 달기 */
-    public PostResponseDto.comment createComment(Long userId, Long postId, Long groupId, @Valid PostCommentRequestDto requestDto) {
+    public PostResponseDto.comment createComment(Long userId, Long postId, Long groupId, PostRequestDto.comment requestDto) {
 
         // Member 조회
         Member member = findMemberById(userId);
@@ -117,6 +122,7 @@ public class PostService {
         postCommentRepository.save(postComment);
 
         post.addComment(postComment);
+
         return new PostResponseDto.comment("댓글 추가 완료", postComment.getId());
     }
 
@@ -130,20 +136,13 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("그룹을 찾을 수 없습니다."));
     }
 
-    private void validateGroupMembership(Long groupId, Member member) {
-        List<Member> members = memberRepository.findByGroupMembersGroupId(groupId);
-        if (!members.contains(member)) {
-            throw new RuntimeException("사용자가 해당 그룹에 속해 있지 않습니다.");
-        }
-    }
-
-    private Post createAndSavePost(@Valid PostRequestDto requestDto, Board board) {
-        Post post = new Post(requestDto, board);
+    private Post createAndSavePost(PostRequestDto.create requestDto, Board board, Member member) {
+        Post post = new Post(requestDto, board, member);
         board.addPosts(post);
         return postRepository.save(post);
     }
-    private Post createAndSavePostandType(@Valid PostRequestDto requestDto, Board board) {
-        Post post = new Post(requestDto, board);
+    private Post createAndSavePostandType(PostRequestDto.create requestDto, Board board, Member member) {
+        Post post = new Post(requestDto, board, member);
         board.addPosts(post);
         return postRepository.save(post);
     }
@@ -160,15 +159,14 @@ public class PostService {
         }
     }
 
-    public Page<PostRequestDto.gets> getPosts(Pageable pageable) {
+    public Page<PostResponseDto.gets> getPosts(Pageable pageable) {
 
         // postRepository로 얻은 Post를 Page 객체에 넣음
         Page<Post> posts = postRepository.findAll(pageable);
 
         // Post 객체를 PostPageResponseDto로 변환하여 새로운 Page 객체 생성
-        Page<PostRequestDto.gets> pageResponseDtos = posts.map(post ->
-                new PostRequestDto.gets(
-                        post.getId(),
+        Page<PostResponseDto.gets> pageResponseDtos = posts.map(post ->
+                new PostResponseDto.gets(
                         post.getTitle(),
                         post.getContent(),
                         post.getType()
@@ -176,10 +174,10 @@ public class PostService {
         );
 
         log.info(pageResponseDtos.toString());
-        return  pageResponseDtos;
+        return pageResponseDtos;
     }
 
-    public PostResponseDto.put putPost(Long postId, Long memberId,Long groupId, PostRequestDto.put requestDto) {
+    public PostResponseDto.put putPost(Long postId, Long memberId, Long groupId, PostRequestDto.put requestDto) throws UnauthorizedAccessException {
         //게시글 불러오기
         Optional<Post> post =  postRepository.findById(postId);
 
@@ -190,6 +188,7 @@ public class PostService {
             //만약 NOTICE라면 관리자인지 검증하는 로직
             if (requestDto.getType() == null){
                 isMemberAdmin(memberId, groupId);
+                isWriter(memberId, savePost);
             }
 
             //변경내용을 업데이트 및 저장하는 로직
@@ -201,6 +200,13 @@ public class PostService {
         else {
             throw new NullPointerException("존재하지 않은 게시글입니다.");
         }
+    }
+
+    private Boolean isWriter(Long memberId, Post post) throws UnauthorizedAccessException {
+        if (!post.getMember().getId().equals(memberId)) {
+            throw new UnauthorizedAccessException("작성자가 아니어서 수정할 수 없습니다.");
+        }
+        return true;
     }
 
     private boolean isMemberAdmin(Long memberId, Long groupId) {

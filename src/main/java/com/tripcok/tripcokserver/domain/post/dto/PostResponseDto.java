@@ -49,10 +49,15 @@ public class PostResponseDto {
 
     @Data
     public static class gets {
-        private Long id;
         private String title;
         private String content;
         private Type type;
+
+        public gets( String title, String content  , Type type  ) {
+            this.title = title;
+            this.content = content;
+            this.type = type;
+        }
     }
 
     @Data

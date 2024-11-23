@@ -2,6 +2,7 @@ package com.tripcok.tripcokserver.domain.post.controller;
 
 import com.tripcok.tripcokserver.domain.post.dto.*;
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
+import com.tripcok.tripcokserver.domain.post.service.UnauthorizedAccessException;
 import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentRequestDto;
 import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentResponseDto;
 import com.tripcok.tripcokserver.domain.post.service.PostService;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostService postService;
-    private final PostRepository postRepository;
 
     /*게시글 조회(단일)*/
     @GetMapping("/api/v1/post/{postId}")
@@ -34,8 +34,8 @@ public class PostController {
 
     /*게시글 조회(복수)*/
     @GetMapping("/api/v1/posts")
-    public ResponseEntity<Page<PostRequestDto.gets>> getPost(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostRequestDto.gets> pageResponseDtos = postService.getPosts(pageable);
+    public ResponseEntity<Page<PostResponseDto.gets>> getPost(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PostResponseDto.gets> pageResponseDtos = postService.getPosts(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(pageResponseDtos);
     }
 
@@ -50,7 +50,7 @@ public class PostController {
     @PutMapping("/api/v1/post/{postId}/member/{memberId}")
     public ResponseEntity<PostResponseDto.put> putPost( @PathVariable Long postId,
                                                        @RequestParam Long memberId, @RequestParam Long groupId,
-                                                      @RequestBody PostRequestDto.put requestDto) {
+                                                      @RequestBody PostRequestDto.put requestDto) throws UnauthorizedAccessException {
         PostResponseDto.put responseDto = postService.putPost(postId, memberId, groupId, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
@@ -62,7 +62,7 @@ public class PostController {
     public ResponseEntity<PostResponseDto.create> createPost(
             @PathVariable("userId") Long userId,
             @RequestParam("groupId") Long groupId,
-            @Valid @RequestBody PostRequestDto requestDto) {
+            @Valid @RequestBody PostRequestDto.create requestDto) {
         PostResponseDto.create responseDto = postService.createPost(userId, groupId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -76,7 +76,7 @@ public class PostController {
             @PathVariable("userId") Long userId,
             @RequestParam("postId") Long postId,
             @RequestParam("postId") Long groupId,
-            @Valid @RequestBody PostCommentRequestDto requestDto) {
+            @Valid @RequestBody PostRequestDto.comment requestDto) {
 
         PostResponseDto.comment responseDto = postService.createComment(userId, postId, groupId, requestDto);
 
@@ -89,7 +89,7 @@ public class PostController {
     @PostMapping("/api/v1/user/{userId}/group/notice")
     public ResponseEntity<PostResponseDto.create> createNotice(
             @PathVariable("userId") Long userId,
-            @RequestParam("boardId") Long groupId, @Valid @RequestBody PostRequestDto requestDto) {
+            @RequestParam("boardId") Long groupId, @Valid @RequestBody PostRequestDto.create requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(postService.createNotice(userId, groupId, requestDto));
     }
 }

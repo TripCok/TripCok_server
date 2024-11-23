@@ -32,14 +32,12 @@ public class PostComment extends BaseEntity {
 
 
     public PostComment(PostRequestDto.comment requestDto, Post post, Member member) {
-        super();
+        this.content = requestDto.getContent();
+        this.post = post;
+        this.member = member;
     }
 
     public PostComment() {
 
-    }
-
-    public PostComment(@Valid PostCommentRequestDto requestDto, Post post, Member member) {
-        super();
     }
 }
