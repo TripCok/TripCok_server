@@ -107,5 +107,16 @@ public class PostCrudTest {
         Assertions.assertEquals(postId, responseDto.getId());
     }
 
+    @Test
+    public void getPosts(){
 
+        //Given
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("id").ascending());
+
+        //when
+        Page<PostResponseDto.gets> pages = postService.getPosts(pageable);
+
+        //then
+        Assertions.assertNotNull(pages);
+    }
 }
