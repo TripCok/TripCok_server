@@ -140,4 +140,35 @@ public class PostCrudTest {
         Assertions.assertEquals("post 수정 완료", response.getMessage());
 
     }
+
+    @Test
+    public void putNotWriterPutPosts() throws UnauthorizedAccessException {
+        //글 작성자가 아닌 경우 글 변경 불가능
+        //그룹에 새로운 멤버 추가
+        MemberRequestDto.save memberRequestDto = new MemberRequestDto.save();
+        memberRequestDto.setName("NoWriter");
+        memberRequestDto.setEmail("test@test.com");
+        memberRequestDto.setPassword("123");
+        Member member1 = new Member(memberRequestDto);
+
+        memberRepository.save(member1);
+
+        Long postId = this.post.getId();
+        Long memberId = member1.getId();
+        Long groupId = this.group.getId();
+
+        GroupMember groupMember1 = new GroupMember(member1, group, GroupRole.MEMBER);
+        groupMemberRepository.save(groupMember1);
+
+        //given
+        PostRequestDto.put requestDto = new PostRequestDto.put();
+        requestDto.setTitle("test");
+        requestDto.setContent("test");
+
+        //when & then
+        Assertions.assertThrows(UnauthorizedAccessException.class, () -> {
+            postService.putPost(postId, memberId, groupId, requestDto);
+        });
+
+    }
 }
