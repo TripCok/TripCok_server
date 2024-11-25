@@ -62,7 +62,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PlaceReviewLike> reviewLikes;
 
-    /* 작성한 리뷰 */
+    /*작성한 리뷰*/
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PlaceReview> reviews;
 
@@ -84,6 +84,7 @@ public class Member extends BaseEntity {
 
     /* 회원 정보 수정 */
     public Member update(MemberRequestDto.update memberRequest) {
+        this.id = memberRequest.getId();
         this.name = memberRequest.getName();
         this.profileImage = memberRequest.getProfileImage();
         return this;
@@ -91,7 +92,6 @@ public class Member extends BaseEntity {
 
     public Member() {
     }
-
 }
 
 

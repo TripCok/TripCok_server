@@ -1,7 +1,6 @@
 package com.tripcok.tripcokserver.domain.member.dto;
 
 import com.tripcok.tripcokserver.domain.member.entity.Gender;
-import com.tripcok.tripcokserver.domain.member.entity.Role;
 import lombok.Data;
 
 import java.time.LocalDate;

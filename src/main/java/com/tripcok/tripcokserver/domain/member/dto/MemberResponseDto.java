@@ -14,6 +14,7 @@ public class MemberResponseDto {
     /* 회원 정보 조회 */
     @Data
     public static class Info {
+        private Long id;
         private String name;
         private String email;
         private String password;
@@ -26,6 +27,7 @@ public class MemberResponseDto {
 
         /* 회원 정보 수정 */
         public Info(Member member) {
+            this.id = member.getId();
             this.name = member.getName();
             this.email = member.getEmail();
             this.password = member.getPassword();

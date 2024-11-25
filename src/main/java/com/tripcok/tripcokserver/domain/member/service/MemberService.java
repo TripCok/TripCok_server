@@ -1,16 +1,20 @@
 package com.tripcok.tripcokserver.domain.member.service;
 
+import com.tripcok.tripcokserver.domain.member.dto.MemberListResponseDto;
 import com.tripcok.tripcokserver.domain.member.dto.MemberRequestDto;
 import com.tripcok.tripcokserver.domain.member.dto.MemberResponseDto;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,17 +53,21 @@ public class MemberService {
     }
 
     /* 회원 정보 조회 */
+    public MemberResponseDto.Info getMemberInfo(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다. ID: " + memberId));
+        /*MemberResponseDto.Info memberResponseDto = new MemberResponseDto.Info(member);*/
+        return new MemberResponseDto.Info(member);
+    }
 
-//    public ResponseEntity<?> getMemberInfo(Long memberId) {
-//        Optional<Member> findMember = memberRepository.findById(memberId);
-//        if (findMember.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이미 삭제된 회원이거나 존재하지 않는 회원입니다.");
-//        }
-//        return ResponseEntity.status(HttpStatus.OK).body(findMember.get());
-//    }
+    /* 회원 조회 - 복수 Pageable */
+    public Page<MemberListResponseDto> getMembers(Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        Page<Member> all = memberRepository.findAll(pageable);
+        return all.map(MemberListResponseDto::new);
+    }
 
     /* 회원 정보 수정 */
-    @Transactional
     public ResponseEntity<?> updateMember(MemberRequestDto.update memberRequest) {
         Optional<Member> findMember = memberRepository.findById(memberRequest.getId());
         if (findMember.isEmpty()) {
@@ -83,19 +91,5 @@ public class MemberService {
         }
     }
 
-    /* 회원 조회 - 복수 */
-    public ResponseEntity<?> getAllMemberInfo(Long memberId) {
-        Optional<Member> findMember = memberRepository.findById(memberId);
-        if (findMember.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이미 삭제된 회원이거나 존재하지 않는 회원입니다.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(findMember.get());
-    }
-
-    /* 특정 모임에 멤버 - 복수 */
-    public List<Member> getMembersByGroup(Long groupId) {
-        // 그룹 ID로 해당 그룹에 속한 모든 멤버를 조회
-        return memberRepository.findByGroupMembersGroupId(groupId);
-    }
 
 }
