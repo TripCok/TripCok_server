@@ -45,7 +45,7 @@ public class EmailService {
         String body = "<div>"
                 + "<h1> 안녕하세요. Tripcok 입니다</h1>"
                 + "<br>"
-                + "<p>안내 인증 코드에 따라 인증 번호를 입력해주세여.<p>"
+                + "<p>안내 인증 코드에 따라 인증 번호를 입력해주세요.<p>"
                 + "<p>인증 코드 : " + code + "</p>"
                 + "</div>";
 
