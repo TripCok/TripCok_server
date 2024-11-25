@@ -1,4 +1,4 @@
-package com.tripcok.tripcokserver.domain.postcomment;
+package com.tripcok.tripcokserver.domain.postcomment.repository;
 
 import com.tripcok.tripcokserver.domain.postcomment.entity.PostComment;
 import org.springframework.data.jpa.repository.JpaRepository;

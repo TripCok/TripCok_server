@@ -17,6 +17,8 @@ import com.tripcok.tripcokserver.domain.post.entity.Post;
 
 import com.tripcok.tripcokserver.domain.post.entity.Type;
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
+import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentResponseDto;
+import com.tripcok.tripcokserver.domain.postcomment.service.PostCommentService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +60,8 @@ public class postTestService {
     private Post post;
 
     private Board board;
+    @Autowired
+    private PostCommentService postCommentService;
 
     @BeforeEach
     void setUp() {
@@ -165,7 +169,7 @@ public class postTestService {
         commentRequestDto.setContent("test");
 
         // when
-        PostResponseDto.comment response = postService.createComment(this.member.getId(),this.post.getId(), this.group.getId(), commentRequestDto);
+        PostCommentResponseDto.comment response = postCommentService.createComment(this.member.getId(),this.post.getId(), this.group.getId(), commentRequestDto);
 
         // then
         assertThat(response).isNotNull();

@@ -44,7 +44,7 @@ public class PostController {
     }
 
     /*게시글 수정*/
-    @PutMapping("/api/v1/post/{postId}/member/{memberId}")
+    @PutMapping("/api/v1/post/{postId}")
     public ResponseEntity<PostResponseDto.put> putPost( @PathVariable Long postId,
                                                        @RequestParam Long memberId, @RequestParam Long groupId,
                                                       @RequestBody PostRequestDto.put requestDto) throws UnauthorizedAccessException {
@@ -54,39 +54,21 @@ public class PostController {
 
     /*모임 게시글 작성*/
     @Operation(summary = "모임 게시글 작성", description = "모임에 게시글을 작성합니다.")
-    @ApiResponse(responseCode = "201", description = "게시글 작성 성공")
-    @PostMapping("/api/v1/user/{userId}/group/post")
+    @PostMapping("/api/v1/group/post")
     public ResponseEntity<PostResponseDto.create> createPost(
-            @PathVariable("userId") Long userId,
+            @RequestParam("memberId") Long memberId,
             @RequestParam("groupId") Long groupId,
             @Valid @RequestBody PostRequestDto.create requestDto) {
-        PostResponseDto.create responseDto = postService.createPost(userId, groupId, requestDto);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-    }
-
-    /*모임 게시글 댓글 작성*/
-    @Operation(summary = "모임 게시글 댓글 작성", description = "게시글에 댓글을 작성합니다.")
-    @ApiResponse(responseCode = "201", description = "댓글 작성 성공")
-    @PostMapping("/api/v1/group/{userId}/post/comment")
-    public ResponseEntity<PostResponseDto.comment> createComment(
-            @PathVariable("userId") Long userId,
-            @RequestParam("postId") Long postId,
-            @RequestParam("postId") Long groupId,
-            @Valid @RequestBody PostRequestDto.comment requestDto) {
-
-        PostResponseDto.comment responseDto = postService.createComment(userId, postId, groupId, requestDto);
-
+        PostResponseDto.create responseDto = postService.createPost(memberId, groupId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     /*모임 공지사항 작성*/
     @Operation(summary = "모임 공지사항 작성", description = "모임에 공지사항을 작성합니다.")
-    @ApiResponse(responseCode = "201", description = "공지사항 작성 성공")
-    @PostMapping("/api/v1/user/{userId}/group/notice")
+    @PostMapping("/api/v1//group/notice")
     public ResponseEntity<PostResponseDto.create> createNotice(
-            @PathVariable("userId") Long userId,
+            @RequestParam("member") Long memberId,
             @RequestParam("boardId") Long groupId, @Valid @RequestBody PostRequestDto.create requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createNotice(userId, groupId, requestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createNotice(memberId, groupId, requestDto));
     }
 }

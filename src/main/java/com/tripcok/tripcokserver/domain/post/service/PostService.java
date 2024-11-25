@@ -4,8 +4,7 @@ import com.tripcok.tripcokserver.domain.board.Board;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.post.dto.*;
-import com.tripcok.tripcokserver.domain.postcomment.PostCommentRepository;
-import com.tripcok.tripcokserver.domain.postcomment.entity.PostComment;
+import com.tripcok.tripcokserver.domain.postcomment.repository.PostCommentRepository;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
@@ -104,29 +103,6 @@ public class PostService {
         return new PostResponseDto.create("공지사항 추가 완료", post.getId(),post.getType());
     }
 
-    /* 댓글 달기 */
-    public PostResponseDto.comment createComment(Long userId, Long postId, Long groupId, PostRequestDto.comment requestDto) {
-
-        // Member 조회
-        Member member = findMemberById(userId);
-
-        // Post 조회
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("해당 게시물을 찾을 수 없습니다. ID: " + postId));
-
-        // 그룹 및 사용자 검증
-        //Group group = findGroupById(groupId);
-        validateGroupMembership(groupId, member);
-
-        // 댓글 생성 및 저장
-        PostComment postComment = new PostComment(requestDto, post, member);
-
-        postCommentRepository.save(postComment);
-
-        post.addComment(postComment);
-
-        return new PostResponseDto.comment("댓글 추가 완료", postComment.getId());
-    }
 
     private Member findMemberById(Long userId) {
         return memberRepository.findById(userId)
