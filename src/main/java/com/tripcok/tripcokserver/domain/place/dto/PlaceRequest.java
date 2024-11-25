@@ -38,7 +38,6 @@ public class PlaceRequest {
 
         private List<Long> categoryIds;
 
-        // JSON 데이터를 LocalTime으로 변환
         public void convertToLocalTime() {
             this.startTime = LocalTime.parse(strStartTime);
             this.endTime = LocalTime.parse(strEndTime);
@@ -64,7 +63,6 @@ public class PlaceRequest {
 
         private List<Long> categoryIds;
 
-        // 시간 데이터를 LocalTime으로 변환
         public void convertToLocalTime() {
             if (strStartTime != null) {
                 this.startTime = LocalTime.parse(strStartTime);

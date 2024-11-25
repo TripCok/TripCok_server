@@ -14,7 +14,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 public class GroupMember extends BaseEntity {
 
     @Id

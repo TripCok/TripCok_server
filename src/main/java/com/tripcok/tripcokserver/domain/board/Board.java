@@ -30,6 +30,7 @@ public class Board extends BaseEntity {
     public void addPosts(Post post) {
         posts.add(post);
     }
+
     public void addGroup(Group group){
         this.group = group;
     }
