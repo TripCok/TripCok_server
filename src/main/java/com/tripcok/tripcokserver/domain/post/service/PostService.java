@@ -14,6 +14,7 @@ import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
 
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,12 +28,12 @@ import java.util.Optional;
 @Slf4j
 @Service
 @AllArgsConstructor
+@Transactional
 public class PostService {
 
     private final MemberRepository memberRepository;
     private final GroupRepository groupRepository;
     private final PostRepository postRepository;
-    private final PostCommentRepository boardCommentRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final PostCommentRepository postCommentRepository;
 

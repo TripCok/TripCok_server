@@ -1,10 +1,7 @@
 package com.tripcok.tripcokserver.domain.post.controller;
 
 import com.tripcok.tripcokserver.domain.post.dto.*;
-import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
 import com.tripcok.tripcokserver.domain.post.service.UnauthorizedAccessException;
-import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentRequestDto;
-import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentResponseDto;
 import com.tripcok.tripcokserver.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
