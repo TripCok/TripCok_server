@@ -1,6 +1,8 @@
 package com.tripcok.tripcokserver.domain.postcomment.dto;
 
 import lombok.Data;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Data
 public class PostCommentRequestDto {
@@ -14,6 +16,8 @@ public class PostCommentRequestDto {
     public static class comment{
         private String content;
         private Long postId;
+        private Long memberId;
+        private Long groupId;
     }
 
     @Data
@@ -28,11 +32,13 @@ public class PostCommentRequestDto {
     @Data
     public static class put {
         private String Content;
+        private Long postCommentId;
+        private Long memberId;
     }
 
     @Data
     public static class delete {
+        private Long postCommentId;
         private Long memberId;
-        private Long groupId;
     }
 }

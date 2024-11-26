@@ -26,12 +26,9 @@ public class PostCommentController {
     @Operation(summary = "모임 게시글 댓글 작성", description = "게시글에 댓글을 작성합니다.")
     @PostMapping("/api/v1/postComment")
     public ResponseEntity<PostCommentResponseDto.comment> createComment(
-            @RequestParam("memberId") Long memberId,
-            @RequestParam("postId") Long postId,
-            @RequestParam("groupId") Long groupId,
             @Valid @RequestBody PostCommentRequestDto.comment requestDto) {
 
-        PostCommentResponseDto.comment responseDto = postCommentService.createComment(memberId, postId, groupId, requestDto);
+        PostCommentResponseDto.comment responseDto = postCommentService.createComment(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -55,18 +52,16 @@ public class PostCommentController {
     /*댓글 삭제*/
     @Operation(summary = "모임 게시글 댓글 삭제", description = "게시글의 댓글을 삭제합니다.")
     @DeleteMapping("/api/v1/postComment/{postCommentId}")
-    public ResponseEntity<PostCommentResponseDto.delete> deletepostComment(@PathVariable Long postCommentId, @RequestParam Long memberId) throws UnauthorizedAccessException {
-        PostCommentResponseDto.delete responseDto = postCommentService.deletePostCommit(postCommentId, memberId);
+    public ResponseEntity<PostCommentResponseDto.delete> deletepostComment(@RequestBody PostCommentRequestDto.delete requestdto) throws UnauthorizedAccessException {
+        PostCommentResponseDto.delete responseDto = postCommentService.deletePostCommit(requestdto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     /*댓글 수정*/
     @Operation(summary = "모임 게시글 댓글 수정", description = "게시글의 댓글을 수정합니다.")
     @PutMapping("/api/v1/postComment/{postCommentId}")
-    public ResponseEntity<PostCommentResponseDto.put> putpostComment(@PathVariable Long postCommentId,
-                                                                    @RequestParam Long memberId, @RequestParam Long groupId,
-                                                                    @RequestBody PostCommentRequestDto.put requestDto) throws UnauthorizedAccessException {
-        PostCommentResponseDto.put responseDto = postCommentService.putPostCommit(postCommentId, memberId, groupId, requestDto);
+    public ResponseEntity<PostCommentResponseDto.put> putpostComment(@RequestBody PostCommentRequestDto.put requestDto) throws UnauthorizedAccessException {
+        PostCommentResponseDto.put responseDto = postCommentService.putPostCommit(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 

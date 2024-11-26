@@ -65,7 +65,7 @@ public class PostController {
 
     /*모임 공지사항 작성*/
     @Operation(summary = "모임 공지사항 작성", description = "모임에 공지사항을 작성합니다.")
-    @PostMapping("/api/v1//group/notice")
+    @PostMapping("/api/v1/group/notice")
     public ResponseEntity<PostResponseDto.create> createNotice(
             @RequestParam("member") Long memberId,
             @RequestParam("boardId") Long groupId, @Valid @RequestBody PostRequestDto.create requestDto) {

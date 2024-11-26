@@ -4,6 +4,7 @@ import com.tripcok.tripcokserver.domain.board.Board;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.post.dto.*;
+import com.tripcok.tripcokserver.domain.post.entity.Type;
 import com.tripcok.tripcokserver.domain.postcomment.repository.PostCommentRepository;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
@@ -37,13 +38,9 @@ public class PostService {
     private final PostCommentRepository postCommentRepository;
 
     /* 게시글 생성 */
-    public PostResponseDto.create createPost(Long userId, Long groupId, PostRequestDto.create requestDto) {
-
-        //Notice
-        log.info(requestDto.toString());
-
+    public PostResponseDto.create createPost(Long memberId, Long groupId, PostRequestDto.create requestDto) {
         // 사용자 조회
-        Member member = findMemberById(userId);
+        Member member = findMemberById(memberId);
 
         log.info(String.valueOf(member.getId()));
 
@@ -57,9 +54,19 @@ public class PostService {
         Board board = group.getBoard();
 
         // 게시글 생성 및 저장
-        Post post = createAndSavePost(requestDto, board, member);
+        Post post = createAndSavePost(requestDto,Type.COMMON, board, member);
 
         return new PostResponseDto.create("게시글 추가 완료", post.getId(), post.getType());
+    }
+
+    private GroupRole getGroupRole(Long memberId, Long groupId) {
+        Optional<GroupMember> groupMember = groupMemberRepository.findByGroup_IdAndMember_Id(memberId, groupId);
+
+        if (groupMember.isPresent()) {
+            GroupRole role = groupMember.get().getRole();
+            return role;
+        }
+        return null;
     }
 
     private void validateGroupMembership(Long groupId, Member member) {
@@ -99,7 +106,7 @@ public class PostService {
         log.info("Board ID: {}", board.getId());
 
         // 공지사항 생성 및 저장
-        Post post = createAndSavePostandType(requestDto, board, member);
+        Post post = createAndSavePostandType(requestDto, Type.NOTICE, board, member);
         return new PostResponseDto.create("공지사항 추가 완료", post.getId(),post.getType());
     }
 
@@ -114,13 +121,13 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("그룹을 찾을 수 없습니다."));
     }
 
-    private Post createAndSavePost(PostRequestDto.create requestDto, Board board, Member member) {
-        Post post = new Post(requestDto, board, member);
+    private Post createAndSavePost(PostRequestDto.create requestDto,Type type, Board board, Member member) {
+        Post post = new Post(requestDto, type, board, member);
         board.addPosts(post);
         return postRepository.save(post);
     }
-    private Post createAndSavePostandType(PostRequestDto.create requestDto, Board board, Member member) {
-        Post post = new Post(requestDto, board, member);
+    private Post createAndSavePostandType(PostRequestDto.create requestDto,Type type, Board board, Member member) {
+        Post post = new Post(requestDto, type, board, member);
         board.addPosts(post);
         return postRepository.save(post);
     }

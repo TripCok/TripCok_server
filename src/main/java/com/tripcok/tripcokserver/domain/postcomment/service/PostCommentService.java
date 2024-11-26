@@ -27,10 +27,14 @@ public class PostCommentService {
     private final PostRepository postRepository;
 
     /* 댓글 달기 */
-    public PostCommentResponseDto.comment createComment(Long userId, Long postId, Long groupId, PostCommentRequestDto.comment requestDto) {
+    public PostCommentResponseDto.comment createComment(PostCommentRequestDto.comment requestDto) {
+
+        Long memberId = requestDto.getMemberId();
+        Long groupId = requestDto.getGroupId();
+        Long postId = requestDto.getPostId();
 
         // Member 조회
-        Member member = findMemberById(userId);
+        Member member = findMemberById(memberId);
 
         // Post 조회
         Post post = postRepository.findById(postId)
@@ -70,8 +74,10 @@ public class PostCommentService {
     }
 
 
-    public PostCommentResponseDto.delete deletePostCommit(Long postCommentId, Long memberId) throws UnauthorizedAccessException {
+    public PostCommentResponseDto.delete deletePostCommit(PostCommentRequestDto.delete requestDto) throws UnauthorizedAccessException {
 
+        Long postCommentId = requestDto.getPostCommentId();
+        Long memberId = requestDto.getMemberId();
         // 게시글 조회
         PostComment postComment = postCommentRepository.findById(postCommentId)
                 .orElseThrow(() -> new NotFoundException("해당 댓글은 존재하지 않습니다."));
@@ -86,7 +92,11 @@ public class PostCommentService {
         return new PostCommentResponseDto.delete(postCommentId, "삭제 완료되었습니다.");
     }
 
-    public PostCommentResponseDto.put putPostCommit(Long postCommentId, Long memberId, Long groupId, PostCommentRequestDto.put requestDto) throws UnauthorizedAccessException {
+    public PostCommentResponseDto.put putPostCommit(PostCommentRequestDto.put requestDto) throws UnauthorizedAccessException {
+
+        Long postCommentId = requestDto.getPostCommentId();
+        Long memberId = requestDto.getMemberId();
+
         //댓글 불러오기
         Optional<PostComment> postComment =  postCommentRepository.findById(postCommentId);
 

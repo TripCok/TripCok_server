@@ -13,6 +13,7 @@ import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.post.dto.PostRequestDto;
 import com.tripcok.tripcokserver.domain.post.dto.PostResponseDto;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
+import com.tripcok.tripcokserver.domain.post.entity.Type;
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
 import com.tripcok.tripcokserver.domain.post.service.PostService;
 import com.tripcok.tripcokserver.domain.post.service.UnauthorizedAccessException;
@@ -106,7 +107,7 @@ public class PostCommentCrudTest {
         requestDto.setContent("test");
         requestDto.setContent("test2");
 
-        this.post = new Post(requestDto, this.board, member);
+        this.post = new Post(requestDto, Type.COMMON, this.board, member);
 
         postRepository.save(this.post);
 
@@ -149,15 +150,12 @@ public class PostCommentCrudTest {
 
         //Given
         Long postCommentId = this.postComment.getId();
-        Long postId = this.post.getId();
-        Long memberId = this.member.getId();
-        Long groupId = this.group.getId();
 
         PostCommentRequestDto.put requestDto = new PostCommentRequestDto.put();
         requestDto.setContent("test");
 
         //when
-        PostCommentResponseDto.put reseponse = postCommentService.putPostCommit(postCommentId,memberId,groupId,requestDto);
+        PostCommentResponseDto.put reseponse = postCommentService.putPostCommit(requestDto);
 
         //then
         Assertions.assertNotNull(reseponse);
