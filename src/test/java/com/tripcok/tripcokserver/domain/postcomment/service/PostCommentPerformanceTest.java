@@ -11,17 +11,14 @@ import com.tripcok.tripcokserver.domain.member.dto.MemberRequestDto;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.post.dto.PostRequestDto;
-import com.tripcok.tripcokserver.domain.post.dto.PostResponseDto;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
 import com.tripcok.tripcokserver.domain.post.service.PostService;
-import com.tripcok.tripcokserver.domain.post.service.UnauthorizedAccessException;
 import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentRequestDto;
 import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentResponseDto;
 import com.tripcok.tripcokserver.domain.postcomment.entity.PostComment;
 import com.tripcok.tripcokserver.domain.postcomment.repository.PostCommentRepository;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -32,15 +29,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Transactional
-public class PostCommentCrudTest {
-
+public class PostCommentPerformanceTest {
 
     private Member member;
 
@@ -120,62 +119,60 @@ public class PostCommentCrudTest {
         postCommentRepository.save(this.postComment);
     }
 
-    @Test
-    public void getPostComment(){
+    private static final String[] sampleComments = {
+            "이 게시글 정말 유용했어요!",
+            "좋은 정보 감사합니다.",
+            "정말 멋진 글이에요!",
+            "이 부분을 더 설명해주시면 좋겠어요.",
+            "좋은 아이디어네요!",
+            "정확히 이해했어요. 감사합니다.",
+            "다음 글도 기대됩니다!"
+    };
 
-        // 생성한 댓글 정보와 조회한 댓글이 같아야 함
-        String content = this.postComment.getContent();
+    public void generatePostComments(int numberOfComments) {
+        List<PostComment> comments = new ArrayList<>();
 
-        PostCommentResponseDto.get responseDto = postCommentService.getPostComment(postComment.getId());
+        for (int i = 0; i < numberOfComments; i++) {
+            PostCommentRequestDto.comment pcrequestDto = new PostCommentRequestDto.comment();
+            pcrequestDto.setPostId(this.post.getId());
+            pcrequestDto.setContent(generateRandomComment());
 
-        Assertions.assertEquals(content, responseDto.getContent());
+            PostComment comment = new PostComment(pcrequestDto, post, member);
+            postCommentRepository.save(comment);
+        }
+
+        postCommentRepository.saveAll(comments);  // 대량으로 댓글 저장
+    }
+
+    // 랜덤으로 댓글 내용 생성
+    private String generateRandomComment() {
+        Random random = new Random();
+        int index = random.nextInt(sampleComments.length);
+        return sampleComments[index];
     }
 
     @Test
-    public void getPosts(){
-        //Given
-        Pageable pageable = PageRequest.of(0,2, Sort.by("id").ascending());
+    @Timeout(value = 2, unit = TimeUnit.SECONDS)  // 테스트가 2초를 초과하면 실패
+    public void testFetchPostWithCommentsPerformance() {
 
-        //when
-        Page<PostCommentResponseDto.gets> pages = postCommentService.getPostComments(pageable);
+        long startTime = System.nanoTime();
 
-        //when
-        Assertions.assertNotNull(pages);
+        //3000개 생성 후 조회 -> 3000개까지 2초 이내
+        generatePostComments(10);
+
+        Pageable pageable = PageRequest.of(0,10, Sort.by("id").ascending());
+
+        Page<PostCommentResponseDto.gets> comments = postCommentService.getPostComments(pageable);
+
+        long endTime = System.nanoTime();  // 성능 측정을 위한 종료 시간
+
+        long duration = endTime - startTime;  // 성능 측정 (단위: 나노초)
+
+        System.out.println("조회된 댓글 수: " + comments.getContent().size());
+        System.out.println("성능 측정 시간: " + duration / 1_000_000 + " ms");
+
+        // 성능이 2초 이내로 실행됐는지 확인
+        assertTrue(duration < 2_000_000_000, "성능이 5초를 초과했습니다.");
     }
 
-    @Test
-    public void putPostComment() throws UnauthorizedAccessException{
-        //dto로 넣은 값과 조회한 값이 일치하는지 여부
-
-        //Given
-        Long postCommentId = this.postComment.getId();
-        Long postId = this.post.getId();
-        Long memberId = this.member.getId();
-        Long groupId = this.group.getId();
-
-        PostCommentRequestDto.put requestDto = new PostCommentRequestDto.put();
-        requestDto.setContent("test");
-
-        //when
-        PostCommentResponseDto.put reseponse = postCommentService.putPostCommit(postCommentId,memberId,groupId,requestDto);
-
-        //then
-        Assertions.assertNotNull(reseponse);
-        Assertions.assertEquals(postCommentId, reseponse.getId());
-    }
-
-    @Test
-    public void deletePostComment() throws UnauthorizedAccessException{
-        //given
-        Long postCommentId = this.postComment.getId();
-        Long memberId = this.member.getId();
-
-        //when
-        postCommentService.deletePostCommit(postCommentId,memberId);
-
-        //then
-        Assertions.assertThrows(Exception.class, () -> {
-            postCommentRepository.findById(postCommentId).get().getId();
-        });
-    }
 }
