@@ -29,7 +29,7 @@ public class PostCommentController {
             @RequestParam("memberId") Long memberId,
             @RequestParam("postId") Long postId,
             @RequestParam("groupId") Long groupId,
-            @Valid @RequestBody PostRequestDto.comment requestDto) {
+            @Valid @RequestBody PostCommentRequestDto.comment requestDto) {
 
         PostCommentResponseDto.comment responseDto = postCommentService.createComment(memberId, postId, groupId, requestDto);
 

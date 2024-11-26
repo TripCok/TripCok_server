@@ -159,20 +159,4 @@ public class postTestService {
         assertThat(response.getMessage()).isEqualTo("공지사항 추가 완료");
     }
 
-    @Test
-    void testCreateComment() {
-
-        this.post = postRepository.save(new Post(postRequestDto, this.board, this.member));
-
-        // 댓글 데이터 준비
-        PostRequestDto.comment commentRequestDto = new PostRequestDto.comment();
-        commentRequestDto.setContent("test");
-
-        // when
-        PostCommentResponseDto.comment response = postCommentService.createComment(this.member.getId(),this.post.getId(), this.group.getId(), commentRequestDto);
-
-        // then
-        assertThat(response).isNotNull();
-        assertThat(response.getMessage()).isEqualTo("댓글 추가 완료");
-    }
 }

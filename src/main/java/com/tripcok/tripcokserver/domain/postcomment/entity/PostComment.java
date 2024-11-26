@@ -30,7 +30,7 @@ public class PostComment extends BaseEntity {
     private Member member; // 댓글 작성자
 
 
-    public PostComment(PostRequestDto.comment requestDto, Post post, Member member) {
+    public PostComment(PostCommentRequestDto.comment requestDto, Post post, Member member) {
         this.content = requestDto.getContent();
         this.post = post;
         this.member = member;

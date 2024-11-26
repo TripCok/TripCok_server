@@ -12,13 +12,8 @@ public class PostCommentRequestDto {
 
     @Data
     public static class comment{
-        private String message;
+        private String content;
         private Long postId;
-
-        public comment(String message, Long id) {
-            this.message = message;
-            this.postId = id;
-        }
     }
 
     @Data

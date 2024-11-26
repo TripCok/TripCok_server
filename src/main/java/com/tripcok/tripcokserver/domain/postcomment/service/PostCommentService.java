@@ -27,7 +27,7 @@ public class PostCommentService {
     private final PostRepository postRepository;
 
     /* 댓글 달기 */
-    public PostCommentResponseDto.comment createComment(Long userId, Long postId, Long groupId, PostRequestDto.comment requestDto) {
+    public PostCommentResponseDto.comment createComment(Long userId, Long postId, Long groupId, PostCommentRequestDto.comment requestDto) {
 
         // Member 조회
         Member member = findMemberById(userId);
@@ -35,8 +35,6 @@ public class PostCommentService {
         // Post 조회
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("해당 게시물을 찾을 수 없습니다. ID: " + postId));
-
-        // 그룹 사용자 검증
 
         // 댓글 생성 및 저장
         PostComment postComment = new PostComment(requestDto, post, member);
