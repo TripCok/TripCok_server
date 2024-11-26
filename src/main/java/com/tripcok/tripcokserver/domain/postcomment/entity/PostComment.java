@@ -1,12 +1,10 @@
 package com.tripcok.tripcokserver.domain.postcomment.entity;
 
 import com.tripcok.tripcokserver.domain.post.dto.PostRequestDto;
-import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentRequestDto;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.Getter;
 
 @Entity
