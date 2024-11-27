@@ -16,8 +16,8 @@ public class PlaceResponse {
     private String address;
     private LocalTime startTime;
     private LocalTime endTime;
-    private List<String> categories;
-    private List<PlaceImageResponse> images;
+    private List<String> categories;  // 카테고리 이름 리스트
+    private List<PlaceImageResponse> images; // 이미지 리스트
 
     public PlaceResponse(Place place, List<PlaceCategoryMapping> mappings) {
         this.id = place.getId();
@@ -28,10 +28,10 @@ public class PlaceResponse {
         this.endTime = place.getEndTime();
         this.categories = mappings.stream()
                 .map(mapping -> mapping.getCategory().getName())
-                .toList();
+                .toList(); // 카테고리 이름 변환
         this.images = place.getImages().stream()
                 .map(PlaceImageResponse::new)
-                .toList();
+                .toList(); // 이미지 변환
     }
 }
 

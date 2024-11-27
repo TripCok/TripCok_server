@@ -8,6 +8,7 @@ import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -61,10 +63,17 @@ public class MemberService {
     }
 
     /* 회원 조회 - 복수 Pageable */
-    public Page<MemberListResponseDto> getMembers(Integer pageNum, Integer pageSize) {
+    public Page<MemberListResponseDto> getMembers(String query, int pageNum, int pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
-        Page<Member> all = memberRepository.findAll(pageable);
-        return all.map(MemberListResponseDto::new);
+
+        log.info(query + " : " + pageNum + " : " + pageSize);
+
+        if (query == null || query.isEmpty()) {
+            return memberRepository.findAll(pageable).map(MemberListResponseDto::new);
+        }
+
+        return memberRepository.findByNameContainingOrEmailContaining(query, query, pageable)
+                .map(MemberListResponseDto::new);
     }
 
     /* 회원 정보 수정 */
