@@ -36,8 +36,10 @@ public class MemberController {
     /* 회원 조회 - 복수 */
     @GetMapping("/finds")
     public ResponseEntity<?> getAllMembers(@RequestParam(name = "page") Integer page,
-                                           @RequestParam(name = "size") Integer size) {
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.getMembers(page, size));
+                                           @RequestParam(name = "size") Integer size,
+                                           @RequestParam(name = "email") String email
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.getMembers(email, page, size));
     }
 
 

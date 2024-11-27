@@ -45,9 +45,10 @@ public class GroupController {
     @ApiResponse(responseCode = "200", description = "모임 목록 조회 성공")
     @GetMapping("/api/v1/groups")
     public ResponseEntity<?> getGroups(
+            @RequestParam("query") String query,
             @RequestParam("page") Integer page,
             @RequestParam("size") Integer size) {
-        return ResponseEntity.ok(groupService.getGroups(page, size));
+        return ResponseEntity.ok(groupService.getGroups(query, page, size));
     }
 
     /*모임 수정*/

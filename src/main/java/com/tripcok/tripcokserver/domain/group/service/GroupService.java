@@ -96,10 +96,21 @@ public class GroupService {
     }
 
     // 3. 모임 조회 - 복수 (Pageable)
-    public Page<GroupAllResponseDto> getGroups(Integer pageNum, Integer pageSize) {
+    public Page<GroupAllResponseDto> getGroups(String query, Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
-        Page<Group> all = groupRepository.findAll(pageable);
-        return all.map(GroupAllResponseDto::new);
+
+        // 검색어가 있을 경우 그룹 이름으로 필터링
+        Page<Group> groups;
+
+        if (query != null && !query.trim().isEmpty()) {
+            groups = groupRepository.findByGroupNameContainingIgnoreCase(query, pageable);
+        } else {
+            groups = groupRepository.findAll(pageable);
+        }
+
+        return groups.map(GroupAllResponseDto::new);
+        /*Page<Group> all = groupRepository.findAll(pageable);
+        return all.map(GroupAllResponseDto::new);*/
     }
 
     // 4. 모임 수정
@@ -126,7 +137,7 @@ public class GroupService {
     }
 
     // 4. 모임 구인상태 변경
-    public void updateRecruitingStatus(Long groupId, Long memberId,  Boolean recruiting) {
+    public void updateRecruitingStatus(Long groupId, Long memberId, Boolean recruiting) {
         // 그룹 조회
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + groupId));
