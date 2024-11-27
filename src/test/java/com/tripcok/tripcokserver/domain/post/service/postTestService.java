@@ -3,8 +3,6 @@ package com.tripcok.tripcokserver.domain.post.service;
 import com.tripcok.tripcokserver.domain.board.Board;
 import com.tripcok.tripcokserver.domain.board.BoardRepository;
 import com.tripcok.tripcokserver.domain.post.dto.PostResponseDto;
-import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentRequestDto;
-import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentResponseDto;
 import com.tripcok.tripcokserver.domain.group.dto.GroupRequestDto;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
@@ -42,7 +40,7 @@ public class postTestService {
     @Autowired
     private PostRepository postRepository;
 
-    private PostRequestDto postRequestDto;
+    private PostRequestDto.create postRequestDto;
 
     @Autowired
     private GroupRepository groupRepository;
@@ -78,17 +76,19 @@ public class postTestService {
         groupRequestDto.setCategory("Category");
         groupRequestDto.setDescription("Test Group Description");
 
+        this.board = new Board();
+
         // 그룹 등록
-        this.group = groupRepository.save(new Group(groupRequestDto));
+        this.group = groupRepository.save(new Group(groupRequestDto, board));
 
         this.group.setId(member.getId());
 
-        postRequestDto = new PostRequestDto();
+        postRequestDto = new PostRequestDto.create();
         postRequestDto.setTitle("Test Post");
         postRequestDto.setContent("Test Content");
         postRequestDto.setType(Type.COMMON);
 
-        groupMemberRepository.save(new GroupMember(this.member, this.group, GroupRole.MEMBER));
+        groupMemberRepository.save(new GroupMember(this.member, this.group, GroupRole.ADMIN));
 
         // Board 객체 생성 및 그룹 추가
         this.board = new Board();
@@ -115,18 +115,15 @@ public class postTestService {
         // 이미 생성된 그룹과 생성된 보드가 속해 있는 그룹의 아이디는 같아야 한다.
         Assertions.assertEquals(group.getId(), board.getGroup().getId());
 
-        PostResponseDto responseOne = postService.createPost(member.getId(), group.getId(), postRequestDto);
+        PostResponseDto.create responseOne = postService.createPost(member.getId(), group.getId(), postRequestDto);
 
-        System.out.println(responseOne.getPostId() + " : " + responseOne.type.toString());
+        System.out.println(responseOne.getPostId() + " : " + responseOne.getType().toString());
 
         postRequestDto.setType(Type.NOTICE);
 
-        PostResponseDto responseTwo = postService.createPost(member.getId(), group.getId(), postRequestDto);
+        PostResponseDto.create responseTwo = postService.createPost(member.getId(), group.getId(), postRequestDto);
 
-        System.out.println(responseTwo.getPostId() + " : " + responseTwo.type.toString());
-
-
-
+        System.out.println(responseTwo.getPostId() + " : " + responseTwo.getType().toString());
 
     }
 
@@ -134,7 +131,7 @@ public class postTestService {
     void testCreatePost() {
 
         // when
-        PostResponseDto response = postService.createPost(member.getId(), group.getId(), postRequestDto);
+        PostResponseDto.create response = postService.createPost(member.getId(), group.getId(), postRequestDto);
 
         // then
         assertThat(response).isNotNull();
@@ -150,8 +147,9 @@ public class postTestService {
     @Test
     void testCreateNotice() {
 
+        postRequestDto.setType(Type.NOTICE);
         // when
-        PostResponseDto response = postService.createNotice(member.getId(), group.getId(), postRequestDto);
+        PostResponseDto.create response = postService.createNotice(member.getId(), group.getId(), postRequestDto);
         // then
         assertThat(response).isNotNull();
         assertThat(response.getMessage()).isEqualTo("공지사항 추가 완료");
@@ -160,14 +158,14 @@ public class postTestService {
     @Test
     void testCreateComment() {
 
-        this.post = postRepository.save(new Post(postRequestDto, this.board));
+        this.post = postRepository.save(new Post(postRequestDto, this.board, this.member));
 
         // 댓글 데이터 준비
-        PostCommentRequestDto commentRequestDto = new PostCommentRequestDto();
-        commentRequestDto.setContent("Test Comment");
+        PostRequestDto.comment commentRequestDto = new PostRequestDto.comment();
+        commentRequestDto.setContent("test");
 
         // when
-        PostCommentResponseDto response = postService.createComment(this.member.getId(),this.post.getId(), this.group.getId(), commentRequestDto);
+        PostResponseDto.comment response = postService.createComment(this.member.getId(),this.post.getId(), this.group.getId(), commentRequestDto);
 
         // then
         assertThat(response).isNotNull();
