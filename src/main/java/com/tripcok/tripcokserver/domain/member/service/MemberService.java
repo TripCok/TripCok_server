@@ -36,7 +36,7 @@ public class MemberService {
 
         Member member = new Member(request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(memberRepository.save(member));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MemberResponseDto.Info(memberRepository.save(member)));
     }
 
     /* 로그인 */

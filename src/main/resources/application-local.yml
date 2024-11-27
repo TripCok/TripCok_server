@@ -20,8 +20,8 @@ spring:
         format_sql: false
 
 mail:
-  username: 네이버 이메일
-  password: 네이버 비밀번호
+  username: ukidd12@naver.com
+  password: ljh90140189!
 
 
 save:

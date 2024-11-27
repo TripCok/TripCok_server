@@ -48,8 +48,6 @@ public class GroupService {
     public GroupResponseDto createGroup(@Valid GroupRequestDto requestDto) {
 
         /* #1 그룹 생성 */
-
-        //령래 추가 코드
         Board board = new Board();
 
         Group group = new Group(requestDto, board);

@@ -71,14 +71,6 @@ public class Group extends BaseEntity {
         this.recruiting = recruiting;
     }
 
-    public Group(GroupRequestDto requestDto) {
-
-        this.groupName = requestDto.getGroupName();
-        this.description = requestDto.getDescription();
-        this.category = requestDto.getCategory();
-
-    }
-
     public Group(GroupRequestDto requestDto, Board board) {
 
         this.groupName = requestDto.getGroupName();

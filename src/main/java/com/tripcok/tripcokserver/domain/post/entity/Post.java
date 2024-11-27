@@ -1,10 +1,13 @@
 package com.tripcok.tripcokserver.domain.post.entity;
 
 import com.tripcok.tripcokserver.domain.board.Board;
+import com.tripcok.tripcokserver.domain.member.entity.Member;
+import com.tripcok.tripcokserver.domain.post.dto.PostRequestDto.put;
 import com.tripcok.tripcokserver.domain.postcomment.entity.PostComment;
 import com.tripcok.tripcokserver.domain.post.dto.PostRequestDto;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,6 +33,10 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Type type = Type.COMMON;
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
@@ -37,10 +44,15 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PostComment> comments = new ArrayList<>();
 
-    public Post(PostRequestDto requestDto, Board board) {
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public Post(PostRequestDto.create requestDto, Board board, Member member) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.board = board;
+        this.member = member;
         if (requestDto.getType() == Type.NOTICE) {
             this.type = Type.NOTICE;
         }
@@ -50,4 +62,9 @@ public class Post extends BaseEntity {
         comments.add(comment);
     }
 
+    public void updatePost(PostRequestDto.put requestDto){
+        this.title = requestDto.getTitle() != null ? requestDto.getTitle() : title;
+        this.content = requestDto.getContent() != null ? requestDto.getContent() : content;
+        this.type = requestDto.getType() != null ? requestDto.getType() : type;
+    }
 }
