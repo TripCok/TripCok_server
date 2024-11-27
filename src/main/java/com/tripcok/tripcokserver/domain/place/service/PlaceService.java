@@ -17,6 +17,7 @@ import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -104,22 +105,33 @@ public class PlaceService {
         return ResponseEntity.status(HttpStatus.OK).body(new PlaceResponse(place, place.getCategoryMappings()));
     }
 
-    /* 필터별 여행지 조회 */
     @Transactional(readOnly = true)
-    public Page<PlaceResponse> getAllPlaces(List<Long> categoryIds, Pageable pageable) {
+    public Page<PlaceResponse> getAllPlaces(List<Long> categoryIds, String placeName, int page, int size) {
+        // 유효한 페이지 크기 보장
+        if (size < 1) {
+            size = 10; // 기본 페이지 크기 설정
+        }
+        Pageable pageable = PageRequest.of(page, size);
         Page<Place> places;
 
-        if (categoryIds != null && !categoryIds.isEmpty()) {
-            // 특정 카테고리 ID에 해당하는 여행지 조회
+        if (categoryIds != null && !categoryIds.isEmpty() && placeName != null && !placeName.isBlank()) {
+            // 카테고리와 이름 모두 필터링
+            places = placeRepository.findByCategoryIdsAndNameContaining(categoryIds, placeName, pageable);
+        } else if (categoryIds != null && !categoryIds.isEmpty()) {
+            // 카테고리만 필터링
             places = placeRepository.findByCategoryIds(categoryIds, pageable);
+        } else if (placeName != null && !placeName.isBlank()) {
+            // 이름만 필터링
+            places = placeRepository.findByNameContaining(placeName, pageable);
         } else {
-            // 모든 여행지 조회
+            // 모든 데이터 반환
             places = placeRepository.findAll(pageable);
         }
 
         // Place -> PlaceResponse 변환
         return places.map(place -> new PlaceResponse(place, place.getCategoryMappings()));
     }
+
 
     /* 여행지 업데이트 */
     @Transactional(rollbackFor = {NoSuchElementException.class, AccessDeniedException.class})

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link th:href="@{/css/place.css}" rel="stylesheet"/>
+    <title>Tripcok - Admin</title>
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <div class="navigation-container">
+        <div style="height: 100%" th:insert="~{fragments/menu :: menu-list}"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <div class="content-header d-flex justify-content-between align-items-center">
+            <h1>View Places</h1>
+            <div class="logo-container">
+                <p>Trip</p>
+                <p style="color: #6DB777">Cok</p>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="content-search d-flex align-items-center justify-content-between mb-3">
+            <p>All Places</p>
+            <input id="searchInput" class="form-control w-50" type="text" placeholder="검색어를 입력하세요."
+                   onkeyup="searchPlaces()">
+        </div>
+
+        <!-- Places Table -->
+        <table class="table table-bordered text-center align-middle">
+            <thead class="table-success">
+            <tr>
+                <th>ID</th>
+                <th>여행지</th>
+                <th>지역</th>
+                <th>카테고리</th>
+                <th>등록일</th>
+                <th>수정일</th>
+                <th>수정 / 삭제</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- JavaScript로 동적 렌더링 -->
+            </tbody>
+        </table>
+
+        <!-- Pagination and Add Button -->
+        <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-success" onclick="addPlace()">추가하기</button>
+            <nav>
+                <ul id="pagination" class="pagination"></ul>
+            </nav>
+            <div>총 <span id="totalPlaces">0</span> 건</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 초기 변수
+    let currentPage = 0;
+    let totalPages = 0;
+
+    /**
+     * 서버에서 여행지 데이터를 가져와 테이블에 렌더링
+     * @param {string} query 검색어
+     * @param {number} page 현재 페이지
+     * @param {number} size 페이지 당 데이터 수
+     */
+    // 데이터 가져오기
+    function fetchPlaces(query = '', page = 0, size = 10) {
+        const tableBody = document.querySelector('tbody');
+        if (size < 1) {
+            size = 10; // 최소 사이즈 1 이상 보장
+        }
+
+
+        fetch(`/api/v1/place?page=${page}&size=${size}&queryName=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                tableBody.innerHTML = '';
+                document.getElementById('totalPlaces').textContent = data.totalElements;
+
+                data.content.forEach(place => {
+                    const row = `
+                    <tr>
+                        <td>${place.id}</td>
+                        <td>${place.name}</td>
+                        <td>${place.address}</td>
+                        <td>${place.categories.join(' / ')}</td>
+                        <td>${place.createdDate}</td>
+                        <td>${place.updatedDate}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="editPlace(${place.id})">수정</button>
+                            <button class="btn btn-danger btn-sm" onclick="deletePlace(${place.id})">삭제</button>
+                        </td>
+                    </tr>
+                `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            })
+            .catch(error => console.error('Error fetching places:', error));
+    }
+
+    // 여행지 삭제
+    function deletePlace(placeId) {
+        if (confirm(`ID ${placeId}를 삭제하시겠습니까?`)) {
+            fetch(`/api/v1/place/${placeId}`, {method: 'DELETE'})
+                .then(response => {
+                    if (response.ok) {
+                        alert('삭제되었습니다.');
+                        fetchPlaces(); // 데이터 갱신
+                    } else {
+                        alert('삭제에 실패했습니다.');
+                    }
+                })
+                .catch(error => console.error('Error deleting place:', error));
+        }
+    }
+
+    /**
+     * 검색어 입력 시 호출
+     */
+    function searchPlaces() {
+        const query = document.getElementById('searchInput').value;
+        fetchPlaces(query); // 검색어로 데이터 가져오기
+    }
+
+    /**
+     * 여행지 추가
+     */
+    function addPlace() {
+        alert('여행지 추가 기능은 구현 중입니다.');
+    }
+
+    /**
+     * 여행지 수정
+     */
+    function editPlace(placeId) {
+        alert(`ID ${placeId} 수정 기능은 구현 중입니다.`);
+    }
+
+
+    // 페이지 로드 시 초기 데이터 가져오기
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchPlaces(); // 첫 페이지 데이터 로드
+    });
+</script>
+</body>
+</html>
