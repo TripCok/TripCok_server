@@ -15,4 +15,14 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Query("SELECT DISTINCT p FROM Place p JOIN p.categoryMappings cm WHERE cm.category.id IN :categoryIds")
     Page<Place> findByCategoryIds(@Param("categoryIds") List<Long> categoryIds, Pageable pageable);
 
+    // 카테고리 ID와 이름으로 필터링
+    @Query("SELECT DISTINCT p FROM Place p JOIN p.categoryMappings m WHERE m.category.id IN :categoryIds AND p.name LIKE %:name%")
+    Page<Place> findByCategoryIdsAndNameContaining(
+            @Param("categoryIds") List<Long> categoryIds,
+            @Param("name") String name,
+            Pageable pageable
+    );
+
+    // 이름으로만 필터링
+    Page<Place> findByNameContaining(String name, Pageable pageable);
 }

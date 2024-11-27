@@ -55,8 +55,16 @@ public class PlaceController {
     @ApiResponse(responseCode = "200", description = "카테고리 별로 필터된 여행지가 조회 되었습니다.")
     public ResponseEntity<?> getAllPlaces(
             @RequestParam(required = false) List<Long> categoryId,
-            Pageable pageable) {
-        Page<PlaceResponse> responsePage = placeService.getAllPlaces(categoryId, pageable);
+            @RequestParam(required = false) String placeName,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "0") Integer page) {
+
+        // size가 1보다 작은 경우 기본 값 10으로 설정
+        if (size < 1) {
+            size = 10;
+        }
+
+        Page<PlaceResponse> responsePage = placeService.getAllPlaces(categoryId, placeName, page, size);
         return ResponseEntity.ok(responsePage);
     }
 
