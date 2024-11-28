@@ -11,6 +11,7 @@ public class PostRequestDto {
     public static class create {
         private String title;
         private String content;
+        private Type type;
     }
 
     @Data
