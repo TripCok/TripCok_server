@@ -8,14 +8,8 @@ import lombok.Data;
 public class PostRequestDto {
 
     @Data
-    public static class create{
+    public static class create {
         private String title;
-        private String content;
-        private Type type;
-    }
-
-    @Data
-    public static class comment{
         private String content;
     }
 

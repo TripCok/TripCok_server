@@ -1,4 +1,4 @@
-package com.tripcok.tripcokserver.domain.post.service;
+package com.tripcok.tripcokserver.domain.postcomment.service;
 
 import com.tripcok.tripcokserver.domain.board.Board;
 import com.tripcok.tripcokserver.domain.group.dto.GroupRequestDto;
@@ -13,21 +13,35 @@ import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.post.dto.PostRequestDto;
 import com.tripcok.tripcokserver.domain.post.dto.PostResponseDto;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
+import com.tripcok.tripcokserver.domain.post.entity.Type;
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
+import com.tripcok.tripcokserver.domain.post.service.PostService;
+import com.tripcok.tripcokserver.domain.post.service.UnauthorizedAccessException;
+import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentRequestDto;
+import com.tripcok.tripcokserver.domain.postcomment.dto.PostCommentResponseDto;
+import com.tripcok.tripcokserver.domain.postcomment.entity.PostComment;
+import com.tripcok.tripcokserver.domain.postcomment.repository.PostCommentRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Transactional
-public class PostCrudTest {
+public class PostCommentCrudTest {
+
 
     private Member member;
 
@@ -39,6 +53,8 @@ public class PostCrudTest {
 
     private Post post;
 
+    private PostComment postComment;
+
     @Autowired
     private PostService postService;
     @Autowired
@@ -49,9 +65,13 @@ public class PostCrudTest {
     private MemberRepository memberRepository;
     @Autowired
     private GroupMemberRepository groupMemberRepository;
+    @Autowired
+    private PostCommentService postCommentService;
+    @Autowired
+    private PostCommentRepository postCommentRepository;
 
     @BeforeEach()
-    public void setData(){
+    public void setData() {
         // 회원이여야 함
         MemberRequestDto.save memberRequestDto = new MemberRequestDto.save();
         memberRequestDto.setName("test");
@@ -87,102 +107,73 @@ public class PostCrudTest {
         requestDto.setContent("test");
         requestDto.setContent("test2");
 
-        this.post = new Post(requestDto, this.board, member);
+        this.post = new Post(requestDto, Type.COMMON, this.board, member);
 
         postRepository.save(this.post);
 
         board.addPosts(this.post);
+
+        PostCommentRequestDto.comment pcrequestDto = new PostCommentRequestDto.comment();
+        pcrequestDto.setPostId(this.post.getId());
+        pcrequestDto.setContent("test");
+
+        this.postComment = new PostComment(pcrequestDto, post, member);
+        postCommentRepository.save(this.postComment);
     }
 
     @Test
-    public void getPost(){
+    public void getPostComment(){
 
-        // 생성한 게시글(Post) 정보와 조회한 게시글(Post)가 같아야 함
-        Long postId = this.post.getId();
+        // 생성한 댓글 정보와 조회한 댓글이 같아야 함
+        String content = this.postComment.getContent();
 
-        System.out.println("postId = " + postId);
+        PostCommentResponseDto.get responseDto = postCommentService.getPostComment(postComment.getId());
 
-        PostResponseDto.get responseDto = postService.getPost(postId);
-
-        Assertions.assertEquals(postId, responseDto.getId());
+        Assertions.assertEquals(content, responseDto.getContent());
     }
 
     @Test
     public void getPosts(){
-
         //Given
-        Pageable pageable = PageRequest.of(0, 2, Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(0,2, Sort.by("id").ascending());
 
         //when
-        Page<PostResponseDto.gets> pages = postService.getPosts(pageable);
+        Page<PostCommentResponseDto.gets> pages = postCommentService.getPostComments(pageable);
 
-        //then
+        //when
         Assertions.assertNotNull(pages);
     }
 
     @Test
-    public void putPost() throws UnauthorizedAccessException {
-        //dto로 넣은 값과 조회한 값이 일치하는 지 여부
+    public void putPostComment() throws UnauthorizedAccessException{
+        //dto로 넣은 값과 조회한 값이 일치하는지 여부
+
         //Given
-        Long postId = this.post.getId();
-        Long memberId = this.member.getId();
-        Long groupId = this.group.getId();
-        PostRequestDto.put requestDto = new PostRequestDto.put();
-        requestDto.setTitle("test");
+        Long postCommentId = this.postComment.getId();
+
+        PostCommentRequestDto.put requestDto = new PostCommentRequestDto.put();
         requestDto.setContent("test");
 
         //when
-        PostResponseDto.put response = postService.putPost(postId, memberId, groupId, requestDto);
+        PostCommentResponseDto.put reseponse = postCommentService.putPostCommit(requestDto);
 
         //then
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(postId, response.getId());
-        Assertions.assertEquals("post 수정 완료", response.getMessage());
-
+        Assertions.assertNotNull(reseponse);
+        Assertions.assertEquals(postCommentId, reseponse.getId());
     }
 
     @Test
-    public void putNotWriterPutPosts() throws UnauthorizedAccessException {
-        //글 작성자가 아닌 경우 글 변경 불가능
-        //그룹에 새로운 멤버 추가
-        MemberRequestDto.save memberRequestDto = new MemberRequestDto.save();
-        memberRequestDto.setName("NoWriter");
-        memberRequestDto.setEmail("test@test.com");
-        memberRequestDto.setPassword("123");
-        Member member1 = new Member(memberRequestDto);
-
-        memberRepository.save(member1);
-
-        Long postId = this.post.getId();
-        Long memberId = member1.getId();
-        Long groupId = this.group.getId();
-
-        GroupMember groupMember1 = new GroupMember(member1, group, GroupRole.MEMBER);
-        groupMemberRepository.save(groupMember1);
-
+    public void deletePostComment() throws UnauthorizedAccessException{
         //given
-        PostRequestDto.put requestDto = new PostRequestDto.put();
-        requestDto.setTitle("test");
-        requestDto.setContent("test");
-
-        //when & then
-        Assertions.assertThrows(UnauthorizedAccessException.class, () -> {
-            postService.putPost(postId, memberId, groupId, requestDto);
-        });
-    }
-
-    @Test
-    public void deletePost() throws UnauthorizedAccessException {
-        //given
-        Long postId = this.post.getId();
+        Long postCommentId = this.postComment.getId();
         Long memberId = this.member.getId();
 
         //when
-        postService.deletePost(postId, memberId);
+        postCommentService.deletePostCommit(postCommentId,memberId);
 
         //then
         Assertions.assertThrows(Exception.class, () -> {
-            postRepository.findById(postId);
+            postCommentRepository.findById(postCommentId).get().getId();
         });
     }
 }
