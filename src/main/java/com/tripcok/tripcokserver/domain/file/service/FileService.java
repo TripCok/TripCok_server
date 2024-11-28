@@ -59,9 +59,8 @@ public class FileService {
         return fileDtoList;
     }
 
+    /* 이미지 파일 로드 */
     public Resource loadImageAsResource(String filePath) {
-
-        // String을 Path로 변환
         Path path = Paths.get(filePath);
 
         try {
@@ -83,4 +82,23 @@ public class FileService {
             throw new RuntimeException(e);
         }
     }
+
+    /* 파일 삭제 */
+    public boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+
+        if (file.exists()) {
+            if (file.delete()) {
+                log.info("파일이 성공적으로 삭제되었습니다: " + filePath);
+                return true;
+            } else {
+                log.error("파일 삭제에 실패했습니다: " + filePath);
+                return false;
+            }
+        } else {
+            log.warn("삭제하려는 파일이 존재하지 않습니다: " + filePath);
+            return false;
+        }
+    }
 }
+
