@@ -81,7 +81,10 @@ public class WebAdminController {
         return "place";
     }
 
-
+    @GetMapping("/place/add")
+    public  String addplace() {
+    return "addplace";
+    }
 }
 
 
