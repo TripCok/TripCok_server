@@ -2,15 +2,15 @@ package com.tripcok.tripcokserver.domain.group.service;
 
 import com.tripcok.tripcokserver.domain.board.Board;
 import com.tripcok.tripcokserver.domain.group.dto.*;
-import com.tripcok.tripcokserver.domain.group.entity.Group;
-import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
-import com.tripcok.tripcokserver.domain.group.entity.GroupMemberInvite;
-import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
+import com.tripcok.tripcokserver.domain.group.entity.*;
+import com.tripcok.tripcokserver.domain.group.repository.GroupCategoryRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberInviteRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupMemberRepository;
 import com.tripcok.tripcokserver.domain.group.repository.GroupRepository;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
+import com.tripcok.tripcokserver.domain.place.entity.PlaceCategory;
+import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,8 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.tripcok.tripcokserver.domain.group.entity.GroupRole.ADMIN;
@@ -35,10 +35,13 @@ import static com.tripcok.tripcokserver.domain.group.entity.GroupRole.ADMIN;
 @Transactional
 public class GroupService {
 
+
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MemberRepository memberRepository;
     private final GroupMemberInviteRepository groupMemberInviteRepository;
+    private final GroupCategoryRepository groupCategoryRepository;
+    private final PlaceCategoryRepository categoryRepository;
 
     /**
      * - 모임 생성
@@ -56,6 +59,16 @@ public class GroupService {
 
         Group newGroup = groupRepository.save(group);
 
+        /* 카테고리 생성 등록 */
+        List<GroupCategory> newGroupList = requestDto.getCategories().stream()
+                .map(categoryId -> {
+                    PlaceCategory placeCategory = categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new NoSuchElementException("category not found: " + categoryId));
+                    return new GroupCategory(newGroup, placeCategory);
+
+                }).toList();
+
+
         Member findMember = memberRepository.findById(requestDto.getMemberId()).orElseThrow(
                 () -> new EntityNotFoundException("찾을수 없는 사용자 입니다.")
         );
@@ -69,16 +82,15 @@ public class GroupService {
 
         groupMemberRepository.save(groupMember);
 
+        List<GroupCategory> groupCategoryList = groupCategoryRepository.saveAll(newGroupList);
+
+
         return new GroupResponseDto(
                 newGroup.getGroupName(),
                 newGroup.getDescription(),
-                newGroup.getCategory(),
+                groupCategoryList,
                 newGroup.isRecruiting()
         );
-
-        /*GroupResponseDto responseDto = new GroupResponseDto();
-        responseDto.setGroupName(newGroup.getGroupName());
-        return responseDto;*/
     }
 
     // 2. 모임 조회 - 단일
@@ -120,7 +132,7 @@ public class GroupService {
         // 그룹 정보 업데이트
         group.setGroupName(requestDto.getGroupName());
         group.setDescription(requestDto.getDescription());
-        group.setCategory(requestDto.getCategory());
+//        group.setCategory(requestDto.getCategory());
 
         // 업데이트된 그룹 저장!
         groupRepository.save(group);
@@ -236,4 +248,42 @@ public class GroupService {
         groupMemberInviteRepository.delete(invite);
     }
 
+    /* 그룹에 카테고리 추가 */
+    @Transactional(rollbackFor = {NotFoundException.class, Exception.class})
+    public ResponseEntity<?> addGroupCategories(Long id, List<Long> categories) {
+        Group group = groupRepository.findById(id).orElseThrow(() -> new NoSuchElementException("옳 바르지 않은 요청입니다."));
+
+        List<GroupCategory> savingCategory = categories.stream().map(categoryId -> {
+            /* 이미 중복되는 카테고리는 저장 안되게 */
+            Optional<GroupCategory> byGroupIdAndCategoryId = groupCategoryRepository.findByGroupIdAndCategoryId(group.getId(), categoryId);
+            if (byGroupIdAndCategoryId.isEmpty()) {
+                PlaceCategory placeCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchElementException(""));
+                return new GroupCategory(group, placeCategory);
+            }
+            return null;
+        }).toList();
+
+        try {
+
+            groupCategoryRepository.saveAll(savingCategory);
+        } catch (Exception e) {
+            new Exception(e.getCause());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("성공적으로 추가하였습니다.");
+
+
+    }
+
+    /* 카테고리 삭제 */
+    public ResponseEntity<?> deleteGroupCategory(Long id, Long categoryId) {
+
+        try {
+            groupCategoryRepository.deleteByGroupIdAndCategoryId(id, categoryId);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("정상적으로 삭제 되었습니다.");
+
+    }
 }

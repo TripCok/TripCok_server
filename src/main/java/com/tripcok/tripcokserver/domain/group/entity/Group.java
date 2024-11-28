@@ -42,7 +42,8 @@ public class Group extends BaseEntity {
     private String description;
 
     /* 카테고리 */
-    private String category;
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupCategory> category;
 
     /* 신청서 */
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -75,7 +76,7 @@ public class Group extends BaseEntity {
 
         this.groupName = requestDto.getGroupName();
         this.description = requestDto.getDescription();
-        this.category = requestDto.getCategory();
+//        this.category = requestDto.getCategory();
         this.board = board;
 
     }
