@@ -13,6 +13,7 @@ public class GroupAllResponseDto {
     private Integer groupMemberCount;
     private String description;
     private List<GroupCategoryResponse> category;
+    private List<GroupMemberResponse> members;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     private boolean recruiting;
@@ -25,6 +26,9 @@ public class GroupAllResponseDto {
         this.description = group.getDescription();
         this.category = group.getCategory().stream().map(
                 category -> new GroupCategoryResponse(category.getCategory())
+        ).toList();
+        this.members = group.getGroupMembers().stream().map(
+                groupMember -> new GroupMemberResponse(groupMember.getMember())
         ).toList();
         this.createTime = group.getCreateTime();
         this.updateTime = group.getUpdateTime();

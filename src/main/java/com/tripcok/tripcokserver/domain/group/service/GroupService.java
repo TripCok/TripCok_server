@@ -85,24 +85,14 @@ public class GroupService {
         List<GroupCategory> groupCategoryList = groupCategoryRepository.saveAll(newGroupList);
 
 
-        return new GroupResponseDto(
-                newGroup.getGroupName(),
-                newGroup.getDescription(),
-                groupCategoryList,
-                newGroup.isRecruiting()
-        );
+        return new GroupResponseDto(newGroup);
     }
 
     // 2. 모임 조회 - 단일
     public GroupResponseDto getGroup(Long id) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
-        return new GroupResponseDto(
-                group.getGroupName(),
-                group.getDescription(),
-                group.getCategory(),
-                group.isRecruiting()
-        );
+        return new GroupResponseDto(group);
     }
 
     // 3. 모임 조회 - 복수 (Pageable)
@@ -135,15 +125,10 @@ public class GroupService {
 //        group.setCategory(requestDto.getCategory());
 
         // 업데이트된 그룹 저장!
-        groupRepository.save(group);
+        Group saveGroup = groupRepository.save(group);
 
         // 업데이트된 데이터를 DTO로 반환
-        return new GroupResponseDto(
-                group.getGroupName(),
-                group.getDescription(),
-                group.getCategory(),
-                group.isRecruiting()
-        );
+        return new GroupResponseDto(saveGroup);
     }
 
     // 4. 모임 구인상태 변경
