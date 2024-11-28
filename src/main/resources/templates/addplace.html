@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link th:href="@{/css/addplace.css}" rel="stylesheet"/>
+    <title>Tripcok - Admin</title>
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <div class="navigation-container">
+        <div style="height: 100%" th:insert="~{fragments/menu :: menu-list}"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <div class="content-header d-flex justify-content-between align-items-center">
+            <h1>View Places</h1>
+            <div class="logo-container">
+                <p>Trip</p>
+                <p style="color: #6DB777">Cok</p>
+            </div>
+        </div>
+
+        <div class="content-search">
+            <div>
+                <p>All Members</p>
+            </div>
+        </div>
+        <!-- 여행지 추가 부분 -->
+        <div class="add-content">
+            <!-- 왼쪽 박스 -->
+            <div class="left-box">
+                <div class="left-column1">
+                    <p>여행지</p>
+                    <input type="text" id="PlaceName" placeholder="여행지를 입력하세요.">
+                </div>
+
+                <div class="left-column2">
+                    <p>주소</p>
+                    <input type="text" id="Address" placeholder="주소를 입력하세요.">
+                </div>
+
+                <div class="left-column3">
+                    <p>설명</p>
+                    <textarea id="Description" class="description" placeholder="여행지에 대한 설명을 입력하세요."></textarea>
+                </div>
+            </div>
+            <!-- 오른쪽 박스 -->
+            <div class="right-box">
+                <div class="right-column1">
+                    <p>카테고리 선택</p>
+                    <input type="text" id="Category" placeholder="카테고리를 선택하세요.">
+                </div>
+
+                <div class="right-column2">
+                    <p>사진 등록하기</p>
+                    <div class="add-photo">
+                        <div class="add-photo-nav">
+                            <div class="add-photo-icon-box"><i class="bi bi-plus-square-fill"></i></div>
+                        </div>
+                        <div class="add-photo-cards">
+                            <div class="add-photo-card">
+                                <div>1</div>
+                                <div>목포 사진.png</div>
+                            </div>
+                            <div class="add-photo-card">
+                                <div>1</div>
+                                <div>목포 사진.png</div>
+                            </div>
+                            <div class="add-photo-card">
+                                <div>1</div>
+                                <div>목포 사진.png</div>
+                            </div>
+                            <div class="add-photo-card">
+                                <div>1</div>
+                                <div>목포 사진.png</div>
+                            </div>
+                            <div class="add-photo-card">
+                                <div>1</div>
+                                <div>목포 사진.png</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-box">
+            <button class="btn btn-primary">등록하기</button>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
