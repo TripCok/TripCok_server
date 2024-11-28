@@ -13,7 +13,9 @@ import com.tripcok.tripcokserver.domain.place.entity.PlaceCategoryMapping;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceImage;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryMappingRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
+import com.tripcok.tripcokserver.domain.place.repository.PlaceImageRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -26,8 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +41,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final PlaceCategoryRepository categoryRepository;
     private final PlaceCategoryMappingRepository placeCategoryMappingRepository;
+    private final PlaceImageRepository placeImageRepository;
     private final FileService fileService;
 
     @Value("${save.location.place}")
@@ -195,4 +200,35 @@ public class PlaceService {
 
         return ResponseEntity.status(HttpStatus.OK).body("성공적으로 여행지를 삭제 했습니다.");
     }
+
+    /* 여행지 이미지 삭제 */
+    @Transactional
+    public ResponseEntity<?> deletePlaceImg(List<Long> imageIds) {
+
+        List<String> failedDeletions = new ArrayList<>();
+
+        imageIds.forEach(imageId -> {
+            placeImageRepository.findById(imageId).ifPresentOrElse(placeImage -> {
+                String imagePath = placeImage.getImagePath();
+                try {
+                    fileService.deleteFile(imagePath);
+                    placeImageRepository.delete(placeImage);
+                } catch (Exception e) {
+                    failedDeletions.add(imagePath);
+                    e.printStackTrace();
+                }
+            }, () -> {
+                // 로그나 추가 처리 (선택 사항)
+                System.err.println("이미지를 찾을 수 없습니다: " + imageId);
+            });
+        });
+
+        if (!failedDeletions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("다음 이미지 삭제에 실패했습니다: " + String.join(", ", failedDeletions));
+        }
+
+        return ResponseEntity.ok("이미지를 성공적으로 삭제하였습니다.");
+    }
+
 }

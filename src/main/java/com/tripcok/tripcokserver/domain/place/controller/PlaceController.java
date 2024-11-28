@@ -80,6 +80,13 @@ public class PlaceController {
         return placeService.updatePlace(placeId, request, files);
     }
 
+    /* 여행지 이미지 삭제 */
+    @DeleteMapping("/images")
+    public ResponseEntity<?> deletePlace(
+            @RequestParam("imageIds") List<Long> imageIds) {
+        return placeService.deletePlaceImg(imageIds);
+    }
+
     /* 여행지 삭제*/
     @DeleteMapping("/{placeId}")
     @Operation(summary = "여행지 삭제", description = "여행지를 삭제합니다.")
