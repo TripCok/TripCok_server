@@ -2,6 +2,7 @@ package com.tripcok.tripcokserver.domain.group.dto;
 
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupCategory;
+import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
 import com.tripcok.tripcokserver.domain.place.dto.PlaceCategoryResponse;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceCategory;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,19 @@ public class GroupResponseDto {
     /* 그룹 구인 상태 */
     private boolean recruiting;
 
+    public GroupResponseDto(Group group, List<GroupCategory> categories, List<GroupMember> groupMembers) {
+        this.groupName = group.getGroupName();
+        this.description = group.getDescription();
+        this.categories = categories.stream().map(
+                category -> new GroupCategoryResponse(category.getCategory())
+        ).toList();
+        this.members = groupMembers.stream().map(
+                groupMember -> new GroupMemberResponse(groupMember.getMember())
+        ).toList();
+
+        this.recruiting = recruiting;
+    }
+
     public GroupResponseDto(Group group) {
         this.groupName = group.getGroupName();
         this.description = group.getDescription();
@@ -39,6 +53,6 @@ public class GroupResponseDto {
                 groupMember -> new GroupMemberResponse(groupMember.getMember())
         ).toList();
 
-        this.recruiting = recruiting;
+        this.recruiting = group.isRecruiting();
     }
 }

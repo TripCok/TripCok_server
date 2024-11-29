@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -80,12 +81,14 @@ public class GroupService {
                 ADMIN
         );
 
-        groupMemberRepository.save(groupMember);
+        GroupMember saveGroupMember = groupMemberRepository.save(groupMember);
 
         List<GroupCategory> groupCategoryList = groupCategoryRepository.saveAll(newGroupList);
 
+        List<GroupMember> groupMembers = new ArrayList<>();
+        groupMembers.add(saveGroupMember);
 
-        return new GroupResponseDto(newGroup);
+        return new GroupResponseDto(newGroup, groupCategoryList, groupMembers);
     }
 
     // 2. 모임 조회 - 단일

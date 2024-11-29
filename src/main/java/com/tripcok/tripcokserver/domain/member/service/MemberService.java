@@ -55,7 +55,7 @@ public class MemberService {
         if (findMember.isPresent()) {
             Member member = findMember.get();
             if (member.getPassword().equals(request.getPassword())) {
-                return ResponseEntity.status(HttpStatus.OK).body(member);
+                return ResponseEntity.status(HttpStatus.OK).body(new MemberResponseDto.Info(member));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호를 다시 확인하세요.");
             }
