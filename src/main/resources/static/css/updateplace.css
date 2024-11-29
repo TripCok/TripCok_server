@@ -226,7 +226,7 @@ p {
 .btn-secondary {
     width: 100%;
     background-color: #ffffff;
-    color: #ffffff;
+    color: #333;
     border: 3px solid #6DB777;
     border-radius: 10px;
     margin-bottom: 30px;
@@ -243,10 +243,10 @@ p {
     color: #333;
 }
 
-/*.dropdown-menu:hover {*/
-/*    background-color: #6DB777;*/
-/*    color: black;*/
-/*}*/
+.dropdown-menu:hover {
+    background-color: #6DB777;
+    color: black;
+}
 
 .right-column2 {
     width: 100%;
@@ -296,33 +296,35 @@ p {
     cursor: pointer;
 }
 
-.add-photo-icon-box > .bi{
+.add-photo-icon-box > .bi {
     color: #6DB777;
     font-size: 24px;
 }
 
-.add-photo-cards{
+.add-photo-cards {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
-.add-photo-card{
+
+.add-photo-card {
     min-width: 100%;
     display: flex;
     flex-direction: row;
 }
-.add-photo-card > div{
+
+.add-photo-card > div {
     border: 1px solid #dadada;
 }
 
-.add-photo-card > div:first-child{
+.add-photo-card > div:first-child {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 10%;
 }
 
-.add-photo-card > div:last-child{
+.add-photo-card > div:last-child {
     width: 90%;
     padding-left: 10px;
 }
@@ -336,17 +338,21 @@ p {
 }
 
 .btn-cancel {
-    width: 40px;
+    width: 60px;
     height: 40px;
+    background-color: #DADADA;
+    border: 3px solid #A0A0A0;
+    border-radius: 10px;
     margin-bottom: 10px;
     padding: 10px;
-    color: black;
+    color: #333;
     font-size: 15px;
 }
 
 .btn-update {
     width: 170px;
     height: 40px;
+    background-color: rgba(109, 183, 119, .3);
     border: 3px solid #6DB777;
     border-radius: 10px;
     margin-bottom: 10px;
