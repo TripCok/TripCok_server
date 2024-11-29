@@ -4,6 +4,7 @@ import com.tripcok.tripcokserver.domain.group.dto.GroupAllResponseDto;
 import com.tripcok.tripcokserver.domain.group.service.GroupService;
 import com.tripcok.tripcokserver.domain.member.dto.MemberListResponseDto;
 import com.tripcok.tripcokserver.domain.member.service.MemberService;
+import com.tripcok.tripcokserver.domain.place.dto.PlaceRequest;
 import com.tripcok.tripcokserver.domain.place.dto.PlaceResponse;
 import com.tripcok.tripcokserver.domain.place.service.PlaceService;
 import lombok.RequiredArgsConstructor;
@@ -82,8 +83,9 @@ public class WebAdminController {
     }
 
     @GetMapping("/place/add")
-    public  String addplace() {
-    return "addplace";
+    public String addPlace(Model model) {
+        model.addAttribute("request", new PlaceRequest.placeSave()); // 모델에 필요한 데이터 추가
+        return "addplace";
     }
 }
 
