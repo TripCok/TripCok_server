@@ -305,3 +305,34 @@ p {
     width: 90%;
     padding-left: 10px;
 }
+
+.post-box {
+    display: flex;
+    justify-content: flex-end;
+}
+.post-box div {
+    width: 15%;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 15px 10px;
+    margin: 10px;
+    border: none;
+    background-color: #6DB777;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    justify-content: end;
+}
+
+/* 버튼 마우스 오버 시 스타일 */
+.post-box .btn-primary:hover {
+    background-color: rgba(93, 169, 105, 0.78);
+    color: white;
+}
+
+/* 버튼 클릭 시 스타일 */
+.post-box .btn-primary:active {
+    background-color: #3f6944;
+    color: #ffffff; /* 텍스트 색상 검정 */
+}
+
