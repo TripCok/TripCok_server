@@ -77,7 +77,7 @@ public class GroupController {
     @ApiResponse(responseCode = "200", description = "모임 수정 성공")
     @PutMapping("/{id}")
     public ResponseEntity<GroupResponseDto> updateGroup(
-            @PathVariable Long id, @Valid @RequestBody GroupRequestDto requestDto) {
+            @PathVariable Long id, @Valid @RequestBody GroupRequestDto.update requestDto) {
         return ResponseEntity.ok(groupService.updateGroup(id, requestDto));
     }
 

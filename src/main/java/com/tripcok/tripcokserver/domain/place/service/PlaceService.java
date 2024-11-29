@@ -18,6 +18,7 @@ import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,7 @@ public class PlaceService {
     private final PlaceCategoryMappingRepository placeCategoryMappingRepository;
     private final PlaceImageRepository placeImageRepository;
     private final FileService fileService;
+    private final SqlDataSourceScriptDatabaseInitializer dataSourceScriptDatabaseInitializer;
 
     @Value("${save.location.place}")
     private String savePathDirectory;
@@ -94,10 +96,9 @@ public class PlaceService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자의 정보가 옳바르지 않습니다. Member ID : " + memberId));
 
-
-        if (!member.getRole().equals(Role.MANAGER)) {
-            throw new AccessDeniedException("올바르지 않은 권한입니다. Member ID: " + memberId);
-        }
+          if (member.getRole().equals(Role.USER)){
+              throw new AccessDeniedException("올바르지 않은 권한입니다. Member ID: " + memberId);
+          }
 
         return member;
     }
@@ -214,15 +215,16 @@ public class PlaceService {
                     fileService.deleteFile(imagePath);
                     placeImageRepository.delete(placeImage);
                 } catch (Exception e) {
-                    failedDeletions.add(imagePath);
                     e.printStackTrace();
                 }
             }, () -> {
                 // 로그나 추가 처리 (선택 사항)
+                failedDeletions.add(imageId.toString());
                 System.err.println("이미지를 찾을 수 없습니다: " + imageId);
             });
         });
 
+        System.out.println(failedDeletions);
         if (!failedDeletions.isEmpty()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("다음 이미지 삭제에 실패했습니다: " + String.join(", ", failedDeletions));

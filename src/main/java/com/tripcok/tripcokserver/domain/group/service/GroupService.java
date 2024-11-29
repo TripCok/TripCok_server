@@ -117,7 +117,7 @@ public class GroupService {
     }
 
     // 4. 모임 수정
-    public GroupResponseDto updateGroup(Long id, @Valid GroupRequestDto requestDto) {
+    public GroupResponseDto updateGroup(Long id, @Valid GroupRequestDto.update requestDto) {
         // ID로 그룹 조회 (없으면 예외 발생)
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
@@ -265,7 +265,7 @@ public class GroupService {
 
     /* 카테고리 삭제 */
     public ResponseEntity<?> deleteGroupCategory(Long id, Long categoryId) {
-
+        //System.out.println("----------------");
         try {
             groupCategoryRepository.deleteByGroupIdAndCategoryId(id, categoryId);
         } catch (Exception e) {

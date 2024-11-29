@@ -55,7 +55,7 @@ public class PlaceCategoryService {
                 () -> new EntityNotFoundException("옳바르지 않은 객체로 접근 :" + memberId)
         );
 
-        if (!findMember.getRole().equals(Role.MANAGER)) {
+        if (findMember.getRole().equals(Role.USER)) {
             throw new AccessDeniedException("옳바르지 않은 권한입니다. memberId :" + memberId);
         }
 
