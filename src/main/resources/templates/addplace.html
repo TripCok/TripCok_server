@@ -28,74 +28,160 @@
 
         <div class="content-search">
             <div>
-                <p>All Members</p>
+                <p>Add Place</p>
             </div>
         </div>
-        <!-- 여행지 추가 부분 -->
-        <div class="add-content">
-            <!-- 왼쪽 박스 -->
-            <div class="left-box">
-                <div class="left-column1">
-                    <p>여행지</p>
-                    <input type="text" id="PlaceName" placeholder="여행지를 입력하세요.">
-                </div>
+        <form id="addPlaceForm" method="post" action="/api/v1/place" enctype="multipart/form-data">
+            <!-- 여행지 추가 부분 -->
+            <div class="add-content">
+                <!-- 왼쪽 박스 -->
+                <div class="left-box">
+                    <div class="left-column1">
+                        <p>여행지</p>
+                        <input type="text" id="PlaceName" name="placeName" placeholder="여행지를 입력하세요." required>
+                    </div>
 
-                <div class="left-column2">
-                    <p>주소</p>
-                    <input type="text" id="Address" placeholder="주소를 입력하세요.">
-                </div>
+                    <div class="left-column2">
+                        <p>주소</p>
+                        <input type="text" id="Address" name="address" placeholder="주소를 입력하세요." required>
+                    </div>
 
-                <div class="left-column3">
-                    <p>설명</p>
-                    <textarea id="Description" class="description" placeholder="여행지에 대한 설명을 입력하세요."></textarea>
+                    <div class="left-column3">
+                        <p>설명</p>
+                        <textarea id="Description" name="description" placeholder="여행지에 대한 설명을 입력하세요."></textarea>
+                    </div>
                 </div>
-            </div>
-            <!-- 오른쪽 박스 -->
-            <div class="right-box">
-                <div class="right-column1">
-                    <p>카테고리 선택</p>
-                    <input type="text" id="Category" placeholder="카테고리를 선택하세요.">
-                </div>
+                <!-- 오른쪽 박스 -->
+                <div class="right-box">
+                    <div class="right-column1">
+                        <p>카테고리 선택</p>
+                        <input type="text" id="Category" name="category" placeholder="카테고리를 선택하세요.">
+                    </div>
 
-                <div class="right-column2">
-                    <p>사진 등록하기</p>
-                    <div class="add-photo">
-                        <div class="add-photo-nav">
-                            <div class="add-photo-icon-box"><i class="bi bi-plus-square-fill"></i></div>
-                        </div>
-                        <div class="add-photo-cards">
-                            <div class="add-photo-card">
-                                <div>1</div>
-                                <div>목포 사진.png</div>
+                    <div class="right-column2">
+                        <p>사진 등록하기</p>
+                        <div class="add-photo">
+                            <div class="add-photo-nav">
+                                <div class="add-photo-icon-box" style="cursor: pointer; font-size: 18px;">
+                                    <i class="bi bi-plus-square-fill"></i>
+                                    <input type="file" name="files" id="photoInput" accept="image/*"
+                                           style="display: none;" multiple>
+                                </div>
                             </div>
-                            <div class="add-photo-card">
-                                <div>1</div>
-                                <div>목포 사진.png</div>
-                            </div>
-                            <div class="add-photo-card">
-                                <div>1</div>
-                                <div>목포 사진.png</div>
-                            </div>
-                            <div class="add-photo-card">
-                                <div>1</div>
-                                <div>목포 사진.png</div>
-                            </div>
-                            <div class="add-photo-card">
-                                <div>1</div>
-                                <div>목포 사진.png</div>
+                            <div class="add-photo-cards">
+                                <div id="photoPreview" class="mt-3 d-flex flex-wrap gap-2">
+                                    <!-- 사진 미리보기 영역 -->
+                                </div>
+                                <div class="add-photo-card">
+                                    <div>1</div>
+                                    <div>목포 사진.png</div>
+                                </div>
+                                <div class="add-photo-card">
+                                    <div>1</div>
+                                    <div>목포 사진.png</div>
+                                </div>
+                                <div class="add-photo-card">
+                                    <div>1</div>
+                                    <div>목포 사진.png</div>
+                                </div>
+                                <div class="add-photo-card">
+                                    <div>1</div>
+                                    <div>목포 사진.png</div>
+                                </div>
+                                <div class="add-photo-card">
+                                    <div>1</div>
+                                    <div>목포 사진.png</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="post-box">
-            <button class="btn btn-primary">등록하기</button>
-        </div>
-
+            <div class="post-box">
+                <button class="btn btn-primary">등록하기</button>
+            </div>
+        </form>
     </div>
 </div>
 
+<script>
+    // 사진 추가 및 미리보기
+    const photoInput = document.getElementById('photoInput');
+    const photoPreview = document.getElementById('photoPreview');
+    const addPhotoIcon = document.querySelector('.add-photo-icon-box');
+
+    addPhotoIcon.addEventListener('click', () => {
+        photoInput.click(); // 파일 선택 창 열기
+    });
+
+    photoInput.addEventListener('change', (event) => {
+        const files = event.target.files;
+        photoPreview.innerHTML = ''; // 기존 미리보기 초기화
+
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'photo';
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+                img.style.border = '1px solid #ddd';
+                img.style.borderRadius = '5px';
+                photoPreview.appendChild(img);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // 폼 제출
+    const addPlaceForm = document.getElementById('addPlaceForm');
+
+    addPlaceForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // 기본 동작 막기
+
+        const formData = new FormData(addPlaceForm);
+
+        // JSON 데이터 생성
+        const requestData = {
+            name: document.getElementById('PlaceName').value,
+            address: document.getElementById('Address').value,
+            description: document.getElementById('Description').value,
+            category: document.getElementById('Category').value,
+            memberId: 1 // 사용자 ID 설정
+        };
+
+        // JSON 데이터를 'request'로 추가
+        formData.append('request', new Blob([JSON.stringify(requestData)], {type: 'application/json'}));
+
+        // 파일 추가
+        const files = document.getElementById('photoInput').files;
+        Array.from(files).forEach(file => {
+            formData.append('files', file);
+        });
+
+        fetch('/api/v1/place', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('여행지가 성공적으로 등록되었습니다.');
+                    addPlaceForm.reset();
+                    document.getElementById('photoPreview').innerHTML = ''; // 사진 미리보기 초기화
+                } else {
+                    throw new Error('등록 실패');
+                }
+            })
+            .catch(error => {
+                console.error('등록 중 오류 발생:', error);
+                alert('등록에 실패했습니다.');
+            });
+    });
+</script>
 </body>
 </html>
