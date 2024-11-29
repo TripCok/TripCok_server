@@ -145,7 +145,7 @@ p {
 
 .category-button {
     display: grid;
-    /*weight: 110px;*/
+    width: 110px;
     height: 40px;
     border-radius: 10px;
     border: 3px solid #DADADA;
@@ -159,9 +159,62 @@ p {
     color: #ffffff;
 }
 
-.input-emoji{
-    position: absolute;
+.input-emoji > input {
+    position: sticky;
+    transform: rotate(90deg);
     left: 80px;
     top:10px;
     color: #6db777;
+}
+
+.category-content {
+    display: none; /* 기본적으로 숨김 */
+    position: relative;
+    border: 2px solid #6db777;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #fff;
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 980px;
+    height: 600px;
+    box-sizing: border-box;
+}
+
+.category-content.active {
+    display: block; /* 활성화 시 표시 */
+}
+
+.category-add-section {
+    display: flex; /* 가로로 정렬 */
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    gap: 10px; /* 입력 필드와 버튼 사이의 간격 */
+}
+
+.category-add-wrapper {
+    display: flex; /* 가로 정렬 */
+    align-items: center;
+    width: 100%; /* 부모 요소의 전체 너비 사용 */
+    gap: 10px; /* 내부 요소 간격 */
+}
+
+.category-add .add-category {
+    flex: 1; /* 입력 필드가 가능한 너비를 차지 */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.submit-button {
+    padding: 5px 10px;
+    background-color: #6db777;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #5aa066;
 }
