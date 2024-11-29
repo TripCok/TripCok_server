@@ -310,7 +310,7 @@ p {
     display: flex;
     justify-content: flex-end;
 }
-.post-box button {
+.post-box div {
     width: 15%;
     font-size: 16px;
     font-weight: bold;
@@ -325,13 +325,13 @@ p {
 }
 
 /* 버튼 마우스 오버 시 스타일 */
-.post-box .btn:hover {
+.post-box .btn-primary:hover {
     background-color: rgba(93, 169, 105, 0.78);
     color: white;
 }
 
 /* 버튼 클릭 시 스타일 */
-.post-box .btn:active {
+.post-box .btn-primary:active {
     background-color: #3f6944;
     color: #ffffff; /* 텍스트 색상 검정 */
 }
