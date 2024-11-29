@@ -10,29 +10,29 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Getter
 public class GroupResponseDto {
 
-    /* 그룹 이름 */
+    private long id;
     private String groupName;
-
-    /* 그룹 소개 */
+    private Integer groupMemberCount;
     private String description;
-
-    /* 그룹 카테고리 */
     private List<GroupCategoryResponse> categories;
-
     private List<GroupMemberResponse> members;
-
-    /* 그룹 구인 상태 */
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
     private boolean recruiting;
 
+
     public GroupResponseDto(Group group, List<GroupCategory> categories, List<GroupMember> groupMembers) {
+        this.id = group.getId();
         this.groupName = group.getGroupName();
         this.description = group.getDescription();
+        this.groupMemberCount = groupMembers.size();
         this.categories = categories.stream().map(
                 category -> new GroupCategoryResponse(category.getCategory())
         ).toList();
@@ -40,12 +40,14 @@ public class GroupResponseDto {
                 groupMember -> new GroupMemberResponse(groupMember.getMember())
         ).toList();
 
-        this.recruiting = recruiting;
+        this.recruiting = group.isRecruiting();
     }
 
     public GroupResponseDto(Group group) {
+        this.id = group.getId();
         this.groupName = group.getGroupName();
         this.description = group.getDescription();
+        this.groupMemberCount = group.getGroupMembers().size();
         this.categories = group.getCategory().stream().map(
                 category -> new GroupCategoryResponse(category.getCategory())
         ).toList();
