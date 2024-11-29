@@ -89,6 +89,9 @@ public class WebAdminController {
 
     @GetMapping("/place/update")
     public String updateplace() {return "updateplace";}
+
+    @GetMapping("/category")
+    public String category() {return "category";}
 }
 
 

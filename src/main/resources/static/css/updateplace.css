@@ -95,6 +95,10 @@ p {
     margin-bottom: 50px;
 }
 
+.content-header > h1 {
+    font-weight: bold;
+}
+
 .logo-container {
     display: flex;
     flex-direction: row;
