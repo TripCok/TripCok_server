@@ -137,35 +137,53 @@ p {
     border-radius: 10px;
     border: 3px solid #6db777;
     padding: 20px;
-    width: 100%;
-    weight: 1175px;
-    height: 650px;
-    justify-content: space-between;
+    height: fit-content;
 }
 
 .category-button {
     display: grid;
+}
+
+.category-button1 {
     width: 110px;
     height: 40px;
     border-radius: 10px;
-    border: 3px solid #DADADA;
+    border: 3px solid #6db777;
     background-color: #ffffff;
     color: #6db777;
-    gap: 25px;
+    margin-bottom: 25px;
+}
+.category-button2 {
+    width: 110px;
+    height: 40px;
+    border-radius: 10px;
+    border: 3px solid #6db777;
+    background-color: #ffffff;
+    color: #6db777;
+    margin-bottom: 25px;
+}
+.category-button3 {
+    width: 110px;
+    height: 40px;
+    border-radius: 10px;
+    border: 3px solid #6db777;
+    background-color: #ffffff;
+    color: #6db777;
 }
 
-.category-button:hover {
+.category-button1:hover {
+    background-color: #6db777;
+    color: #ffffff;
+}
+.category-button2:hover {
+    background-color: #6db777;
+    color: #ffffff;
+}
+.category-button3:hover {
     background-color: #6db777;
     color: #ffffff;
 }
 
-.input-emoji > input {
-    position: sticky;
-    transform: rotate(90deg);
-    left: 80px;
-    top:10px;
-    color: #6db777;
-}
 
 .category-content {
     display: none; /* 기본적으로 숨김 */
@@ -174,11 +192,8 @@ p {
     border-radius: 10px;
     padding: 20px;
     background-color: #fff;
-    margin-top: 20px;
-    margin-left: 20px;
-    width: 980px;
-    height: 600px;
     box-sizing: border-box;
+    margin-left: 20px;
 }
 
 .category-content.active {
@@ -186,21 +201,21 @@ p {
 }
 
 .category-add-section {
-    display: flex; /* 가로로 정렬 */
-    justify-content: flex-start; /* 왼쪽 정렬 */
-    align-items: center; /* 수직 중앙 정렬 */
-    gap: 10px; /* 입력 필드와 버튼 사이의 간격 */
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 50px;
+    gap: 10px;
 }
 
 .category-add-wrapper {
-    display: flex; /* 가로 정렬 */
+    display: flex;
     align-items: center;
-    width: 100%; /* 부모 요소의 전체 너비 사용 */
-    gap: 10px; /* 내부 요소 간격 */
+    width: 100%;
+    gap: 10px;
 }
 
 .category-add .add-category {
-    flex: 1; /* 입력 필드가 가능한 너비를 차지 */
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;

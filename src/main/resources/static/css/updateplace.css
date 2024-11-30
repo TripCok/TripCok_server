@@ -210,81 +210,50 @@ p {
 .right-box {
     max-width: 48%;
     min-width: 48%;
-    height: auto;
+    height: fit-content;
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 20px;
 }
 
-.right-column1-dropdown {
+.right-column1 {
     width: 100%;
-    gap: 380px;
 }
 
-.right-column1-dropdown > p {
+.right-column1 >p {
     font-size: 15px;
     font-weight: bold;
     color: #333;
 }
 
-.btn-secondary {
+.right-column1 > select {
     width: 100%;
-    background-color: #ffffff;
-    color: #333;
     border: 3px solid #6DB777;
     border-radius: 10px;
-    margin-bottom: 30px;
-    padding: 10px;
-}
-
-.dropdown-menu {
-    background-color: #ffffff;
-    border: 3px solid #6DB777;
-    border-radius: 10px;
-}
-
-.dropdown-item {
-    color: #333;
-}
-
-.dropdown-menu:hover {
-    background-color: #6DB777;
-    color: black;
+    padding: 5px;
 }
 
 .right-column2 {
     width: 100%;
 }
 
-.right-column2 > p {
+.right-column2 >p {
     font-size: 15px;
     font-weight: bold;
     color: #333;
 }
 
-.right-column2 > textarea {
-    width: 100%;
-    border: 3px solid #6DB777;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    padding: 10px;
-    resize: none;
-    height: auto;
-}
-
 .add-photo {
     width: 100%;
-    min-height: 200%;
+    min-height: 100%;
     border: 3px solid #6DB777;
     border-radius: 10px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
+    padding-top: 10px;
 }
 
 .add-photo-nav {
-    display: flex;
-    justify-content: flex-start;
+    margin-left: 10px;
     margin-bottom: 10px;
 }
 
@@ -292,45 +261,16 @@ p {
     padding: 10px;
     border-radius: 10px;
     border: 3px solid #6DB777;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
-.add-photo-icon-box > .bi {
-    color: #6DB777;
-    font-size: 24px;
-}
-
-.add-photo-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.add-photo-card {
-    min-width: 100%;
+    width: 40px;
+    height: 40px;
     display: flex;
     flex-direction: row;
-}
-
-.add-photo-card > div {
-    border: 1px solid #dadada;
-}
-
-.add-photo-card > div:first-child {
-    display: flex;
     justify-content: center;
     align-items: center;
-    width: 10%;
 }
 
-.add-photo-card > div:last-child {
-    width: 90%;
-    padding-left: 10px;
+.add-photo-icon-box > .bi{
+    color: #6DB777;
 }
 
 .button-container {
@@ -348,7 +288,7 @@ p {
     border: 3px solid #A0A0A0;
     border-radius: 10px;
     margin-bottom: 10px;
-    padding: 10px;
+    padding: 5px;
     color: #333;
     font-size: 15px;
 }
@@ -360,7 +300,7 @@ p {
     border: 3px solid #6DB777;
     border-radius: 10px;
     margin-bottom: 10px;
-    padding: 10px;
+    padding: 5px;
     font-size: 15px;
     font-weight: bold;
     color: #333;
