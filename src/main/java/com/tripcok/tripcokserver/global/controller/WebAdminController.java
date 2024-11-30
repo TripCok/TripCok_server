@@ -87,6 +87,9 @@ public class WebAdminController {
         model.addAttribute("request", new PlaceRequest.placeSave()); // 모델에 필요한 데이터 추가
         return "addplace";
     }
+
+    @GetMapping()
+    public String dashboard() {return "dashboard";}
 }
 
 
