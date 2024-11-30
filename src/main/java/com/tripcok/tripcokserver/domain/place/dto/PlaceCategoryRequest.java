@@ -5,10 +5,7 @@ import lombok.Data;
 @Data
 public class PlaceCategoryRequest {
 
-    /* 요청자 아이디 */
-    private Long memberId;
-
-    private String name;
-
-    private Long parentId;
+    private Long memberId; // 요청자 아이디
+    private String placeName; // 여행지 이름
+    private Long parentId; // 카테고리 부모 ID
 }

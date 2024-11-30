@@ -2,8 +2,14 @@ package com.tripcok.tripcokserver.domain.group.entity;
 
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class GroupMemberInvite {
 
     @Id
@@ -24,10 +30,7 @@ public class GroupMemberInvite {
     public GroupMemberInvite(Member member, Group group) {
         this.member = member;
         this.group = group;
-    }
-
-    public GroupMemberInvite() {
-
+        this.invitationStatus = InvitationStatus.PENDING;
     }
 
     /* 초대 거절 */
