@@ -100,42 +100,41 @@ public class GroupService {
     }
 
     // 3. 모임 조회 - 복수 (Pageable)
-    public Page<GroupAllResponseDto> getGroups(String query, Integer pageNum, Integer pageSize) {
+    public Page<?> getGroups(List<Long> categoryIds, Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
 
-        // 검색어가 있을 경우 그룹 이름으로 필터링
-        Page<Group> groups;
+        Page<Group> groupsPage;
 
-        if (query != null && !query.trim().isEmpty()) {
-            groups = groupRepository.findByGroupNameContainingIgnoreCase(query, pageable);
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            // 1. 카테고리가 있는 경우
+            groupsPage = groupRepository.findAllByCategoryIds(categoryIds, pageable);
         } else {
-            groups = groupRepository.findAll(pageable);
+            // 2. 카테고리가 없는 경우
+            groupsPage = groupRepository.findAllByOrderByCreateAtDesc(pageable);
         }
 
-        return groups.map(GroupAllResponseDto::new);
-
+        // Page<Group> -> Page<GroupAllResponseDto> 변환
+        return groupsPage.map(GroupAllResponseDto::new);
     }
 
     /* 내가 가입된 모임 조회 */
-    public ResponseEntity<List<GroupResponseDto>> getMyGroups(List<Long> categoryIds, Integer pageNum, Integer pageSize, Long memberId) {
+    public ResponseEntity<?> getMyGroups(List<Long> categoryIds, Integer pageNum, Integer pageSize, Long memberId) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
 
-        List<Group> groups;
+        Page<Group> groupsPage;
 
         if (categoryIds != null && !categoryIds.isEmpty()) {
             // 1. 카테고리가 있는 경우: 사용자가 가입한 그룹 중 카테고리가 일치하는 그룹 조회
-            groups = groupMemberRepository.findGroupsByMemberIdAndCategoryIds(memberId, categoryIds, pageable);
+            groupsPage = groupMemberRepository.findGroupsByMemberIdAndCategoryIds(memberId, categoryIds, pageable);
         } else {
             // 2. 카테고리가 없는 경우: 사용자가 가입한 모든 그룹 조회
-            groups = groupMemberRepository.findGroupsByMemberId(memberId, pageable);
+            groupsPage = groupMemberRepository.findGroupsByMemberId(memberId, pageable);
         }
 
-        List<GroupResponseDto> response = groups.stream()
-                .map(GroupResponseDto::new)
-                .collect(Collectors.toList());
+        // Page<Group> -> Page<GroupResponseDto> 변환
+        Page<GroupResponseDto> responsePage = groupsPage.map(GroupResponseDto::new);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-
+        return ResponseEntity.ok(responsePage);
     }
 
     // 4. 모임 수정

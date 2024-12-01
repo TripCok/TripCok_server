@@ -1,14 +1,14 @@
 package com.tripcok.tripcokserver.domain.group.controller;
 
-import com.tripcok.tripcokserver.domain.group.dto.*;
-import com.tripcok.tripcokserver.domain.group.entity.Group;
+import com.tripcok.tripcokserver.domain.group.dto.GroupInviteDto;
+import com.tripcok.tripcokserver.domain.group.dto.GroupRequestDto;
+import com.tripcok.tripcokserver.domain.group.dto.GroupResponseDto;
+import com.tripcok.tripcokserver.domain.group.dto.InviteRequestDto;
 import com.tripcok.tripcokserver.domain.group.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,10 +51,10 @@ public class GroupController {
     @ApiResponse(responseCode = "200", description = "모임 목록 조회 성공")
     @GetMapping("/all")
     public ResponseEntity<?> getGroups(
-            @RequestParam("query") String query,
+            @RequestParam(value = "categoryIds", required = false) List<Long> categoryIds,
             @RequestParam("page") Integer page,
             @RequestParam("size") Integer size) {
-        return ResponseEntity.ok(groupService.getGroups(query, page, size));
+        return ResponseEntity.ok(groupService.getGroups(categoryIds, page, size));
     }
 
     /*내가 가입된 모임 조회*/

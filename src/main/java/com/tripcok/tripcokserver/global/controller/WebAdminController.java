@@ -57,10 +57,10 @@ public class WebAdminController {
 
     @GetMapping("/group")
     public String groups(Model model,
-                         @RequestParam(required = false) String query,
+                         @RequestParam(required = false) List<Long> categoryIds,
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size) {
-        Page<GroupAllResponseDto> groups = groupService.getGroups(query, page, size);
+        Page<?> groups = groupService.getGroups(categoryIds, page, size);
 
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", groups.getTotalPages());
