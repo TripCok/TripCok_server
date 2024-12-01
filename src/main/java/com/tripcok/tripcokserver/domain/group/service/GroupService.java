@@ -113,6 +113,7 @@ public class GroupService {
         }
 
         return groups.map(GroupAllResponseDto::new);
+
     }
 
     /* 내가 가입된 모임 조회 */
@@ -134,6 +135,7 @@ public class GroupService {
                 .collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
     // 4. 모임 수정

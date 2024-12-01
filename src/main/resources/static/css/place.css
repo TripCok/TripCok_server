@@ -116,8 +116,8 @@ p {
     border-bottom: 3px solid #6DB777;
 }
 
-.content-search > div > p {
-    font-size: 20px;
+.content-search > p {
+    font-size: 15px;
     font-weight: 600;
 }
 
@@ -133,4 +133,68 @@ p {
 
 .member-search:focus {
     border: 3px solid #6DB777;
+}
+
+/* 검색 필드 */
+#searchInput {
+    outline: none;
+    border: 3px solid #d2d2d2;
+    border-radius: 10px;
+    width: 450px;
+    height: 40px;
+    padding: 10px 15px;
+    transition: 0.3s border ease-in-out;
+}
+
+#searchInput:focus {
+    border: 3px solid #6DB777;
+}
+
+/* 카테고리 선택 드롭다운 */
+#categorySelect {
+    outline: none;
+    border: 3px solid #d2d2d2;
+    border-radius: 10px;
+    height: 40px;
+    padding: 5px 10px;
+    font-size: 16px;
+    width: 300px;
+    transition: 0.3s border ease-in-out;
+}
+
+#categorySelect:focus {
+    border: 3px solid #6DB777;
+}
+
+/* 테이블 스타일 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+table th {
+    background-color: #6DB777;
+    color: white;
+    font-weight: bold;
+}
+
+/* 버튼 스타일 */
+button {
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    transition: 0.2s background-color ease-in-out;
+}
+
+button:hover {
+    background-color: #5aa666;
+    color: white;
 }

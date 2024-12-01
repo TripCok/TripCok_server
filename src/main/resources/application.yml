@@ -2,12 +2,12 @@ spring:
   profiles:
     active: local
 
-logging:
-  level:
-    org:
-      springframework:
-        web: DEBUG
-      hibernate:
-        type:
-          descriptor:
-            sql: TRACE
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        web: DEBUG
+#      hibernate:
+#        type:
+#          descriptor:
+#            sql: TRACE
