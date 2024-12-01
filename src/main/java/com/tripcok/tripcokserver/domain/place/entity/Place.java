@@ -1,6 +1,7 @@
 package com.tripcok.tripcokserver.domain.place.entity;
 
 import com.tripcok.tripcokserver.domain.place.dto.PlaceRequest;
+import com.tripcok.tripcokserver.domain.recommend.entity.Recommend;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -44,6 +45,9 @@ public class Place extends BaseEntity {
     /* 카테고리 매핑 */
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaceCategoryMapping> categoryMappings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Recommend> recommends = new ArrayList<>();
 
     public Place(PlaceRequest.placeSave request) {
         this.name = request.getName();

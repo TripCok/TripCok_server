@@ -3,6 +3,7 @@ package com.tripcok.tripcokserver.domain.group.entity;
 import com.tripcok.tripcokserver.domain.application.entity.Application;
 import com.tripcok.tripcokserver.domain.board.Board;
 import com.tripcok.tripcokserver.domain.group.dto.GroupRequestDto;
+import com.tripcok.tripcokserver.domain.recommend.entity.Recommend;
 import com.tripcok.tripcokserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -61,6 +62,10 @@ public class Group extends BaseEntity {
     /* 모암 초대 인원 */
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupMemberInvite> groupMemberInvites;
+
+    /*추천 결과*/
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Recommend> recommends = new ArrayList<>();
 
     public Boolean isRecruiting() {
 
