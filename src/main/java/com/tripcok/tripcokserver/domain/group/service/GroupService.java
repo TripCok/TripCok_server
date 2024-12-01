@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.tripcok.tripcokserver.domain.group.entity.GroupRole.ADMIN;
 
@@ -112,6 +113,28 @@ public class GroupService {
         }
 
         return groups.map(GroupAllResponseDto::new);
+
+    }
+
+    /* 내가 가입된 모임 조회 */
+    public ResponseEntity<List<GroupResponseDto>> getMyGroups(List<Long> categoryIds, Integer pageNum, Integer pageSize, Long memberId) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+
+        List<Group> groups;
+
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            // 1. 카테고리가 있는 경우: 사용자가 가입한 그룹 중 카테고리가 일치하는 그룹 조회
+            groups = groupMemberRepository.findGroupsByMemberIdAndCategoryIds(memberId, categoryIds, pageable);
+        } else {
+            // 2. 카테고리가 없는 경우: 사용자가 가입한 모든 그룹 조회
+            groups = groupMemberRepository.findGroupsByMemberId(memberId, pageable);
+        }
+
+        List<GroupResponseDto> response = groups.stream()
+                .map(GroupResponseDto::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 
@@ -264,7 +287,6 @@ public class GroupService {
 
     /* 카테고리 삭제 */
     public ResponseEntity<?> deleteGroupCategory(Long id, Long categoryId) {
-        //System.out.println("----------------");
         try {
             groupCategoryRepository.deleteByGroupIdAndCategoryId(id, categoryId);
         } catch (Exception e) {
@@ -273,4 +295,5 @@ public class GroupService {
         return ResponseEntity.status(HttpStatus.OK).body("정상적으로 삭제 되었습니다.");
 
     }
+
 }

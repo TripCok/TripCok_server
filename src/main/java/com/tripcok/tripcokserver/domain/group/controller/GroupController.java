@@ -1,11 +1,14 @@
 package com.tripcok.tripcokserver.domain.group.controller;
 
 import com.tripcok.tripcokserver.domain.group.dto.*;
+import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +55,15 @@ public class GroupController {
             @RequestParam("page") Integer page,
             @RequestParam("size") Integer size) {
         return ResponseEntity.ok(groupService.getGroups(query, page, size));
+    }
+
+    /*내가 가입된 모임 조회*/
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyGroups(@RequestParam(value = "categories", required = false) List<Long> categoryIds,
+                                         @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                         @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                         @RequestParam(value = "memberId") Long memberId) {
+        return groupService.getMyGroups(categoryIds, page, size, memberId);
     }
 
     /* 모임 카테고리 추가 */
@@ -104,7 +116,6 @@ public class GroupController {
     @ApiResponse(responseCode = "200", description = "모임 초대 성공")
     @PostMapping("/invite")
     public ResponseEntity<?> inviteMember(@RequestBody GroupInviteDto inviteDto) {
-
         return groupService.inviteMember(inviteDto);
     }
 
@@ -116,4 +127,6 @@ public class GroupController {
         groupService.acceptInvite(request);
         return ResponseEntity.ok().build();
     }
+
+
 }
