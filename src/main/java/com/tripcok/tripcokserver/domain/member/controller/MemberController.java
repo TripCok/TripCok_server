@@ -5,6 +5,7 @@ import com.tripcok.tripcokserver.domain.member.dto.MemberResponseDto;
 import com.tripcok.tripcokserver.domain.member.service.MemberService;
 import com.tripcok.tripcokserver.global.service.EmailService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -48,8 +49,10 @@ public class MemberController {
 
     /* 로그인 */
     @PutMapping("/login")
-    public ResponseEntity<?> login(@RequestBody MemberRequestDto.login request) {
-        return memberService.loginMember(request);
+    public ResponseEntity<?> login(@RequestBody MemberRequestDto.login request, HttpSession session) {
+
+        log.info(request.toString());
+        return memberService.loginMember(request, session);
     }
 
     /* 회원 정보 조회 */
@@ -91,8 +94,6 @@ public class MemberController {
     ) {
         return memberService.updateProfileName(memberId, name);
     }
-
-
 
 
     /* 회원 삭제 */
