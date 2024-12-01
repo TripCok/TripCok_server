@@ -20,14 +20,17 @@ public class AdminInterceptor implements HandlerInterceptor {
 
         Member member = (Member) request.getSession().getAttribute("member");
 
-        log.info("Pre Handle => " + member.toString());
+//        log.info("Pre Handle => " + member.toString());
 
-        if (!member.getRole().equals(Role.MANAGER)) {
+        try {
+            if (member.getRole().equals(Role.MANAGER)) {
+                return true;
+            }
+        } catch (NullPointerException e) {
             response.sendRedirect("/admin/login");
             return false;
         }
 
-        // 인증 정보가 있으면 요청 계속 처리
         return true;
     }
 

@@ -59,7 +59,6 @@ public class WebAdminController {
                          @RequestParam(defaultValue = "10") int size) {
         Page<GroupAllResponseDto> groups = groupService.getGroups(query, page, size);
 
-        model.addAttribute("groups", groups);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", groups.getTotalPages());
         model.addAttribute("member", session.getAttribute("member"));

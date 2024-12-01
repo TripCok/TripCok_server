@@ -112,8 +112,7 @@ public class GroupService {
         }
 
         return groups.map(GroupAllResponseDto::new);
-        /*Page<Group> all = groupRepository.findAll(pageable);
-        return all.map(GroupAllResponseDto::new);*/
+
     }
 
     // 4. 모임 수정
