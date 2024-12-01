@@ -10,12 +10,19 @@ import com.tripcok.tripcokserver.domain.recommend.dto.RecommendResponseDto;
 import com.tripcok.tripcokserver.domain.recommend.entity.Recommend;
 import com.tripcok.tripcokserver.domain.recommend.repository.RecommendRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import javax.crypto.spec.OAEPParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,15 +32,39 @@ public class RecommendService {
     private final PlaceRepository placeRepository;
     private final GroupRepository groupRepository;
 
-    public List<RecommendResponseDto> getRecommends() {
-           List<Recommend> recommends = recommendRepository.findAllSortedByScoreDesc();
-           List<RecommendResponseDto> responseDtos = new ArrayList<>();
-           recommends.forEach(recommend -> {
-                Place place = recommend.getPlace();
-                PlaceResponse placeResponse = new PlaceResponse(place, place.getCategoryMappings());
-                responseDtos.add(new RecommendResponseDto(recommend.getScore(), recommend.getGroup().getId(), placeResponse));
-           });
-           return responseDtos;
+    public Page<PlaceResponse> getRecommendPlaces() {
+        // 추천 장소 리스트 생성
+        List<PlaceResponse> recommendPlaces = recommendRepository.findAllSortedByScoreDesc()
+                .stream()
+                .map(recommend -> new PlaceResponse(recommend.getPlace(), recommend.getPlace().getCategoryMappings()))
+                .toList();
+
+        // 일반 장소 리스트 생성
+        List<PlaceResponse> restPlaces = placeRepository.findAllExceptRecommends()
+                .stream()
+                .map(restPlace -> new PlaceResponse(restPlace, restPlace.getCategoryMappings()))
+                .toList();
+
+        // 추천 장소와 일반 장소 합치기
+        List<PlaceResponse> allPlaces = new ArrayList<>(recommendPlaces);
+        allPlaces.addAll(restPlaces);
+
+        // 페이지 처리
+        int page = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        // Page 객체 생성 및 반환
+        Page<PlaceResponse> pageResult = new PageImpl<>(
+                allPlaces.subList(
+                        Math.min(page * size, allPlaces.size()),
+                        Math.min((page + 1) * size, allPlaces.size())
+                ),
+                pageRequest,
+                allPlaces.size()
+        );
+
+        return pageResult;
     }
 
     public RecommendResponseDto putRecommend(RecommendRequestDto requestDto) {
@@ -45,7 +76,6 @@ public class RecommendService {
 
         recommendRepository.save(recommend);
         PlaceResponse placeResponseDto = new PlaceResponse(place,place.getCategoryMappings());
-        RecommendResponseDto responseDto = new RecommendResponseDto(requestDto.getScore(), requestDto.getGroup_id(), placeResponseDto);
-        return responseDto;
+        return new RecommendResponseDto(requestDto.getScore(), requestDto.getGroup_id(), placeResponseDto);
     }
 }

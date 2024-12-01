@@ -25,4 +25,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     // 이름으로만 필터링
     Page<Place> findByNameContaining(String name, Pageable pageable);
+
+    @Query("SELECT p FROM Place p WHERE p.id NOT IN (SELECT r.place.id FROM Recommend r)")
+    List<Place> findAllExceptRecommends();
 }
