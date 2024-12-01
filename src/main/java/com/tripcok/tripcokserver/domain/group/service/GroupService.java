@@ -24,9 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.tripcok.tripcokserver.domain.group.entity.GroupRole.ADMIN;
 
@@ -80,29 +82,21 @@ public class GroupService {
                 ADMIN
         );
 
-        groupMemberRepository.save(groupMember);
+        GroupMember saveGroupMember = groupMemberRepository.save(groupMember);
 
         List<GroupCategory> groupCategoryList = groupCategoryRepository.saveAll(newGroupList);
 
+        List<GroupMember> groupMembers = new ArrayList<>();
+        groupMembers.add(saveGroupMember);
 
-        return new GroupResponseDto(
-                newGroup.getGroupName(),
-                newGroup.getDescription(),
-                groupCategoryList,
-                newGroup.isRecruiting()
-        );
+        return new GroupResponseDto(newGroup, groupCategoryList, groupMembers);
     }
 
     // 2. 모임 조회 - 단일
     public GroupResponseDto getGroup(Long id) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
-        return new GroupResponseDto(
-                group.getGroupName(),
-                group.getDescription(),
-                group.getCategory(),
-                group.isRecruiting()
-        );
+        return new GroupResponseDto(group);
     }
 
     // 3. 모임 조회 - 복수 (Pageable)
@@ -119,12 +113,33 @@ public class GroupService {
         }
 
         return groups.map(GroupAllResponseDto::new);
-        /*Page<Group> all = groupRepository.findAll(pageable);
-        return all.map(GroupAllResponseDto::new);*/
+
+    }
+
+    /* 내가 가입된 모임 조회 */
+    public ResponseEntity<List<GroupResponseDto>> getMyGroups(List<Long> categoryIds, Integer pageNum, Integer pageSize, Long memberId) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+
+        List<Group> groups;
+
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            // 1. 카테고리가 있는 경우: 사용자가 가입한 그룹 중 카테고리가 일치하는 그룹 조회
+            groups = groupMemberRepository.findGroupsByMemberIdAndCategoryIds(memberId, categoryIds, pageable);
+        } else {
+            // 2. 카테고리가 없는 경우: 사용자가 가입한 모든 그룹 조회
+            groups = groupMemberRepository.findGroupsByMemberId(memberId, pageable);
+        }
+
+        List<GroupResponseDto> response = groups.stream()
+                .map(GroupResponseDto::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
     // 4. 모임 수정
-    public GroupResponseDto updateGroup(Long id, @Valid GroupRequestDto requestDto) {
+    public GroupResponseDto updateGroup(Long id, @Valid GroupRequestDto.update requestDto) {
         // ID로 그룹 조회 (없으면 예외 발생)
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
@@ -135,15 +150,10 @@ public class GroupService {
 //        group.setCategory(requestDto.getCategory());
 
         // 업데이트된 그룹 저장!
-        groupRepository.save(group);
+        Group saveGroup = groupRepository.save(group);
 
         // 업데이트된 데이터를 DTO로 반환
-        return new GroupResponseDto(
-                group.getGroupName(),
-                group.getDescription(),
-                group.getCategory(),
-                group.isRecruiting()
-        );
+        return new GroupResponseDto(saveGroup);
     }
 
     // 4. 모임 구인상태 변경
@@ -277,7 +287,6 @@ public class GroupService {
 
     /* 카테고리 삭제 */
     public ResponseEntity<?> deleteGroupCategory(Long id, Long categoryId) {
-
         try {
             groupCategoryRepository.deleteByGroupIdAndCategoryId(id, categoryId);
         } catch (Exception e) {
@@ -286,4 +295,5 @@ public class GroupService {
         return ResponseEntity.status(HttpStatus.OK).body("정상적으로 삭제 되었습니다.");
 
     }
+
 }

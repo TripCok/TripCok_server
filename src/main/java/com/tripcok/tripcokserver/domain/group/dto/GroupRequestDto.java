@@ -23,5 +23,11 @@ public class GroupRequestDto {
     /* 카테고리 */
     private List<Long> categories;
 
+    @Data
+    public static class update{
+        private Long memberId;
+        private String groupName;
+        private String description;
+    }
 
 }

@@ -35,5 +35,14 @@ public class PlaceCategoryController {
         return pcs.findByAllCategory();
     }
 
+    @GetMapping
+    public ResponseEntity<?> getCategory(
+            @RequestParam(value = "parentId", required = false) Long parentId,
+            @RequestParam(value = "categoryName", required = false) String categoryName,
+            @RequestParam(value = "depth", required = false) Integer depth
+    ) {
+        return pcs.findByCategory(parentId, categoryName, depth);
+    }
+
 
 }

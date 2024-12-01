@@ -70,13 +70,14 @@
     function fetchGroups(query = '') {
         const tableBody = document.querySelector('tbody');
 
-        fetch(`/api/v1/groups?page=0&size=10&query=${query}`)
+        fetch(`/api/v1/group/all?page=0&size=10&query=${query}`)
             .then(response => {
                 if (!response.ok) throw new Error('네트워크 응답에 문제가 있습니다.');
                 return response.json();
             })
             .then(data => {
-                tableBody.innerHTML = ''; // 테이블 초기화
+                tableBody.innerHTML = '';
+                console.log(data)
 
                 // 데이터 렌더링
                 data.content.forEach(group => {

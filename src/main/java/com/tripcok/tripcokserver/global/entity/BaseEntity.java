@@ -9,8 +9,10 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
-    @Column(updatable = false)
+    @Column(name = "create_time", updatable = false, nullable = false)
     private LocalDateTime createAt;
+
+    @Column(name = "update_time", nullable = false)
     private LocalDateTime updateAt;
 
     @PrePersist

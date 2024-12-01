@@ -9,6 +9,8 @@ import com.tripcok.tripcokserver.domain.place.dto.PlaceResponse;
 import com.tripcok.tripcokserver.domain.place.service.PlaceService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +32,7 @@ public class WebAdminController {
     private final MemberService memberService;
     private final GroupService groupService;
     private final PlaceService placeService;
+    private final HttpSession session;
 
     @GetMapping("/login")
     public String login() {
@@ -46,6 +49,7 @@ public class WebAdminController {
         model.addAttribute("members", members);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", members.getTotalPages());
+        model.addAttribute("member", session.getAttribute("member"));
         log.info(members.toString());
 
         return "member";
@@ -58,9 +62,9 @@ public class WebAdminController {
                          @RequestParam(defaultValue = "10") int size) {
         Page<GroupAllResponseDto> groups = groupService.getGroups(query, page, size);
 
-        model.addAttribute("groups", groups);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", groups.getTotalPages());
+        model.addAttribute("member", session.getAttribute("member"));
         log.info("Groups: {}", groups.getContent());
         return "group";
     }
@@ -81,13 +85,16 @@ public class WebAdminController {
         model.addAttribute("currentPage", page);              // 현재 페이지
         model.addAttribute("totalPages", allPlaces.getTotalPages()); // 총 페이지
         model.addAttribute("totalElements", allPlaces.getTotalElements()); // 총 여행지 수
+        model.addAttribute("member", session.getAttribute("member"));
 
         return "place";
     }
 
     @GetMapping("/place/add")
-    public  String addplace() {
-    return "addplace";
+    public String addPlace(Model model) {
+        model.addAttribute("request", new PlaceRequest.placeSave()); // 모델에 필요한 데이터 추가
+        model.addAttribute("member", session.getAttribute("member"));
+        return "addplace";
     }
 
 //    @PutMapping("/admin/place/update/{placeId}")
