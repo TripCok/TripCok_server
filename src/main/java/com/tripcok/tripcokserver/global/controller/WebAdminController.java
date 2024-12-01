@@ -97,22 +97,17 @@ public class WebAdminController {
         return "addplace";
     }
 
-//    @PutMapping("/admin/place/update/{placeId}")
-//    @Operation(summary = "관리자 여행지 수정", description = "관리자가 여행지 정보를 수정합니다.")
-//    public ResponseEntity<?> adminUpdatePlace(
-//            @PathVariable Long placeId,
-//            @RequestPart("request") @Valid PlaceRequest.placeUpdate request,
-//            @RequestPart(value = "files", required = false) List<MultipartFile> files
-//    ) throws AccessDeniedException {
-//        return placeService.updatePlace(placeId, request, files);
-//    }
-
     @GetMapping("/place/update")
-    public String updateplace() {return "updateplace";}
+    public String updatePlace(@RequestParam Long placeId, Model model) {
+        ResponseEntity<?> placeResponse = placeService.getPlaceDetails(placeId);
+        model.addAttribute("place", placeResponse.getBody());
+        model.addAttribute("member", session.getAttribute("member"));
+        model.addAttribute("placeId", placeId);
+        return "updateplace";
+    }
 
     @GetMapping("/category")
     public String category() {return "category";}
 }
-
 
 
