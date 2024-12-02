@@ -98,11 +98,6 @@ public class WebAdminController {
         return "addplace";
     }
 
-    @GetMapping()
-    public String dashboard() {return "dashboard";}
-}
-
-
     @GetMapping("/place/update")
     public String updatePlace(@RequestParam Long placeId, Model model) {
         ResponseEntity<?> placeResponse = placeService.getPlaceDetails(placeId);
