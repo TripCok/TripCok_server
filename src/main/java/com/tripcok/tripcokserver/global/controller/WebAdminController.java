@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -108,10 +109,19 @@ public class WebAdminController {
     }
 
     @GetMapping("/category")
-    public String category() {return "category";}
+    public String category() {
+        return "category";
+    }
 
     @GetMapping("/dashboard")
-    public String dashboard() {return "dashboard";}
+    public String dashboard(Model model) {
+        long memberTotal = memberService.getMembers("", 0, 1).getTotalElements();
+        List<Long> tmp = new ArrayList<Long>();
+        long groupTotal = groupService.getGroups(tmp, "", 0, 1).getTotalElements();
+        model.addAttribute("memberTotal", memberTotal);
+        model.addAttribute("groupTotal", groupTotal);
+        return "dashboard";
+    }
 }
 
 
