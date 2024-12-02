@@ -8,6 +8,7 @@ import com.tripcok.tripcokserver.domain.recommend.service.RecommendService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -32,8 +33,8 @@ public class RecommendController {
     
     @GetMapping("/api/v1/getRecommends")
     @Operation(summary = "추천 결과 리스트", description = "추천 결과 리스트.")
-    public ResponseEntity<?> getRecommends() {
-        Page<PlaceResponse> recommendList = recommendService.getRecommendPlaces();
+    public ResponseEntity<?> getRecommends(@RequestBody int page, int size) {
+        Page<PlaceResponse> recommendList = recommendService.getRecommendPlaces(page, size);
         return ResponseEntity.status(HttpStatus.OK).body(recommendList);
     }
 }

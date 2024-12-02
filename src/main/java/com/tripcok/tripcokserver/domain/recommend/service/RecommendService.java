@@ -15,14 +15,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-import javax.crypto.spec.OAEPParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 @AllArgsConstructor
@@ -32,7 +27,7 @@ public class RecommendService {
     private final PlaceRepository placeRepository;
     private final GroupRepository groupRepository;
 
-    public Page<PlaceResponse> getRecommendPlaces() {
+    public Page<PlaceResponse> getRecommendPlaces(int page, int size) {
         // 추천 장소 리스트 생성
         List<PlaceResponse> recommendPlaces = recommendRepository.findAllSortedByScoreDesc()
                 .stream()
@@ -49,9 +44,6 @@ public class RecommendService {
         List<PlaceResponse> allPlaces = new ArrayList<>(recommendPlaces);
         allPlaces.addAll(restPlaces);
 
-        // 페이지 처리
-        int page = 0;
-        int size = 10;
         PageRequest pageRequest = PageRequest.of(page, size);
 
         // Page 객체 생성 및 반환
