@@ -4,12 +4,14 @@ import com.tripcok.tripcokserver.domain.post.entity.Post;
 import com.tripcok.tripcokserver.domain.post.entity.Type;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 
 @Data
 public class PostResponseDto {
 
     @Data
-    public static class create{
+    public static class create {
         private String message;
         private Long postId;
         private Type type;
@@ -27,13 +29,23 @@ public class PostResponseDto {
         private Long id;
         private String title;
         private String content;
+        private Long groupId;
         private Type type;
+        private String writer;
+        private String writerProfile;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
 
-        public get(Post post){
+        public get(Post post) {
             this.id = post.getId();
             this.title = post.getTitle();
             this.content = post.getContent();
+            this.groupId = post.getBoard().getGroup().getId();
             this.type = post.getType();
+            this.writer = post.getMember().getName();
+            this.writerProfile = post.getMember().getProfileImage();
+            this.createTime = post.getCreateTime();
+            this.updateTime = post.getUpdateTime();
         }
     }
 
@@ -43,7 +55,7 @@ public class PostResponseDto {
         private String content;
         private Type type;
 
-        public gets( String title, String content  , Type type  ) {
+        public gets(String title, String content, Type type) {
             this.title = title;
             this.content = content;
             this.type = type;

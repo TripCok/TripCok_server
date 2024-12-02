@@ -3,6 +3,7 @@ package com.tripcok.tripcokserver.domain.postcomment.service;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.post.dto.PostRequestDto;
+import com.tripcok.tripcokserver.domain.post.dto.PostResponseDto;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
 import com.tripcok.tripcokserver.domain.post.service.UnauthorizedAccessException;
@@ -57,19 +58,18 @@ public class PostCommentService {
         if (postComment.isPresent()) {
             PostComment comment = postComment.get();
             return new PostCommentResponseDto.get(comment);
-        }else{
+        } else {
             throw new NullPointerException("해당 댓글은 삭제되었습니다");
         }
     }
 
-    public Page<PostCommentResponseDto.gets> getPostComments(Pageable pageable) {
-        Page<PostComment> postComments = postCommentRepository.findAll(pageable);
+    public Page<PostCommentResponseDto.gets> getPostComments(Long postId, Pageable pageable) {
+        Page<PostComment> postComments = postCommentRepository.findByPostId(postId, pageable);
 
         // PostComment 객체를 PostCommentPageResponseDto로 변환하여 새로운 Page 객체 생성
-        Page<PostCommentResponseDto.gets> pageResponseDtos = postComments.map(postComment ->
-                new PostCommentResponseDto.gets(
-                        postComment.getContent())
-                );
+        Page<PostCommentResponseDto.gets> pageResponseDtos = postComments.map(PostCommentResponseDto.gets::new);
+
+
         return pageResponseDtos;
     }
 
@@ -98,7 +98,7 @@ public class PostCommentService {
         Long memberId = requestDto.getMemberId();
 
         //댓글 불러오기
-        Optional<PostComment> postComment =  postCommentRepository.findById(postCommentId);
+        Optional<PostComment> postComment = postCommentRepository.findById(postCommentId);
 
         // 댓글이 존재한다면
         if (postComment.isPresent()) {
@@ -112,8 +112,7 @@ public class PostCommentService {
             postCommentRepository.save(savePostComment);
 
             return new PostCommentResponseDto.put(savePostComment.getId(), "post 수정 완료");
-        }
-        else {
+        } else {
             throw new NullPointerException("존재하지 않은 게시글입니다.");
         }
     }

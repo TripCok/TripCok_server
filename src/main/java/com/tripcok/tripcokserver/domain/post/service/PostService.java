@@ -14,6 +14,7 @@ import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.post.entity.Post;
 
 import com.tripcok.tripcokserver.domain.post.repository.PostRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +55,7 @@ public class PostService {
         Board board = group.getBoard();
 
         // 게시글 생성 및 저장
-        Post post = createAndSavePost(requestDto,Type.COMMON, board, member);
+        Post post = createAndSavePost(requestDto, Type.COMMON, board, member);
 
         return new PostResponseDto.create("게시글 추가 완료", post.getId(), post.getType());
     }
@@ -87,7 +88,7 @@ public class PostService {
         validateGroupMembership(groupId, member);
 
         // ADMIN 검증
-        Optional<GroupMember> adminMember = groupMemberRepository.findGroupMemberByMember_IdAndAndGroup_Id(userId,groupId);
+        Optional<GroupMember> adminMember = groupMemberRepository.findGroupMemberByMember_IdAndAndGroup_Id(userId, groupId);
 
         // ADMIN 권한을 가진 멤버 검증
         if (adminMember.isPresent()) {
@@ -107,7 +108,7 @@ public class PostService {
 
         // 공지사항 생성 및 저장
         Post post = createAndSavePostandType(requestDto, Type.NOTICE, board, member);
-        return new PostResponseDto.create("공지사항 추가 완료", post.getId(),post.getType());
+        return new PostResponseDto.create("공지사항 추가 완료", post.getId(), post.getType());
     }
 
 
@@ -121,42 +122,40 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("그룹을 찾을 수 없습니다."));
     }
 
-    private Post createAndSavePost(PostRequestDto.create requestDto,Type type, Board board, Member member) {
+    private Post createAndSavePost(PostRequestDto.create requestDto, Type type, Board board, Member member) {
         Post post = new Post(requestDto, type, board, member);
         board.addPosts(post);
         return postRepository.save(post);
     }
-    private Post createAndSavePostandType(PostRequestDto.create requestDto,Type type, Board board, Member member) {
+
+    private Post createAndSavePostandType(PostRequestDto.create requestDto, Type type, Board board, Member member) {
         Post post = new Post(requestDto, type, board, member);
         board.addPosts(post);
         return postRepository.save(post);
     }
 
     public PostResponseDto.get getPost(Long postId) {
-        Optional<Post> post =  postRepository.findById(postId);
+        Optional<Post> post = postRepository.findById(postId);
 
         if (post.isPresent()) {
             Post savePost = post.get();
             return new PostResponseDto.get(savePost);
-        }
-        else {
+        } else {
             throw new NullPointerException("해당 Post는 삭제되었습니다.");
         }
     }
 
-    public Page<PostResponseDto.gets> getPosts(Pageable pageable) {
+    public Page<PostResponseDto.get> getPosts(Long groupId, Pageable pageable) {
+
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new EntityNotFoundException("옳바르지 않은 요청입니다."));
+
+        Long boardId = group.getBoard().getId();
 
         // postRepository로 얻은 Post를 Page 객체에 넣음
-        Page<Post> posts = postRepository.findAll(pageable);
+        Page<Post> posts = postRepository.findByBoardId(boardId, pageable);
 
         // Post 객체를 PostPageResponseDto로 변환하여 새로운 Page 객체 생성
-        Page<PostResponseDto.gets> pageResponseDtos = posts.map(post ->
-                new PostResponseDto.gets(
-                        post.getTitle(),
-                        post.getContent(),
-                        post.getType()
-                )
-        );
+        Page<PostResponseDto.get> pageResponseDtos = posts.map(PostResponseDto.get::new);
 
         log.info(pageResponseDtos.toString());
         return pageResponseDtos;
@@ -164,14 +163,14 @@ public class PostService {
 
     public PostResponseDto.put putPost(Long postId, Long memberId, Long groupId, PostRequestDto.put requestDto) throws UnauthorizedAccessException {
         //게시글 불러오기
-        Optional<Post> post =  postRepository.findById(postId);
+        Optional<Post> post = postRepository.findById(postId);
 
         // 게시글이 존재한다면
         if (post.isPresent()) {
             Post savePost = post.get();
 
             //만약 NOTICE라면 관리자인지 검증하는 로직
-            if (requestDto.getType() == null){
+            if (requestDto.getType() == null) {
                 isMemberAdmin(memberId, groupId);
                 isWriter(memberId, savePost);
             }
@@ -181,8 +180,7 @@ public class PostService {
             postRepository.save(savePost);
 
             return new PostResponseDto.put(savePost.getId(), "post 수정 완료");
-        }
-        else {
+        } else {
             throw new NullPointerException("존재하지 않은 게시글입니다.");
         }
     }

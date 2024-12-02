@@ -31,9 +31,10 @@ public class PostController {
 
     /*게시글 조회(복수)*/
     @GetMapping("/api/v1/posts")
-    public ResponseEntity<Page<PostResponseDto.gets>> getPost(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostResponseDto.gets> pageResponseDtos = postService.getPosts(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(pageResponseDtos);
+    public ResponseEntity<?> getPost(
+            @RequestParam("groupId") Long groupId,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getPosts(groupId, pageable));
     }
 
     /*게시글 삭제*/
@@ -45,9 +46,9 @@ public class PostController {
 
     /*게시글 수정*/
     @PutMapping("/api/v1/post/{postId}")
-    public ResponseEntity<PostResponseDto.put> putPost( @PathVariable Long postId,
+    public ResponseEntity<PostResponseDto.put> putPost(@PathVariable Long postId,
                                                        @RequestParam Long memberId, @RequestParam Long groupId,
-                                                      @RequestBody PostRequestDto.put requestDto) throws UnauthorizedAccessException {
+                                                       @RequestBody PostRequestDto.put requestDto) throws UnauthorizedAccessException {
         PostResponseDto.put responseDto = postService.putPost(postId, memberId, groupId, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

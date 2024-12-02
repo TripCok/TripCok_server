@@ -44,14 +44,17 @@ public class PostCommentController {
     /*댓글 조회(복수)*/
     @Operation(summary = "모임 게시글 댓글 복수 조회", description = "게시글의 댓글을 여러개 조회합니다.")
     @GetMapping("/api/v1/postComments")
-    public ResponseEntity<Page<PostCommentResponseDto.gets>> getspostComment(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostCommentResponseDto.gets> pageResponseDtos = postCommentService.getPostComments(pageable);
+    public ResponseEntity<Page<PostCommentResponseDto.gets>> getspostComment(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam("postId") Long postId
+    ) {
+        Page<PostCommentResponseDto.gets> pageResponseDtos = postCommentService.getPostComments(postId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(pageResponseDtos);
     }
 
     /*댓글 삭제*/
     @Operation(summary = "모임 게시글 댓글 삭제", description = "게시글의 댓글을 삭제합니다.")
-    @DeleteMapping("/api/v1/postComment/{postCommentId}")
+    @DeleteMapping("/api/v1/postComment")
     public ResponseEntity<PostCommentResponseDto.delete> deletepostComment(@RequestBody PostCommentRequestDto.delete requestdto) throws UnauthorizedAccessException {
         PostCommentResponseDto.delete responseDto = postCommentService.deletePostCommit(requestdto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);

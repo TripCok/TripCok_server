@@ -5,15 +5,17 @@ import com.tripcok.tripcokserver.domain.postcomment.entity.PostComment;
 import lombok.Data;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Data
 public class PostCommentResponseDto {
     @Data
-    public static class create{
+    public static class create {
 
     }
 
     @Data
-    public static class get{
+    public static class get {
         private String content;
 
         public get(PostComment comment) {
@@ -23,10 +25,22 @@ public class PostCommentResponseDto {
 
     @Data
     public static class gets {
+        private Long id;
+        private String writerProfile;
+        private String writerName;
+        private String writerEmail;
         private String content;
+        private LocalDateTime createTime;
 
-        public gets(String content) {
-            this.content = content;
+
+        public gets(PostComment comment) {
+            this.id = comment.getId();
+            this.writerProfile = comment.getMember().getProfileImage();
+            this.writerName = comment.getMember().getName();
+            this.writerEmail = comment.getMember().getEmail();
+            this.content = comment.getContent();
+            this.createTime = comment.getCreateTime();
+
         }
     }
 
@@ -54,7 +68,7 @@ public class PostCommentResponseDto {
     }
 
     @Data
-    public static class comment{
+    public static class comment {
         private String message;
         private Long postId;
 
