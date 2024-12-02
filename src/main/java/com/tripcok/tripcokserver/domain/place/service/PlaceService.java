@@ -13,9 +13,12 @@ import com.tripcok.tripcokserver.domain.place.entity.PlaceCategoryMapping;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceImage;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryMappingRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
+import com.tripcok.tripcokserver.domain.place.repository.PlaceImageRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +42,9 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final PlaceCategoryRepository categoryRepository;
     private final PlaceCategoryMappingRepository placeCategoryMappingRepository;
+    private final PlaceImageRepository placeImageRepository;
     private final FileService fileService;
+    private final SqlDataSourceScriptDatabaseInitializer dataSourceScriptDatabaseInitializer;
 
     @Value("${save.location.place}")
     private String savePathDirectory;
@@ -89,10 +96,9 @@ public class PlaceService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자의 정보가 옳바르지 않습니다. Member ID : " + memberId));
 
-
-        if (!member.getRole().equals(Role.MANAGER)) {
-            throw new AccessDeniedException("올바르지 않은 권한입니다. Member ID: " + memberId);
-        }
+          if (member.getRole().equals(Role.USER)){
+              throw new AccessDeniedException("올바르지 않은 권한입니다. Member ID: " + memberId);
+          }
 
         return member;
     }
@@ -195,4 +201,36 @@ public class PlaceService {
 
         return ResponseEntity.status(HttpStatus.OK).body("성공적으로 여행지를 삭제 했습니다.");
     }
+
+    /* 여행지 이미지 삭제 */
+    @Transactional
+    public ResponseEntity<?> deletePlaceImg(List<Long> imageIds) {
+
+        List<String> failedDeletions = new ArrayList<>();
+
+        imageIds.forEach(imageId -> {
+            placeImageRepository.findById(imageId).ifPresentOrElse(placeImage -> {
+                String imagePath = placeImage.getImagePath();
+                try {
+                    fileService.deleteFile(imagePath);
+                    placeImageRepository.delete(placeImage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, () -> {
+                // 로그나 추가 처리 (선택 사항)
+                failedDeletions.add(imageId.toString());
+                System.err.println("이미지를 찾을 수 없습니다: " + imageId);
+            });
+        });
+
+        System.out.println(failedDeletions);
+        if (!failedDeletions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("다음 이미지 삭제에 실패했습니다: " + String.join(", ", failedDeletions));
+        }
+
+        return ResponseEntity.ok("이미지를 성공적으로 삭제하였습니다.");
+    }
+
 }

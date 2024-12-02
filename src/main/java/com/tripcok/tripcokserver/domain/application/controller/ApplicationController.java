@@ -30,6 +30,16 @@ public class ApplicationController {
         return applicationService.createApplication(request);
     }
 
+    /* 모임 신청 조회 */
+    @GetMapping("/group/{groupId}")
+    public ResponseEntity<?> getApplications(
+            @PathVariable("groupId") Long groupId,
+            @RequestParam(value = "size", defaultValue = "5") Integer size,
+            @RequestParam(value = "page", defaultValue = "1") Integer page
+    ) {
+        return applicationService.getApplications(groupId, size, page);
+    }
+
     /* 모임 신청 취소 */
     @Operation(summary = "모임 신청 취소", description = "모임 신청을 취소합니다.")
     @ApiResponse(responseCode = "200", description = "모임 신청 취소 성공")
@@ -40,11 +50,12 @@ public class ApplicationController {
         return applicationService.deleteApplication(applicationId, memberId);
     }
 
+
     /* 모임 신청 수락 */
     @Operation(summary = "모임 신청 수락", description = "모임 신청을 수락하였습니다.")
     @ApiResponse(responseCode = "200", description = "모임 신청 수락 성공")
     @PutMapping
-    public ResponseEntity<?> acceptedApplication(@RequestBody ApplicationRequestDto.applicationAccept request) {
-        return applicationService.acceptedApplication(request);
+    public ResponseEntity<?> acceptedApplication(@RequestBody ApplicationRequestDto.applicationAccept request) throws AccessDeniedException {
+        return applicationService.acceptApplication(request);
     }
 }

@@ -169,7 +169,6 @@ public class PostCrudTest {
         Assertions.assertThrows(UnauthorizedAccessException.class, () -> {
             postService.putPost(postId, memberId, groupId, requestDto);
         });
-
     }
 
     @Test

@@ -1,21 +1,28 @@
 package com.tripcok.tripcokserver.domain.member.service;
 
+import com.tripcok.tripcokserver.domain.file.FileDto;
+import com.tripcok.tripcokserver.domain.file.service.FileService;
 import com.tripcok.tripcokserver.domain.member.dto.MemberListResponseDto;
 import com.tripcok.tripcokserver.domain.member.dto.MemberRequestDto;
 import com.tripcok.tripcokserver.domain.member.dto.MemberResponseDto;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -24,6 +31,10 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final FileService fileService;
+
+    @Value("${save.location.user.profile}")
+    private String savePathDir;
 
     /* 회원가입 */
     @Transactional
@@ -40,12 +51,13 @@ public class MemberService {
     }
 
     /* 로그인 */
-    public ResponseEntity<?> loginMember(MemberRequestDto.login request) {
+    public ResponseEntity<?> loginMember(MemberRequestDto.login request, HttpSession session) {
         Optional<Member> findMember = memberRepository.findByEmail(request.getEmail());
         if (findMember.isPresent()) {
             Member member = findMember.get();
             if (member.getPassword().equals(request.getPassword())) {
-                return ResponseEntity.status(HttpStatus.OK).body(member);
+                session.setAttribute("member", member);
+                return ResponseEntity.status(HttpStatus.OK).body(new MemberResponseDto.Info(member));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호를 다시 확인하세요.");
             }
@@ -88,6 +100,61 @@ public class MemberService {
         return ResponseEntity.status(HttpStatus.OK).body(new MemberResponseDto.Info(updateMember));
     }
 
+    /**
+     * 회원 프로필 이미지 업데이트
+     */
+    @Transactional()
+    public ResponseEntity<?> updateProfileImage(Long memberId, List<MultipartFile> files) {
+        // 멤버 확인 및 가져오기
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("올바르지 않은 요청입니다."));
+
+        try {
+            // 기존 프로필 이미지 삭제
+            deleteExistingProfileImage(member);
+
+            // 새로운 프로필 이미지 저장
+            FileDto fileDto = saveNewProfileImage(files);
+
+            // 멤버 프로필 이미지 업데이트
+            member.updateProfileImage(fileDto.getPath());
+
+            return ResponseEntity.status(HttpStatus.OK).body(fileDto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 이유로 업데이트에 실패하였습니다.");
+        }
+    }
+
+    /**
+     * 기존 프로필 이미지를 삭제합니다.
+     */
+    private void deleteExistingProfileImage(Member member) {
+        if (member.getProfileImage() != null) {
+            boolean isDeleted = fileService.deleteFile(member.getProfileImage());
+            if (!isDeleted) {
+                throw new IllegalStateException("기존 프로필 이미지를 삭제하지 못했습니다.");
+            }
+        }
+    }
+
+    /**
+     * 새 프로필 이미지를 저장하고 경로를 반환합니다.
+     */
+    private FileDto saveNewProfileImage(List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            throw new IllegalArgumentException("업로드할 파일이 없습니다.");
+        }
+
+        List<FileDto> fileDtoList = fileService.saveFiles(files, System.getProperty("user.home") + savePathDir);
+        if (fileDtoList.size() != 1) {
+            throw new IllegalArgumentException("여러 장의 사진은 저장할 수 없습니다.");
+        }
+
+        return fileDtoList.get(0);
+    }
+
     /* 회원 정보 삭제 */
     public ResponseEntity<?> deleteMember(Long memberId) {
         try {
@@ -101,4 +168,15 @@ public class MemberService {
     }
 
 
+    /* 회원 정보 수정 - 이름*/
+    @Transactional
+    public ResponseEntity<?> updateProfileName(Long memberId, String name) {
+        try {
+            Member member = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("옳바르지 않은 요청입니다."));
+            member.updateName(name);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("성공적으로 업데이트 하였습니다.");
+    }
 }

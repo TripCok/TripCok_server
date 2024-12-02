@@ -48,12 +48,12 @@ public class Post extends BaseEntity {
         this.member = member;
     }
 
-    public Post(PostRequestDto.create requestDto, Board board, Member member) {
+    public Post(PostRequestDto.create requestDto, Type type, Board board, Member member) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.board = board;
         this.member = member;
-        if (requestDto.getType() == Type.NOTICE) {
+        if (type== Type.NOTICE) {
             this.type = Type.NOTICE;
         }
     }

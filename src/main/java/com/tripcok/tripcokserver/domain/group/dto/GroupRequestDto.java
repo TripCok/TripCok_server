@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +21,13 @@ public class GroupRequestDto {
     private String description;
 
     /* 카테고리 */
-    private String category;
+    private List<Long> categories;
 
+    @Data
+    public static class update{
+        private Long memberId;
+        private String groupName;
+        private String description;
+    }
 
 }

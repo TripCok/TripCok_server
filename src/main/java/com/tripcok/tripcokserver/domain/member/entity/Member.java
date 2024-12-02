@@ -90,6 +90,15 @@ public class Member extends BaseEntity {
         return this;
     }
 
+    /* 회원 프로필 이미지 업데이트 */
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void updateName(String name){
+        this.name = name;
+    }
+
     public Member() {
     }
 }

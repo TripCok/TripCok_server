@@ -5,13 +5,16 @@ import com.tripcok.tripcokserver.domain.member.dto.MemberResponseDto;
 import com.tripcok.tripcokserver.domain.member.service.MemberService;
 import com.tripcok.tripcokserver.global.service.EmailService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/member")
@@ -46,8 +49,10 @@ public class MemberController {
 
     /* 로그인 */
     @PutMapping("/login")
-    public ResponseEntity<?> login(@RequestBody MemberRequestDto.login request) {
-        return memberService.loginMember(request);
+    public ResponseEntity<?> login(@RequestBody MemberRequestDto.login request, HttpSession session) {
+
+        log.info(request.toString());
+        return memberService.loginMember(request, session);
     }
 
     /* 회원 정보 조회 */
@@ -72,11 +77,29 @@ public class MemberController {
         return memberService.updateMember(request);
     }
 
+    /* 회원 정보 수정 - 프로필 이미지 변경 */
+    @PutMapping("/{memberId}/profile-image")
+    public ResponseEntity<?> updateProfileImage(
+            @PathVariable Long memberId,
+            @RequestPart("files") List<MultipartFile> files
+    ) {
+        return memberService.updateProfileImage(memberId, files);
+    }
+
+    /* 회원 정보 수정 - 프로필 이름 변경 */
+    @PutMapping("/{memberId}/profile-name")
+    public ResponseEntity<?> updateProfileName(
+            @PathVariable Long memberId,
+            @RequestParam("name") String name
+    ) {
+        return memberService.updateProfileName(memberId, name);
+    }
+
+
     /* 회원 삭제 */
     @DeleteMapping("/{memberId}")
     public ResponseEntity<?> deleteMember(@PathVariable Long memberId) {
         return memberService.deleteMember(memberId);
     }
-
 
 }

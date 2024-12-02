@@ -25,11 +25,11 @@ public class PlaceCategory extends BaseEntity {
     @JsonIgnore
     private PlaceCategory parentCategory;
 
-    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<PlaceCategory> childCategories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PlaceCategoryMapping> categoryMappings;
 
     private Integer depth;
