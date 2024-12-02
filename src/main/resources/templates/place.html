@@ -156,8 +156,8 @@
                     <td>${place.name}</td>
                     <td>${place.address}</td>
                     <td>${place.categories.join(' / ')}</td>
-                    <td>${place.createdDate}</td>
-                    <td>${place.updatedDate}</td>
+                    <td>${place.createTime}</td>
+                    <td>${place.updateTime}</td>
                     <td>
                         <button class="btn btn-primary btn-sm" onclick="editPlace(${place.id})">수정</button>
                         <button class="btn btn-danger btn-sm" onclick="deletePlace(${place.id})">삭제</button>
@@ -196,8 +196,15 @@
      * 여행지 삭제
      */
     function deletePlace(placeId) {
+        const memberId = prompt("삭제 권한을 확인하기 위해 사용자 ID를 입력하세요:"); // 사용자 ID 입력받기
+
+        if (!memberId) {
+            alert('삭제하려면 사용자 ID가 필요합니다.');
+            return;
+        }
+
         if (confirm(`ID ${placeId}를 삭제하시겠습니까?`)) {
-            fetch(`/api/v1/place/${placeId}`, {
+            fetch(`/api/v1/place/${placeId}?memberId=${memberId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

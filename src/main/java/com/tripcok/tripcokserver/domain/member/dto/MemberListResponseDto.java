@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 public class MemberListResponseDto {
@@ -17,8 +18,10 @@ public class MemberListResponseDto {
     private LocalDate birthDay;
     private String address;
     private String profileImg;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
+    private String createdDate;
+    private String updatedDate;
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public MemberListResponseDto(Member member) {
@@ -30,7 +33,9 @@ public class MemberListResponseDto {
         this.birthDay = member.getBirthday();
         this.gender = member.getGender();
         this.profileImg = member.getProfileImage();
-        this.createdDate = member.getCreateTime();
-        this.updatedDate = member.getUpdateTime();
+        this.createdDate = member.getCreateTime() != null ? member.getCreateTime().format(FORMATTER) : null;
+        this.updatedDate = member.getUpdateTime() != null ? member.getUpdateTime().format(FORMATTER) : null;
+
+        System.out.println("DTO 생성 완료: " + this.createdDate + " / " + this.updatedDate);
     }
 }
