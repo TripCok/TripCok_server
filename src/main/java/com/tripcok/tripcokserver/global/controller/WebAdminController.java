@@ -109,6 +109,9 @@ public class WebAdminController {
 
     @GetMapping("/category")
     public String category() {return "category";}
+
+    @GetMapping("/dashboard")
+    public String dashboard() {return "dashboard";}
 }
 
 
