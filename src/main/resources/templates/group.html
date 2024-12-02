@@ -77,23 +77,22 @@
             })
             .then(data => {
                 tableBody.innerHTML = '';
-                console.log(data)
 
                 // 데이터 렌더링
                 data.content.forEach(group => {
                     const categories = group.categories.map(cat => cat.name).join(', ');
                     const row = `
-                    <tr>
-                        <td>${group.id}</td>
-                        <td>${group.groupName}</td>
-                        <td>${group.groupMemberCount}</td>
-                        <td>${categories || '-'}</td>
-                        <td>${group.description}</td>
-                        <td>${group.createTime}</td>
-                        <td>${group.updateTime}</td>
-                        <td>${group.recruiting ? '모집중' : '모집마감'}</td>
-                    </tr>
-                `;
+                <tr>
+                    <td>${group.id}</td>
+                    <td>${group.groupName}</td>
+                    <td>${group.groupMemberCount}</td>
+                    <td>${categories || '-'}</td>
+                    <td>${group.description}</td>
+                    <td>${group.createTime}</td>
+                    <td>${group.updateTime}</td>
+                    <td>${group.recruiting ? '모집중' : '모집마감'}</td>
+                </tr>
+            `;
                     tableBody.insertAdjacentHTML('beforeend', row);
                 });
 
@@ -103,10 +102,6 @@
                 }
             })
             .catch(error => console.error('데이터 가져오는 중 오류 발생:', error));
-    }
-
-    function viewGroupDetails(groupId) {
-        window.location.href = `/groups/${groupId}`; // 세부정보 페이지로 이동
     }
 </script>
 </body>

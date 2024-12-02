@@ -52,9 +52,10 @@ public class GroupController {
     @GetMapping("/all")
     public ResponseEntity<?> getGroups(
             @RequestParam(value = "categoryIds", required = false) List<Long> categoryIds,
+            @RequestParam(value = "query", required = false) String query,
             @RequestParam("page") Integer page,
             @RequestParam("size") Integer size) {
-        return ResponseEntity.ok(groupService.getGroups(categoryIds, page, size));
+        return ResponseEntity.ok(groupService.getGroups(categoryIds, query, page, size));
     }
 
     /*내가 가입된 모임 조회*/

@@ -100,7 +100,7 @@ public class GroupService {
     }
 
     // 3. 모임 조회 - 복수 (Pageable)
-    public Page<?> getGroups(List<Long> categoryIds, Integer pageNum, Integer pageSize) {
+    public Page<?> getGroups(List<Long> categoryIds, String query, Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
 
         Page<Group> groupsPage;
@@ -110,6 +110,14 @@ public class GroupService {
             groupsPage = groupRepository.findAllByCategoryIds(categoryIds, pageable);
         } else {
             // 2. 카테고리가 없는 경우
+            groupsPage = groupRepository.findAllByOrderByCreateAtDesc(pageable);
+        }
+
+        if (query != null && !query.isEmpty()) {
+            // 해당 그룹이름이 있는 경우
+            groupsPage = groupRepository.findByGroupNameContainingIgnoreCase(query, pageable);
+        } else {
+            // 해당 그룹이름이 없는 경우
             groupsPage = groupRepository.findAllByOrderByCreateAtDesc(pageable);
         }
 
