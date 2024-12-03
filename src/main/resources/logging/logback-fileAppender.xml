@@ -1,0 +1,32 @@
+<configuration>
+
+    <!-- 로그 패턴 정의 -->
+    <conversionRule conversionWord="clr" converterClass="ch.qos.logback.classic.pattern.ColorConverter"/>
+
+    <!-- 콘솔 로그 출력 설정 (선택사항) -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 파일 로그 출력 설정 -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/app.log</file> <!-- 로그 파일 경로 지정 -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern> <!-- 로그 형식 -->
+        </encoder>
+    </appender>
+
+    <!-- 로그 레벨 설정 -->
+    <root level="info">
+        <appender-ref ref="STDOUT"/> <!-- 콘솔로 로그 출력 -->
+        <appender-ref ref="FILE"/>   <!-- 파일로 로그 출력 -->
+    </root>
+
+    <!-- 특정 패키지의 로그 레벨 설정 -->
+    <logger name="com.example" level="debug">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+</configuration>
