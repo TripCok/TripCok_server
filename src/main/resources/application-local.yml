@@ -29,3 +29,5 @@ save:
     place: /place-image
     user:
       profile: /user/profile
+logging:
+  config: classpath:logging/spring_log.xml
