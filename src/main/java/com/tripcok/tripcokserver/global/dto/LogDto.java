@@ -1,28 +1,42 @@
 package com.tripcok.tripcokserver.global.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+
 
 @Data
 public class LogDto {
+
     String traceId;
+    String memberId;
     String clientIp;
     String url;
     String method;
     String request;
     String response;
     String statusCode;
+    String time;
 
-    public LogDto(ContentCachingRequestWrapper requestWrapper, ContentCachingResponseWrapper responseWrapper) {
-        this.traceId = requestWrapper.getHeader("traceId");
+    @JsonIgnore
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public LogDto(ContentCachingRequestWrapper requestWrapper, ContentCachingResponseWrapper responseWrapper) throws IOException {
+        this.traceId = responseWrapper.getHeader("TRACE_ID");
         this.url = requestWrapper.getRequestURL().toString();
         this.method = requestWrapper.getMethod();
-        this.request = Arrays.toString(requestWrapper.getContentAsByteArray());
-        this.response = Arrays.toString(responseWrapper.getContentAsByteArray());
-        this.statusCode = requestWrapper.getHeader("statusCode");
+        this.request = new String(requestWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
+        this.response = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
+        this.statusCode = String.valueOf(responseWrapper.getStatus());
         this.clientIp = requestWrapper.getRemoteAddr();
+        this.time = String.valueOf(System.currentTimeMillis());
+        this.memberId = (String) requestWrapper.getAttribute("memberId");
     }
+
 }
