@@ -14,6 +14,7 @@ public class PlaceResponse {
     private Long id;
     private String name;
     private String description;
+    private String placeThumbnail;
     private String address;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -26,6 +27,7 @@ public class PlaceResponse {
         this.id = place.getId();
         this.name = place.getName();
         this.description = place.getDescription();
+        this.placeThumbnail = getThumbnail(place.getImages());
         this.address = place.getAddress();
         this.startTime = place.getStartTime();
         this.endTime = place.getEndTime();
@@ -38,5 +40,17 @@ public class PlaceResponse {
                 .map(PlaceImageResponse::new)
                 .toList(); // 이미지 변환
     }
+
+    private String getThumbnail(List<PlaceImage> images) {
+        String path = null;
+        try {
+            path = images.get(0).getImagePath();
+
+        } catch (IndexOutOfBoundsException e) {
+            path = null;
+        }
+        return path;
+    }
+
 }
 

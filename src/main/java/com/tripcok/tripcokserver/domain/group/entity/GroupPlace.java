@@ -4,6 +4,7 @@ package com.tripcok.tripcokserver.domain.group.entity;
 import com.tripcok.tripcokserver.domain.place.entity.Place;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -21,6 +22,7 @@ public class GroupPlace {
     @JoinColumn(name = "place_id", nullable = false)
     private Place place; // 장소
 
+    @Setter
     private Integer orders; // 순서
 
     public void updateOrder(Integer order) {

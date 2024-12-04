@@ -3,6 +3,7 @@ package com.tripcok.tripcokserver.domain.group.dto;
 import com.tripcok.tripcokserver.domain.group.entity.Group;
 import com.tripcok.tripcokserver.domain.group.entity.GroupCategory;
 import com.tripcok.tripcokserver.domain.group.entity.GroupMember;
+import com.tripcok.tripcokserver.domain.group.entity.GroupRole;
 import com.tripcok.tripcokserver.domain.place.dto.PlaceCategoryResponse;
 import com.tripcok.tripcokserver.domain.place.entity.PlaceCategory;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class GroupResponseDto {
     private long id;
     private String groupName;
     private Integer groupMemberCount;
+    private long groupOwnerId;
     private String description;
     private List<GroupCategoryResponse> categories;
     private List<GroupMemberResponse> members;
@@ -33,6 +35,7 @@ public class GroupResponseDto {
         this.groupName = group.getGroupName();
         this.description = group.getDescription();
         this.groupMemberCount = groupMembers.size();
+        this.groupOwnerId = getOwner(groupMembers);
         this.categories = categories.stream().map(
                 category -> new GroupCategoryResponse(category.getCategory())
         ).toList();
@@ -48,6 +51,7 @@ public class GroupResponseDto {
         this.groupName = group.getGroupName();
         this.description = group.getDescription();
         this.groupMemberCount = group.getGroupMembers().size();
+        this.groupOwnerId = getOwner(group.getGroupMembers());
         this.categories = group.getCategory().stream().map(
                 category -> new GroupCategoryResponse(category.getCategory())
         ).toList();
@@ -57,4 +61,15 @@ public class GroupResponseDto {
 
         this.recruiting = group.isRecruiting();
     }
+
+    private long getOwner(List<GroupMember> groupMembers) {
+        for (GroupMember groupMember : groupMembers) {
+            if (groupMember.getRole().equals(GroupRole.ADMIN)) {
+                return groupMember.getMember().getId();
+            }
+        }
+        return 0;
+    }
+
+
 }

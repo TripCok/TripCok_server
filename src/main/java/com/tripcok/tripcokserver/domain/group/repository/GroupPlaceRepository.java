@@ -12,4 +12,6 @@ public interface GroupPlaceRepository extends JpaRepository<GroupPlace, Long> {
     List<GroupPlace> findByGroup_IdOrderByOrdersDesc(Long groupId);
 
     Page<GroupPlace> findByGroup_IdOrderByOrdersAsc(Long groupId, Pageable pageable);
+
+    List<GroupPlace> findByGroupIdOrderByOrdersAsc(Long groupId);
 }

@@ -1,3 +1,5 @@
+
+
 spring:
   servlet:
     multipart:
@@ -29,3 +31,6 @@ save:
     place: /place-image
     user:
       profile: /user/profile
+
+server:
+  port: 9090

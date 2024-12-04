@@ -36,9 +36,12 @@ public class GroupPlaceController {
     }
 
     /* 그룹에 여행지 삭제 */
-    @DeleteMapping("{groupPlaceId}")
-    public ResponseEntity<?> groupRemovePlace(@PathVariable("groupPlaceId") Long id) {
-        return groupPlaceService.groupInPlaceRemove(id);
+    @DeleteMapping
+    public ResponseEntity<?> groupRemovePlace(
+            @RequestParam("placeId") Long placeId,
+            @RequestParam("groupId") Long groupId,
+            @RequestParam("memberId") Long memberId) {
+        return groupPlaceService.groupInPlaceRemove(placeId, groupId, memberId);
     }
 
     /* 그룹에 여행지 순서 변경 */
