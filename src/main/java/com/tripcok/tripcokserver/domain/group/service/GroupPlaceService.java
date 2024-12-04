@@ -82,15 +82,48 @@ public class GroupPlaceService {
     }
 
     /* 그룹에 추가된 여행지 삭제 */
-    public ResponseEntity<?> groupInPlaceRemove(Long id) {
-        GroupPlace groupPlace = groupPlaceRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("찾을수 없는 그룹에 포함 된 여행지 입니다. id = " + id)
-        );
+    @Transactional
+    public ResponseEntity<?> groupInPlaceRemove(Long placeId, Long groupId, Long memberId) {
+        // 해당 그룹의 모든 여행지 조회 (order By Order asc)
+        List<GroupPlace> groupPlaceList = groupPlaceRepository.findByGroupIdOrderByOrdersAsc(groupId);
 
-        groupPlaceRepository.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("성공적으로 "
-                + groupPlace.getPlace().getName()
-                + " 여행지를 삭제하였습니다.");
+        // 요청자가 해당 그룹의 Owner인지 검사
+        GroupMember groupMember = groupMemberRepository
+                .findByGroup_IdAndMember_Id(groupId, memberId)
+                .orElseThrow(() -> new EntityNotFoundException("그룹 멤버를 찾을 수 없습니다."));
+
+        if (groupMember.getRole() != GroupRole.ADMIN) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("여행지를 삭제할 권한이 없습니다.");
+        }
+
+        // 삭제하려는 여행지 조회
+        GroupPlace targetGroupPlace = groupPlaceList.stream()
+                .filter(groupPlace -> groupPlace.getPlace().getId().equals(placeId))
+                .findFirst()
+                .orElse(null);
+
+        if (targetGroupPlace == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("해당 여행지가 그룹에 포함되어 있지 않습니다.");
+        }
+
+        // 삭제 처리
+        groupPlaceRepository.delete(targetGroupPlace);
+
+        // 순서 정렬 (Order 재지정)
+        int order = 1;
+        for (GroupPlace groupPlace : groupPlaceList) {
+            if (!groupPlace.getPlace().getId().equals(placeId)) {
+                groupPlace.setOrders(order++);
+            }
+        }
+
+//        groupPlaceRepository.saveAll(groupPlaceList);
+
+        return ResponseEntity.ok("여행지가 성공적으로 삭제되었습니다.");
     }
 
     /* 그룹에 추가된 여행지 순서 조절 */

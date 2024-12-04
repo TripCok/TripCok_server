@@ -33,7 +33,6 @@ public class GroupController {
     @PostMapping
     public ResponseEntity<GroupResponseDto> createGroup(@Valid @RequestBody GroupRequestDto requestDto) {
 
-        //requestDto에 member_id를 추가
         GroupResponseDto responseDto = groupService.createGroup(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -106,7 +105,7 @@ public class GroupController {
     /*모임 구인 상태 변경*/
     @Operation(summary = "모임 구인 상태 변경", description = "모임의 구인 상태를 변경합니다.")
     @ApiResponse(responseCode = "200", description = "모임 구인 상태 변경 성공")
-    @PatchMapping("/{groupId}/recruiting")
+    @PutMapping("/{groupId}/recruiting")
     public ResponseEntity<Void> updateRecruitingStatus(@PathVariable Long groupId, @RequestParam Long memberId, @RequestParam boolean recruiting) {
         groupService.updateRecruitingStatus(groupId, memberId, recruiting);
         return ResponseEntity.ok().build();

@@ -1,3 +1,5 @@
+
+
 spring:
   servlet:
     multipart:
@@ -30,7 +32,6 @@ save:
     user:
       profile: /user/profile
 
-
 logging:
   config: classpath:logging/spring_log.xml
 
@@ -46,3 +47,7 @@ cloud:
       auto: false
     stack:
       auto: false
+
+server:
+  port: 9090
+

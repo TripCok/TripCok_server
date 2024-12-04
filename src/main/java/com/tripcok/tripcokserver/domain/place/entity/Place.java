@@ -30,6 +30,9 @@ public class Place extends BaseEntity {
     private LocalTime startTime;
     private LocalTime endTime;
 
+    private String latitude;
+    private String longitude;
+
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaceImage> images = new ArrayList<>();
 

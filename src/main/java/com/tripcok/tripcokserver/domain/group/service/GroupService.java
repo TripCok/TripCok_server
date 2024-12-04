@@ -96,6 +96,7 @@ public class GroupService {
     public GroupResponseDto getGroup(Long id) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
+
         return new GroupResponseDto(group);
     }
 
@@ -183,6 +184,7 @@ public class GroupService {
         /* 그룹 조회 */
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID로 그룹을 찾을 수 없습니다!: " + id));
+
         /* 그룹 삭제 */
         groupRepository.delete(group);
     }
