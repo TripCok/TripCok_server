@@ -14,7 +14,7 @@
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>./logs/testFile.log</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger - %msg%n</pattern>
+            <pattern>%msg%n</pattern>
         </encoder>
     </appender>
 
@@ -22,7 +22,7 @@
         <appender-ref ref="CONSOLE"/>
     </root>
 
-    <logger name="com.tripcok.tripcokserver.domain.*.controller.*" level="INFO">
+    <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
 <!--        <appender-ref ref="CONSOLE"/>&ndash;&gt;-->
         <appender-ref ref="FILE"/>
     </logger>

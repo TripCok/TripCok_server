@@ -1,0 +1,26 @@
+
+ INFO com.tripcok.tripcokserver.global.interceptor.LoggingInterceptor - {"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/api/v1/postComment","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/api/v1/postComment","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/swagger-ui/swagger-initializer.js","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/v3/api-docs/swagger-config","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/v3/api-docs","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/swagger-ui/index.html","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/swagger-ui/swagger-initializer.js","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/v3/api-docs/swagger-config","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/v3/api-docs","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/api/files/upload","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/error","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/error","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/error","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/error","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/swagger-ui/index.html","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/swagger-ui/swagger-initializer.js","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/v3/api-docs/swagger-config","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/v3/api-docs","method":"GET","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/api/files/upload","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/error","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/api/files/upload","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/api/files/upload","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/api/files/upload","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/api/files/upload","method":"POST","request":"[]","response":"[]","statusCode":null}
+{"traceId":null,"clientIp":"0:0:0:0:0:0:0:1","url":"http://localhost:8080/api/files/upload","method":"POST","request":"[]","response":"[]","statusCode":null}

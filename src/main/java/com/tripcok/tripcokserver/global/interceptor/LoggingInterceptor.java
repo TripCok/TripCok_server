@@ -1,5 +1,6 @@
 package com.tripcok.tripcokserver.global.interceptor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tripcok.tripcokserver.global.dto.LogDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,11 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
     private static final String TRACE_ID = "TRACE_ID";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final ObjectMapper objectMapper;
+
+    public LoggingInterceptor(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     /* traceId 추가 */
     @Override
@@ -38,10 +44,11 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
         //LogDto 생성
         LogDto logDto = new LogDto(wrappedRequest,wrappedResponse);
-        //LogDto logDto = new LogDto()
-        //LogDto를 String으로 저장
-        //logger.info();
 
+        //LogDto를 String으로 저장
+        String jsonResult = objectMapper.writeValueAsString(logDto);
+
+        logger.info(jsonResult);
     }
 
 }

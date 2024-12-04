@@ -29,5 +29,20 @@ save:
     place: /place-image
     user:
       profile: /user/profile
+
+
 logging:
   config: classpath:logging/spring_log.xml
+
+cloud:
+  aws:
+    s3:
+      bucket: tripcok
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
