@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,12 +22,15 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class PostController {
 
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
     private final PostService postService;
 
     /*게시글 조회(단일)*/
     @GetMapping("/api/v1/post/{postId}")
     public ResponseEntity<PostResponseDto.get> getPost(@PathVariable Long postId) {
+
         PostResponseDto.get postResponseDto = postService.getPost(postId);
+        logger.info(postResponseDto.toString());
         return ResponseEntity.status(HttpStatus.OK).body(postResponseDto);
     }
 
