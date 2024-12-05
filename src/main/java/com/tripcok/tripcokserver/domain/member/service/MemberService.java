@@ -179,4 +179,17 @@ public class MemberService {
         }
         return ResponseEntity.status(HttpStatus.OK).body("성공적으로 업데이트 하였습니다.");
     }
+
+
+    public ResponseEntity<?> asyncLogin(Long id, String email, HttpSession session) {
+        Optional<Member> byIdAndEmail = memberRepository.findByIdAndEmail(id, email);
+
+        if (byIdAndEmail.isPresent()) {
+
+            session.setAttribute("member", new MemberResponseDto.Info(byIdAndEmail.get()));
+            return ResponseEntity.status(HttpStatus.OK).body(new MemberResponseDto.Info(byIdAndEmail.get()));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("옳바르지 않은 요청입니다.");
+        }
+    }
 }

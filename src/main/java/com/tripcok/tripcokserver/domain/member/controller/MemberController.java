@@ -2,6 +2,7 @@ package com.tripcok.tripcokserver.domain.member.controller;
 
 import com.tripcok.tripcokserver.domain.member.dto.MemberRequestDto;
 import com.tripcok.tripcokserver.domain.member.dto.MemberResponseDto;
+import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.member.service.MemberService;
 import com.tripcok.tripcokserver.global.service.EmailService;
 import jakarta.mail.MessagingException;
@@ -23,6 +24,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+
     private final EmailService emailService;
 
     /* 회원가입 */
@@ -53,6 +55,13 @@ public class MemberController {
 
         log.info(request.toString());
         return memberService.loginMember(request, session);
+    }
+
+    @PutMapping("/login/async")
+    public ResponseEntity<?> login(@RequestParam Long id, @RequestParam String email, HttpSession session) {
+
+        return memberService.asyncLogin(id, email, session);
+
     }
 
     /* 회원 정보 조회 */
