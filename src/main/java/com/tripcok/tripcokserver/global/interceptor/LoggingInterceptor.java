@@ -14,7 +14,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 @Component
@@ -43,20 +42,14 @@ public class LoggingInterceptor implements HandlerInterceptor {
     /* 로그를 파일로 변환 */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+
         // Request와 Response를 캐싱 가능한 래퍼로 감싸기
         ContentCachingRequestWrapper wrappedRequest = (ContentCachingRequestWrapper) request;
         ContentCachingResponseWrapper wrappedResponse = (ContentCachingResponseWrapper) response;
 
         //memberId 추가
         Member member = (Member) wrappedRequest.getSession().getAttribute("member");
-        String memberId;
-        if (member == null){
-            memberId = "0";
-        }
-        else{
-            memberId = member.getId().toString();
-        }
-
+        String memberId = String.valueOf(member.getId());
 
         wrappedRequest.setAttribute("memberId", memberId);
 
