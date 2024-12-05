@@ -34,19 +34,19 @@ public class Place extends BaseEntity {
     private String longitude;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceImage> images = new ArrayList<>();
+    private final List<PlaceImage> images = new ArrayList<>();
 
     /* 리뷰 */
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<PlaceReview> reviews = new ArrayList<>();
+    private final List<PlaceReview> reviews = new ArrayList<>();
 
     /* 구독 */
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<PlaceSubscribe> subscribes = new ArrayList<>();
+    private final List<PlaceSubscribe> subscribes = new ArrayList<>();
 
     /* 카테고리 매핑 */
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceCategoryMapping> categoryMappings = new ArrayList<>();
+    private final List<PlaceCategoryMapping> categoryMappings = new ArrayList<>();
 
     public Place(PlaceRequest.placeSave request) {
         this.name = request.getName();
