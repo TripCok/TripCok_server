@@ -18,13 +18,21 @@
         </encoder>
     </appender>
 
+    <appender name="KAFKA" class="ch.qos.logback.classic.net.KafkaAppender">
+        <topic>logs</topic>
+        <bootstrapServers>localhost:9092</bootstrapServers>
+        <keyEncoder>org.apache.kafka.common.serialization.StringSerializer</keyEncoder>
+        <valueEncoder>org.apache.kafka.common.serialization.StringSerializer</valueEncoder>
+    </appender>
+
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
 
     <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
-<!--        <appender-ref ref="CONSOLE"/>&ndash;&gt;-->
         <appender-ref ref="FILE"/>
+        <appender-ref ref="KAFKA"/>
     </logger>
 
 </configuration>
