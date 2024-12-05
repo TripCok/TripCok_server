@@ -49,7 +49,15 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
         //memberId 추가
         Member member = (Member) wrappedRequest.getSession().getAttribute("member");
-        String memberId = String.valueOf(member.getId());
+        String memberId;
+        if (member == null){
+            memberId = "0";
+        }
+        else{
+            memberId = member.getId().toString();
+        }
+
+
         wrappedRequest.setAttribute("memberId", memberId);
 
         //LogDto 생성
