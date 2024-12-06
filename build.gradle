@@ -39,6 +39,15 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     implementation 'me.paulschwarz:spring-dotenv:3.0.0'
+
+    /* logback-kafka-appender */
+    implementation "com.github.danielwegener:logback-kafka-appender:0.1.0"
+    implementation "ch.qos.logback.contrib:logback-jackson:0.1.5"
+    implementation "ch.qos.logback.contrib:logback-json-classic:0.1.5"
+
+    // Spring Kafka (Producer/Consumer 기능 지원)
+    implementation 'org.springframework.kafka:spring-kafka'
+
 }
 
 tasks.named('test') {
