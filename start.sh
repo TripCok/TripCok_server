@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVER_NAME='tripcok'
+SERVER_NAME='tripcok-spring-app-1'
 DOCKER_COMPOSE_FILE='docker-compose.spring.yml'
 DISCORD_WEBHOOK_URL='https://discord.com/api/webhooks/1314466280773914774/q1Qb_yeKsOmtAQAwyGhhCvsVUmNwnneaNfs62_hSRxE1jy5Val7DdWr5V9D5gfsOaCCO'
 
