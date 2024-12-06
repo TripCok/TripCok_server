@@ -20,5 +20,3 @@ services:
       - ./logs:/logs
       - ./place-image:/place-image
       - ./user/profile:/user/profile
-    depends_on:
-      - database
