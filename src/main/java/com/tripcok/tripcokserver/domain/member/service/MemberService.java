@@ -38,7 +38,7 @@ public class MemberService {
 
     /* 회원가입 */
     @Transactional
-    public ResponseEntity<?> createMember(MemberRequestDto.save request) {
+    public ResponseEntity<?> createMember(MemberRequestDto.save request, HttpSession session) {
         Optional<Member> findMember = memberRepository.findByEmail(request.getEmail());
 
         if (findMember.isPresent()) {
@@ -47,7 +47,11 @@ public class MemberService {
 
         Member member = new Member(request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MemberResponseDto.Info(memberRepository.save(member)));
+        Member saveMember = memberRepository.save(member);
+
+        session.setAttribute("member", saveMember);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MemberResponseDto.Info(saveMember));
     }
 
     /* 로그인 */

@@ -29,8 +29,8 @@ public class MemberController {
 
     /* 회원가입 */
     @PostMapping("/register")
-    public ResponseEntity<?> createMember(@RequestBody MemberRequestDto.save request) {
-        return memberService.createMember(request);
+    public ResponseEntity<?> createMember(@RequestBody MemberRequestDto.save request, HttpSession session) {
+        return memberService.createMember(request, session);
     }
 
     /* 회원가입 - 이매일 인증번호 전송 */

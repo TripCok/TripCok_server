@@ -48,13 +48,17 @@ public class LoggingInterceptor implements HandlerInterceptor {
         ContentCachingResponseWrapper wrappedResponse = (ContentCachingResponseWrapper) response;
 
         //memberId 추가
-        Member member = (Member) wrappedRequest.getSession().getAttribute("member");
-        String memberId = String.valueOf(member.getId());
+        try {
+            Member member = (Member) wrappedRequest.getSession().getAttribute("member");
+            String memberId = String.valueOf(member.getId());
 
-        wrappedRequest.setAttribute("memberId", memberId);
+            wrappedRequest.setAttribute("memberId", memberId);
+        } catch (NullPointerException e) {
+            return;
+        }
 
         //LogDto 생성
-        LogDto logDto = new LogDto(wrappedRequest,wrappedResponse);
+        LogDto logDto = new LogDto(wrappedRequest, wrappedResponse);
 
         //LogDto를 String으로 저장
         String jsonResult = objectMapper.writeValueAsString(logDto);

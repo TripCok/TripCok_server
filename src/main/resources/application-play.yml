@@ -31,7 +31,7 @@ save:
       profile: /user/profile
 
 logging:
-  config: classpath:logging/spring_log.xml
+  config: classpath:logging/spring-log-play.xml
 
 cloud:
   aws:
