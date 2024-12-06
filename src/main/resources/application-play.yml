@@ -20,8 +20,8 @@ spring:
         format_sql: false
 
 mail:
-  username: ukidd12@naver.com
-  password: ljh90140189!
+  username: ${MAIL_USER_NAME}
+  password: ${MAIL_USER_PASSWORD}
 
 
 save:
