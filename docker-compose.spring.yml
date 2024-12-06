@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - DB_HOST_IP=${DB_HOST_IP}
+      - DB_HOST_PORT=${DB_HOST_PORT}
+      - DB_HOST_DATABASE=${DB_HOST_DATABASE}
+      - DB_HOST_USERNAME=${DB_HOST_USERNAME}
+      - DB_HOST_PASSWORD=${DB_HOST_PASSWORD}
+      - MAIL_USER_NAME=${MAIL_USER_NAME}
+      - MAIL_USER_PASSWORD=${MAIL_USER_PASSWORD}
+    volumes:
+      - ./logs:/logs
+      - ./place-image:/place-image
+      - ./user/profile:/user/profile
+    depends_on:
+      - database
+
+  database:
+    image: mariadb:10.7
+    container_name: mariadb
+    ports:
+      - "3366:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${DB_HOST_DATABASE}
+      MYSQL_USER: ${DB_HOST_USERNAME}
+      MYSQL_PASSWORD: ${DB_HOST_PASSWORD}
+    volumes:
+      - ./mariadb_data:/var/lib/mysql

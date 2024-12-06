@@ -5,9 +5,9 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
   datasource:
-    url: jdbc:mariadb://localhost:3366/tripcok_db
-    username: tripcok
-    password: tripcok1234
+    url: jdbc:mariadb://${DB_HOST_IP}:${DB_HOST_PORT}/${DB_HOST_DATABASE}
+    username: ${DB_HOST_USERNAME}
+    password: ${DB_HOST_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
@@ -20,8 +20,8 @@ spring:
         format_sql: false
 
 mail:
-  username: ukidd12@naver.com
-  password: ljh90140189!
+  username: ${MAIL_USER_NAME}
+  password: ${MAIL_USER_PASSWORD}
 
 
 save:
