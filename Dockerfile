@@ -1,19 +1,19 @@
 # OpenJDK 17 기반 이미지 사용
 FROM openjdk:17-jdk-slim
 
-# 환경 변수 설정
-ENV SPRING_PROFILES_ACTIVE=play
-
-# 작업 디렉토리 설정
+# 작업 디렉터리 설정
 WORKDIR /app
 
 # JAR 파일 및 설정 파일 복사
 COPY ./build/libs/tripcok-server-0.0.1-SNAPSHOT.jar app.jar
-#COPY /spring/env/.env ./
 
-# 컨테이너 실행 시 사용할 사용자 설정
+# 로그 디렉터리 생성
+RUN mkdir -p /app/logs && \
+    chown -R tripcok:tripcok /app/logs
+
+# 사용자 권한 설정
 RUN groupadd -r tripcok && useradd -r -g tripcok tripcok
 USER tripcok
 
-# 컨테이너가 시작될 때 실행될 명령어
-CMD ["java", "-jar", "app.jar"]
+# 컨테이너 시작 시 실행할 명령어
+CMD ["java", "-Dspring.profiles.active=play", "-jar", "app.jar"]
