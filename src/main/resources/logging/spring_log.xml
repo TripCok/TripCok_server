@@ -18,14 +18,21 @@
         </encoder>
     </appender>
 
-    <appender name="KAFKA" class="com.github.danielwegener.logback.kafka.KafkaAppender">
-        <encoder class="com.github.danielwegener.logback.kafka.encoding.LayoutKafkaMessageEncoder">
-            <layout class="ch.qos.logback.classic.PatternLayout">
-                <Pattern>%msg%n</Pattern>
-            </layout>
-        </encoder>
-        <topic>logs</topic>
-        <producerConfig>bootstrap.servers=localhost:9092</producerConfig>
+<!--    <appender name="KAFKA" class="com.github.danielwegener.logback.kafka.KafkaAppender">-->
+<!--        <encoder class="com.github.danielwegener.logback.kafka.encoding.LayoutKafkaMessageEncoder">-->
+<!--            <layout class="ch.qos.logback.classic.PatternLayout">-->
+<!--                <Pattern>%msg%n</Pattern>-->
+<!--            </layout>-->
+<!--        </encoder>-->
+<!--        <topic>logs</topic>-->
+<!--        <producerConfig>bootstrap.servers=localhost:9092</producerConfig>-->
+<!--    </appender>-->
+
+    <!-- Custom Kafka Appender 설정 -->
+    <appender name="CUSTOM_KAFKA" class="com.tripcok.tripcokserver.global.kafka.CustomKafkaAppender">
+        <topic>logs</topic>  <!-- Kafka 토픽 이름 -->
+        <fallbackFilePath>failed_logs.txt</fallbackFilePath>  <!-- 실패 로그 파일 경로 -->
+        <maxRetries>3</maxRetries>  <!-- 최대 재시도 횟수 -->
     </appender>
 
     <root level="INFO">
@@ -34,7 +41,7 @@
 
     <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
 <!--        <appender-ref ref="FILE"/>-->
-        <appender-ref ref="KAFKA"/>
+        <appender-ref ref="CUSTOM_KAFKA"/>
     </logger>
 
 </configuration>
