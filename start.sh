@@ -27,7 +27,7 @@ docker compose -f $DOCKER_COMPOSE_FILE up -d
 # 서버 컨테이너의 실행 상태 확인
 send_discord_message " - 서버 컨테이너의 상태를 검사합니다. [4 / 5]"
 if [ "$(docker inspect -f '{{.State.Running}}' $SERVER_NAME 2>/dev/null)" = "true" ]; then
-  send_discord_message "- 서버 컨테이너 '$SERVER_NAME'가 성공적으로 실행 중입니다. [5 / 5]"
+  send_discord_message "- ✅ 서버 컨테이너 '$SERVER_NAME'가 성공적으로 실행 중입니다. ✅ [5 / 5]"
 else
-  send_discord_message "- 서버 컨테이너 '$SERVER_NAME' 실행에 실패했습니다. [5 / 5]"
+  send_discord_message "- ❌ 서버 컨테이너 '$SERVER_NAME' 실행에 실패했습니다. ❌ [5 / 5]"
 fi
