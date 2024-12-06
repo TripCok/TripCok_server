@@ -18,7 +18,7 @@
         </encoder>
     </appender>
 
-    <appender name="kafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+    <appender name="KAFKA" class="com.github.danielwegener.logback.kafka.KafkaAppender">
         <encoder class="com.github.danielwegener.logback.kafka.encoding.LayoutKafkaMessageEncoder">
             <layout class="ch.qos.logback.classic.PatternLayout">
                 <Pattern>%msg%n</Pattern>
@@ -33,7 +33,7 @@
     </root>
 
     <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
-        <appender-ref ref="FILE"/>
+<!--        <appender-ref ref="FILE"/>-->
         <appender-ref ref="KAFKA"/>
     </logger>
 
