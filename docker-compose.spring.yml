@@ -22,16 +22,3 @@ services:
       - ./user/profile:/user/profile
     depends_on:
       - database
-
-  database:
-    image: mariadb:10.7
-    container_name: mariadb
-    ports:
-      - "3366:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: ${DB_HOST_DATABASE}
-      MYSQL_USER: ${DB_HOST_USERNAME}
-      MYSQL_PASSWORD: ${DB_HOST_PASSWORD}
-    volumes:
-      - ./mariadb_data:/var/lib/mysql
