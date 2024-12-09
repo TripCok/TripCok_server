@@ -23,6 +23,7 @@ public class PlaceImage {
 
     private String imagePath;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private PlaceImageType imageType;
 

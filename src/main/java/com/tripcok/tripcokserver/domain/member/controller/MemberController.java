@@ -57,6 +57,7 @@ public class MemberController {
         return memberService.loginMember(request, session);
     }
 
+    /* AsyncLogin */
     @PutMapping("/login/async")
     public ResponseEntity<?> login(@RequestParam Long id, @RequestParam String email, HttpSession session) {
 

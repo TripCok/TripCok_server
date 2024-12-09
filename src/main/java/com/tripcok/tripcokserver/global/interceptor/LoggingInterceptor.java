@@ -43,9 +43,17 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
 
+        ContentCachingRequestWrapper wrappedRequest;
+        ContentCachingResponseWrapper wrappedResponse;
+
         // Request와 Response를 캐싱 가능한 래퍼로 감싸기
-        ContentCachingRequestWrapper wrappedRequest = (ContentCachingRequestWrapper) request;
-        ContentCachingResponseWrapper wrappedResponse = (ContentCachingResponseWrapper) response;
+        if (request instanceof ContentCachingRequestWrapper && response instanceof ContentCachingResponseWrapper) {
+            wrappedRequest = (ContentCachingRequestWrapper) request;
+            wrappedResponse = (ContentCachingResponseWrapper) response;
+            // 이후 로직 실행
+        } else {
+            return;
+        }
 
         //memberId 추가
         try {

@@ -30,9 +30,9 @@ mail:
 
 save:
   location:
-    place: /place-image
+    place: place/images
     user:
-      profile: /user/profile
+      profile: user/profile
 
 logging:
   config: classpath:logging/spring-log-local.xml

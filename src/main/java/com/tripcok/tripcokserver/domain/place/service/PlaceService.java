@@ -7,10 +7,7 @@ import com.tripcok.tripcokserver.domain.member.entity.Role;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.place.dto.PlaceRequest;
 import com.tripcok.tripcokserver.domain.place.dto.PlaceResponse;
-import com.tripcok.tripcokserver.domain.place.entity.Place;
-import com.tripcok.tripcokserver.domain.place.entity.PlaceCategory;
-import com.tripcok.tripcokserver.domain.place.entity.PlaceCategoryMapping;
-import com.tripcok.tripcokserver.domain.place.entity.PlaceImage;
+import com.tripcok.tripcokserver.domain.place.entity.*;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryMappingRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceImageRepository;
@@ -47,7 +44,7 @@ public class PlaceService {
     private final SqlDataSourceScriptDatabaseInitializer dataSourceScriptDatabaseInitializer;
 
     @Value("${save.location.place}")
-    private String savePathDirectory;
+    private String bucketDir;
 
     /* 여행지 생성 */
     @Transactional(rollbackFor = {NoSuchElementException.class, AccessDeniedException.class})
@@ -60,19 +57,7 @@ public class PlaceService {
         Place place = new Place(request);
         Place newPlace = placeRepository.save(place);
 
-        /* 2-1. 파일 저장 */
-        if (files != null) {
-            String savePath = System.getProperty("user.home") + savePathDirectory;
-
-            List<FileDto> fileDtoList = fileService.saveFiles(files, savePath);
-            for (FileDto fileDto : fileDtoList) {
-                PlaceImage placeImage = new PlaceImage(fileDto.getName(), fileDto.getPath());
-                newPlace.addImage(placeImage);
-            }
-        }
-
-
-        /* 3. 카테고리 매핑 생성 */
+        /* 2-1. 카테고리 매핑 생성 */
         List<PlaceCategoryMapping> mappings = request.getCategoryIds().stream()
                 .map(categoryId -> {
                     PlaceCategory category = categoryRepository.findById(categoryId)
@@ -80,6 +65,26 @@ public class PlaceService {
                     return new PlaceCategoryMapping(newPlace, category);
                 })
                 .toList();
+
+
+        /* 3. 여행지 이미지 저장 */
+        if (files != null) {
+
+            int cnt = 0;
+
+            List<FileDto> fileDtoList = fileService.uploadFile(files, bucketDir);
+            for (FileDto fileDto : fileDtoList) {
+
+                PlaceImage placeImage = new PlaceImage(fileDto.getName(), fileDto.getPath());
+
+                if (cnt == 0) {
+                    placeImage.setImageType(PlaceImageType.T);
+                }
+
+                newPlace.addImage(placeImage);
+                cnt++;
+            }
+        }
 
         placeCategoryMappingRepository.saveAll(mappings);
 
@@ -96,9 +101,9 @@ public class PlaceService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자의 정보가 옳바르지 않습니다. Member ID : " + memberId));
 
-          if (member.getRole().equals(Role.USER)){
-              throw new AccessDeniedException("올바르지 않은 권한입니다. Member ID: " + memberId);
-          }
+        if (member.getRole().equals(Role.USER)) {
+            throw new AccessDeniedException("올바르지 않은 권한입니다. Member ID: " + memberId);
+        }
 
         return member;
     }
@@ -172,9 +177,7 @@ public class PlaceService {
 
         /* 5. 파일 처리 (기존 파일 유지 or 업데이트) */
         if (files != null) {
-            String savePath = System.getProperty("user.home") + savePathDirectory;
-
-            List<FileDto> fileDtoList = fileService.saveFiles(files, savePath);
+            List<FileDto> fileDtoList = fileService.uploadFile(files, bucketDir);
             for (FileDto fileDto : fileDtoList) {
                 PlaceImage placeImage = new PlaceImage(fileDto.getName(), fileDto.getPath());
                 place.addImage(placeImage);

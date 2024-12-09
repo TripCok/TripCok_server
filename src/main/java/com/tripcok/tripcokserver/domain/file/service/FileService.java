@@ -1,7 +1,13 @@
 package com.tripcok.tripcokserver.domain.file.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.tripcok.tripcokserver.domain.file.FileDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -19,44 +25,55 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FileService {
 
-    /* 파일 저장 */
-    public List<FileDto> saveFiles(List<MultipartFile> files, String savePath) {
-        List<FileDto> fileDtoList = new ArrayList<>();
+    private final AmazonS3 amazonS3;
 
-        // 저장 경로가 존재하지 않으면 디렉토리 생성
-        File directory = new File(savePath);
-        if (!directory.exists()) {
-            directory.mkdirs();
-            log.info(savePath + " <- 폴더 생성");
-        }
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
 
-        for (MultipartFile file : files) {
-            if (file.isEmpty()) {
-                continue;
-            }
+    // 파일 업로드
+    public List<FileDto> uploadFile(List<MultipartFile> files, String folder) {
+
+        /* Path List */
+        List<FileDto> fileDtos = new ArrayList<>();
+
+        for (MultipartFile multipartFile : files) {
+            String originalFilename = multipartFile.getOriginalFilename();
+            String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
+            String key = folder + "/" + uniqueFilename;
 
             try {
-                String originalFilename = file.getOriginalFilename();
-                String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(multipartFile.getSize()); // 파일 크기를 설정
 
-                String filePath = savePath + File.separator + uniqueFilename;
+                amazonS3.putObject(new PutObjectRequest(bucketName, key, multipartFile.getInputStream(), metadata));
 
-                file.transferTo(new File(filePath));
 
-                // 저장된 파일 경로를 리스트에 추가
-                FileDto fileDto = new FileDto();
-                fileDto.setName(originalFilename);
-                fileDto.setPath(filePath);
-                fileDtoList.add(fileDto);
+                String path = amazonS3.getUrl(bucketName, key).toString();
 
+                fileDtos.add(new FileDto(uniqueFilename, path));
             } catch (IOException e) {
-                throw new RuntimeException("파일 저장 중 오류 발생: " + file.getOriginalFilename(), e);
+                throw new RuntimeException("S3에 파일 업로드 중 오류 발생: " + multipartFile.getOriginalFilename(), e);
             }
+
         }
 
-        return fileDtoList;
+        return fileDtos;
+
+    }
+
+    // 파일 삭제
+    public boolean deleteFile(String fileFullPath) {
+        try {
+            String key = fileFullPath.replace(amazonS3.getUrl(bucketName, "").toString(), "");
+            System.out.println(key);
+            amazonS3.deleteObject(bucketName, key);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     /* 이미지 파일 로드 */
@@ -84,21 +101,21 @@ public class FileService {
     }
 
     /* 파일 삭제 */
-    public boolean deleteFile(String filePath) {
-        File file = new File(filePath);
-
-        if (file.exists()) {
-            if (file.delete()) {
-                log.info("파일이 성공적으로 삭제되었습니다: " + filePath);
-                return true;
-            } else {
-                log.error("파일 삭제에 실패했습니다: " + filePath);
-                return false;
-            }
-        } else {
-            log.warn("삭제하려는 파일이 존재하지 않습니다: " + filePath);
-            return false;
-        }
-    }
+//    public boolean deleteFile(String filePath) {
+//        File file = new File(filePath);
+//
+//        if (file.exists()) {
+//            if (file.delete()) {
+//                log.info("파일이 성공적으로 삭제되었습니다: " + filePath);
+//                return true;
+//            } else {
+//                log.error("파일 삭제에 실패했습니다: " + filePath);
+//                return false;
+//            }
+//        } else {
+//            log.warn("삭제하려는 파일이 존재하지 않습니다: " + filePath);
+//            return false;
+//        }
+//    }
 }
 

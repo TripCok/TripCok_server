@@ -127,7 +127,7 @@ public class MemberService {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 이유로 업데이트에 실패하였습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -151,7 +151,7 @@ public class MemberService {
             throw new IllegalArgumentException("업로드할 파일이 없습니다.");
         }
 
-        List<FileDto> fileDtoList = fileService.saveFiles(files, System.getProperty("user.home") + savePathDir);
+        List<FileDto> fileDtoList = fileService.uploadFile(files, savePathDir);
         if (fileDtoList.size() != 1) {
             throw new IllegalArgumentException("여러 장의 사진은 저장할 수 없습니다.");
         }
