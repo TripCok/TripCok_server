@@ -21,14 +21,14 @@ spring:
         show_sql: false
         format_sql: false
 
-#  kafka:
-#    producer:
-#      bootstrap-servers: localhost:9092
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      acks: all       # 모든 복제 브로커의 응답을 기다림
-#      retries: 3      # 재시도 횟수
-#      enable-idempotence: true # 멱등성 활성화
+  kafka:
+    producer:
+      bootstrap-servers: localhost:29092,localhost:39092,localhost:49092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all       # 모든 복제 브로커의 응답을 기다림
+      retries: 3      # 재시도 횟수
+      enable-idempotence: true # 멱등성 활성화
 
 mail:
   username: ukidd12@naver.com

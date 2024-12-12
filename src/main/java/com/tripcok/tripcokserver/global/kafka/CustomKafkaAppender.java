@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CustomKafkaAppender<E> extends AppenderBase<E> {
 
     private KafkaProducer<String, String> producer;
@@ -21,17 +24,29 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
     private int maxRetries = 3; // 최대 재시도 횟수
     private Queue<String> retryQueue = new LinkedList<>(); // 임시 큐
     @Setter
-    private String fallbackFilePath = "failed_logs.txt"; // 실패한 로그 파일 경로
+    private String fallbackFilePath = "./failed_logs.txt"; // 실패한 로그 파일 경로
 
     @Override
     public void start() {
         super.start();
         // KafkaProducer 설정
         Properties props = new Properties();
-        props.put("bootstrap.servers", "172.18.0.1:9092");
+        props.put("bootstrap.servers", "localhost:29092,localhost:39092,localhost:49092");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("acks", "all");  // 멱등성 보장을 위해 'all'로 설정
+
+        //멱등성 보장
+        props.put("acks", "all");  // 모든 ISR 복제본이 수신해야 성공으로 간주
+        props.put("enable.idempotence", "true");  // 중복 방지를 위한 멱등성 설정
+
+        // 배치 설정
+        props.put("batch.size", 16384);  // 배치 크기 설정
+        props.put("linger.ms", 5);  // 배치 대기 시간 설정
+
+        // 타임아웃 설정
+        props.put("request.timeout.ms", 500);  // 요청 타임아웃 (밀리초)
+        props.put("delivery.timeout.ms", 1000);  // 배달 타임아웃 (밀리초)
+
         producer = new KafkaProducer<>(props);
     }
 
@@ -43,7 +58,11 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
 
         String message = eventObject.toString(); // 로그 메시지 변환
 
+        System.out.println("CustomAppender invoked with event: " + message);
+
         boolean success = sendWithRetry(message, maxRetries);
+
+        System.out.println("***************************" + success);
 
         // 전송 실패 시 임시 큐에 저장
         if (!success) {
@@ -63,6 +82,7 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         return false; // 전송 실패
     }
 
+    @Scheduled(cron = "0 0 0 * * ?")
     public void processRetryQueue() {
         while (!retryQueue.isEmpty()) {
             String message = retryQueue.poll();
