@@ -24,14 +24,21 @@ public class Place extends BaseEntity {
     private Long id;
 
     private String name;
+
+    @Lob
     private String description;
+
     private String address;
 
     private LocalTime startTime;
+
     private LocalTime endTime;
 
     private String latitude;
+
     private String longitude;
+
+    private Integer mlMappingId;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<PlaceImage> images = new ArrayList<>();
