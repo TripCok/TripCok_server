@@ -33,6 +33,9 @@ save:
     user:
       profile: /user/profile
 
+kafka:
+  bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
+
 logging:
   config: classpath:logging/spring-log-play.xml
 

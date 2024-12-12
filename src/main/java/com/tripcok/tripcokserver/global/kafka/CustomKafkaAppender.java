@@ -12,6 +12,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,16 +25,20 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
     private String topic;
     @Setter
     private int maxRetries = 3; // 최대 재시도 횟수
-    private Queue<String> retryQueue = new LinkedList<>(); // 임시 큐
+    private Queue<String> retryQueue = new LinkedList<>();
     @Setter
-    private String fallbackFilePath = "./failed_logs.txt"; // 실패한 로그 파일 경로
+    private String fallbackFilePath = "./failed_logs.txt";
+
+    @Value("${kafka.bootstrap}")
+    private String KAFKA_BOOTSTRAP_SERVERS;
+
 
     @Override
     public void start() {
         super.start();
         // KafkaProducer 설정
         Properties props = new Properties();
-        props.put("bootstrap.servers", "172.31.5.40:29092,172.31.5.40:39092,172.31.5.40:49092");
+        props.put("bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 

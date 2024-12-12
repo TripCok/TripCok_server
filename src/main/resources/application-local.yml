@@ -24,15 +24,8 @@ spring:
       enabled: true
       additional-exclude: static/**,public/**
 
-#
-#  kafka:
-#    producer:
-#      bootstrap-servers: 172.31.5.40:29092,172.31.5.40:39092,172.31.5.40:49092
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      acks: all       # 모든 복제 브로커의 응답을 기다림
-#      retries: 3      # 재시도 횟수
-#      enable-idempotence: true # 멱등성 활성화
+kafka:
+  bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
 
 mail:
   username: ${MAIL_USER_NAME}
