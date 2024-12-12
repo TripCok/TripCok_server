@@ -20,8 +20,6 @@ public class AdminInterceptor implements HandlerInterceptor {
 
         Member member = (Member) request.getSession().getAttribute("member");
 
-//        log.info("Pre Handle => " + member.toString());
-
         try {
             if (member.getRole().equals(Role.MANAGER)) {
                 return true;

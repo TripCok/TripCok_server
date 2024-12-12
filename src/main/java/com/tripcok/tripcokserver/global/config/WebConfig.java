@@ -26,7 +26,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")  // 인터셉터를 적용할 기본 URL 패턴
                 .excludePathPatterns(
                         "/api/v1/member/login",      // 로그인 URL 제외
-                        "/api/v1/member/register"     // 회원가입 URL 제외
+                        "/api/v1/member/register",     // 회원가입 URL 제외
+                        "/api/v1/member/register/*"
                 );
     }
 }
