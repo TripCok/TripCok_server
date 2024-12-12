@@ -51,8 +51,8 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         props.put("linger.ms", 5);  // 배치 대기 시간 설정
 
         // 타임아웃 설정
-        props.put("request.timeout.ms", 500);  // 요청 타임아웃 (밀리초)
-        props.put("delivery.timeout.ms", 1000);  // 배달 타임아웃 (밀리초)
+        props.put("request.timeout.ms", 5);  // 요청 타임아웃 (밀리초)
+        props.put("delivery.timeout.ms", 10);  // 배달 타임아웃 (밀리초)
 
         this.topic = "logs";
 
