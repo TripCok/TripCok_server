@@ -9,10 +9,7 @@ spring:
     username: ${DB_HOST_USERNAME}
     password: ${DB_HOST_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
-  devtools:
-    restart:
-      enabled: false
-      additional-exclude: static/**,public/**
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,18 +19,24 @@ spring:
         show_sql: false
         format_sql: false
 
+  devtools:
+    restart:
+      enabled: true
+      additional-exclude: static/**,public/**
+
+kafka:
+  bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
+
 mail:
   username: ${MAIL_USER_NAME}
   password: ${MAIL_USER_PASSWORD}
 
+
 save:
   location:
-    place: /place-image
+    place: place/images
     user:
-      profile: /user/profile
-
-kafka:
-  bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
+      profile: user/profile
 
 logging:
   config: classpath:logging/spring-log-play.xml
@@ -53,3 +56,5 @@ cloud:
 
 server:
   port: 9090
+
+

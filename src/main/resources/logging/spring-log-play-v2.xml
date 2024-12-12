@@ -18,13 +18,20 @@
         </encoder>
     </appender>
 
+    <!-- Custom Kafka Appender 설정 -->
+    <appender name="CUSTOM_KAFKA" class="com.tripcok.tripcokserver.global.kafka.CustomKafkaAppender">
+        <topic>logs</topic>  <!-- Kafka 토픽 이름 -->
+<!--        <fallbackFilePath>failed_logs.txt</fallbackFilePath>  &lt;!&ndash; 실패 로그 파일 경로 &ndash;&gt;-->
+        <maxRetries>3</maxRetries>  <!-- 최대 재시도 횟수 -->
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
 
     <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
-        <!--        <appender-ref ref="CONSOLE"/>&ndash;&gt;-->
-        <appender-ref ref="FILE"/>
+<!--        <appender-ref ref="FILE"/>-->
+        <appender-ref ref="CUSTOM_KAFKA"/>
     </logger>
 
 </configuration>
