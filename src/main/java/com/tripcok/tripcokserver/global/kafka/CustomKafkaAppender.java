@@ -3,11 +3,12 @@ package com.tripcok.tripcokserver.global.kafka;
 import ch.qos.logback.core.AppenderBase;
 import lombok.Setter;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
@@ -31,7 +32,7 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         super.start();
         // KafkaProducer 설정
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:29092,localhost:39092,localhost:49092");
+        props.put("bootstrap.servers", "172.31.5.40:29092,172.31.5.40:39092,172.31.5.40:49092");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
@@ -46,6 +47,8 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         // 타임아웃 설정
         props.put("request.timeout.ms", 500);  // 요청 타임아웃 (밀리초)
         props.put("delivery.timeout.ms", 1000);  // 배달 타임아웃 (밀리초)
+
+        this.topic = "logs";
 
         producer = new KafkaProducer<>(props);
     }
@@ -94,6 +97,9 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
     }
 
     private void writeToFallbackFile(String message) {
+        //현재 날짜 가지고 오는 방법
+        String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        fallbackFilePath = "./failed_logs/" + currentDateTime; // 실패한 로그 파일 경로
         try (FileWriter writer = new FileWriter(fallbackFilePath, true)) {
             writer.write(message + System.lineSeparator());
         } catch (IOException e) {
