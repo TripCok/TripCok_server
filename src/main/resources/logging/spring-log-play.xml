@@ -32,7 +32,6 @@
     <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
 <!--        <appender-ref ref="FILE"/>-->
         <appender-ref ref="CUSTOM_KAFKA"/>
->>>>>>> 0.2-dev-kafka2S3:src/main/resources/logging/spring_log.xml
     </logger>
 
 </configuration>
