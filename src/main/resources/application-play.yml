@@ -26,7 +26,6 @@ mail:
   username: ${MAIL_USER_NAME}
   password: ${MAIL_USER_PASSWORD}
 
-
 save:
   location:
     place: /place-image
