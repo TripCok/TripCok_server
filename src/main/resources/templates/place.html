@@ -142,6 +142,7 @@
         url.searchParams.append('page', page);
         url.searchParams.append('size', size);
         if (query) url.searchParams.append('queryName', query);
+        if (query.trim() !== '') url.searchParams.append('placeName', query.trim())
         if (category) url.searchParams.append('categoryIds', category); // 카테고리 필터 추가 (선택된 경우만)
 
         // API 호출
@@ -176,8 +177,8 @@
      * 검색어 입력 시 호출
      */
     function searchPlaces() {
-        const query = document.getElementById('searchInput').add
-        fetchPlaces(query); // 검색어로 데이터 가져오기
+        const query = document.getElementById('searchInput').value.trim(); // 입력된 검색어
+        fetchPlaces(query); // 검색어로 여행지 조회
     }
 
     /**
