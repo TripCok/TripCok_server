@@ -38,7 +38,7 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         super.start();
         // KafkaProducer 설정
         Properties props = new Properties();
-        props.put("bootstrap.servers", "172.31.5.40:9094,172.31.5.40:9095,172.31.5.40:9095");
+        props.put("bootstrap.servers", "172.31.29.197:19092,172.31.23.162:19092,172.31.24.68:19092");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
