@@ -35,9 +35,9 @@ public class MemberController {
 
     /* 회원가입 - 이매일 인증번호 전송 */
     @GetMapping("/register/{email}")
-    public ResponseEntity<?> sendVerificationEmail(@PathVariable("email") String email) throws MessagingException, UnsupportedEncodingException, MessagingException, UnsupportedEncodingException {
+    public ResponseEntity<?> sendVerificationEmail(@PathVariable("email") String email, HttpSession session) throws MessagingException, UnsupportedEncodingException, MessagingException, UnsupportedEncodingException {
         log.info(email);
-        return emailService.sendVerificationEmail(email);
+        return emailService.sendVerificationEmail(email, session);
     }
 
     /* 회원가입 - 이매일 인증번호 인증 */

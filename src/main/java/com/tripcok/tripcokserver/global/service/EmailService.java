@@ -24,12 +24,11 @@ public class EmailService {
     @Value(value = "${mail.username}")
     private String SENDER_EMAIL;
 
-    private final HttpSession session;
     private final JavaMailSender mailSender;
 
     private static final long CODE_EXPIRATION_TIME = 300_000; // 5분
 
-    public ResponseEntity<?> sendVerificationEmail(String email) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity<?> sendVerificationEmail(String email, HttpSession session) throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage message = mailSender.createMimeMessage();
         String code = generateVerificationCode();
