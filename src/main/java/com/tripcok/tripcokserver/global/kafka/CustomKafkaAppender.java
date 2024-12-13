@@ -38,7 +38,7 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         super.start();
         // KafkaProducer 설정
         Properties props = new Properties();
-        props.put("bootstrap.servers", "172.31.29.197:19092,172.31.23.162:19092,172.31.24.68:19092");
+        props.put("bootstrap.servers", "172.31.29.197:19092");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
@@ -51,8 +51,8 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         props.put("linger.ms", 5);  // 배치 대기 시간 설정
 
         // 타임아웃 설정
-        props.put("request.timeout.ms", 5);  // 요청 타임아웃 (밀리초)
-        props.put("delivery.timeout.ms", 10);  // 배달 타임아웃 (밀리초)
+        props.put("request.timeout.ms", 500);  // 요청 타임아웃 (밀리초)
+        props.put("delivery.timeout.ms", 1000);  // 배달 타임아웃 (밀리초)
 
         this.topic = "logs";
 
