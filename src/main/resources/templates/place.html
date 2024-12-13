@@ -135,18 +135,20 @@
         const category = document.getElementById('categorySelect').value; // 선택된 카테고리 ID
         if (size < 1) size = 10;
 
+        tableBody.innerHTML = '';
+
         // API 호출 URL 생성
         const url = new URL('/api/v1/place', window.location.origin);
         url.searchParams.append('page', page);
         url.searchParams.append('size', size);
         if (query) url.searchParams.append('queryName', query);
-        if (category) url.searchParams.append('categoryId', category); // 카테고리 필터 추가 (선택된 경우만)
+        if (category) url.searchParams.append('categoryIds', category); // 카테고리 필터 추가 (선택된 경우만)
 
         // API 호출
         fetch(url.toString())
             .then(response => response.json())
             .then(data => {
-                tableBody.innerHTML = '';
+                tableBody.innerHTML = ''; //초기화
                 document.getElementById('totalPlaces').textContent = data.totalElements;
 
                 data.content.forEach(place => {
@@ -174,7 +176,7 @@
      * 검색어 입력 시 호출
      */
     function searchPlaces() {
-        const query = document.getElementById('searchInput').value;
+        const query = document.getElementById('searchInput').add
         fetchPlaces(query); // 검색어로 데이터 가져오기
     }
 
