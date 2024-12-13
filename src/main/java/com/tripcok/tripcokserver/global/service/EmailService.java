@@ -59,7 +59,7 @@ public class EmailService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> verifyCode(String email, String code) {
+    public ResponseEntity<?> verifyCode(String email, String code, HttpSession session) {
         log.info("verify code {}", code);
         log.info("verify email {}", email);
         String storedCode = (String) session.getAttribute(email);

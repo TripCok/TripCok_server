@@ -44,9 +44,10 @@ public class MemberController {
     @GetMapping("/register/email/check")
     public ResponseEntity<?> checkVerificationEmail(
             @RequestParam("email") String email,
-            @RequestParam("code") String code
+            @RequestParam("code") String code,
+            HttpSession session
     ) {
-        return emailService.verifyCode(email, code);
+        return emailService.verifyCode(email, code, session);
     }
 
     /* 로그인 */
