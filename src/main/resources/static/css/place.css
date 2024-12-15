@@ -94,6 +94,11 @@ p {
     margin-bottom: 50px;
 }
 
+.content-header > h1 {
+    font-size: 30px;
+    font-weight: bold;
+}
+
 .logo-container {
     display: flex;
     flex-direction: row;
@@ -112,13 +117,13 @@ p {
 }
 
 .content-search > div {
-    padding: 15px 10px;
-    border-bottom: 3px solid #6DB777;
+    padding: 5px 10px;
+    border-bottom: 4px solid #6DB777;
 }
 
-.content-search > p {
-    font-size: 15px;
-    font-weight: 600;
+.content-search > div > p {
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .member-search {
@@ -138,7 +143,7 @@ p {
 /* 검색 필드 */
 #searchInput {
     outline: none;
-    border: 3px solid #d2d2d2;
+    border: 3px solid #6DB777;
     border-radius: 10px;
     width: 450px;
     height: 40px;
@@ -153,7 +158,7 @@ p {
 /* 카테고리 선택 드롭다운 */
 #categorySelect {
     outline: none;
-    border: 3px solid #d2d2d2;
+    border: 3px solid #6DB777;
     border-radius: 10px;
     height: 40px;
     padding: 5px 10px;
@@ -187,14 +192,32 @@ table th {
 }
 
 /* 버튼 스타일 */
-button {
-    border-radius: 5px;
-    padding: 5px 10px;
-    font-size: 14px;
-    transition: 0.2s background-color ease-in-out;
+.add-button {
+    background-color: #6DB777;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out;
 }
 
-button:hover {
-    background-color: #5aa666;
-    color: white;
+/*button:hover {*/
+/*    background-color: #5aa666;*/
+/*    color: white;*/
+/*}*/
+
+.pagination-button {
+    background-color: rgba(109, 183, 119, 0.1);
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #6DB777;
+    text-decoration: underline;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
+
+/*.pagination-button:hover {*/
+/*    background-color: #6DB777;*/
+/*    color: white;*/
+/*}*/

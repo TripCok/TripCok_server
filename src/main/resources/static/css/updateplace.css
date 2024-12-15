@@ -117,11 +117,6 @@ p {
 }
 
 .content-search > div {
-    padding: 15px 10px;
-    border-bottom: 3px solid #6DB777;
-}
-
-.content-search > div {
     padding: 5px 10px;
     border-bottom: 4px solid #6DB777;
 }

@@ -6,20 +6,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link th:href="@{/css/place.css}" rel="stylesheet"/>
+    <link th:href="@{/css/member.css}" rel="stylesheet"/>
     <title>Tripcok - Admin</title>
 </head>
 <body>
 <div class="container">
-    <!-- Navigation -->
     <div class="navigation-container">
         <div style="height: 100%" th:insert="~{fragments/menu :: menu-list}"></div>
     </div>
-
-    <!-- Main Content -->
     <div class="content-container">
-        <div class="content-header d-flex justify-content-between align-items-center">
-            <h1>View Places</h1>
+        <div class="content-header">
+            <h1>View Members</h1>
             <div class="logo-container">
                 <p>Trip</p>
                 <p style="color: #6DB777">Cok</p>
@@ -29,10 +26,11 @@
         <!-- Search and Filter -->
         <div class="content-search d-flex align-items-center justify-content-between mb-3">
             <p>All Places</p>
-            <select id="categorySelect" class="form-select w-50 me-3">
+            <select class="form-select w-50 me-3" id="categorySelect">
                 <option value="">카테고리를 선택하세요</option>
-            <input id="searchInput" class="form-control w-50" type="text" placeholder="여행지 이름을 검색하세요"
-                   onkeyup="searchPlaces()">
+            </select>
+            <input class="form-control w-50" id="searchInput" onkeyup="searchPlaces()" placeholder="여행지 이름을 검색하세요"
+                   type="text">
         </div>
 
         <!-- Places Table -->
@@ -55,10 +53,14 @@
 
         <!-- Pagination and Add Button -->
         <div class="d-flex justify-content-between align-items-center">
-            <button class="btn btn-success" onclick="addPlace()">추가하기</button>
-            <nav>
-                <ul id="pagination" class="pagination"></ul>
-            </nav>
+            <button class="btn btn-success add-button" onclick="addPlace()">추가하기</button>
+            <div class="page-container">
+                <div class="pagination-container d-flex justify-content-center align-items-center">
+                    <button class="btn btn-outline-primary pagination-button prev-button me-2" onclick="prevPage()">&lt;</button>
+                    <div class="number-button-wrapper d-flex"></div>
+                    <button class="btn btn-outline-primary pagination-button next-button ms-2" onclick="nextPage()">&gt;</button>
+                </div>
+            </div>
             <div>총 <span id="totalPlaces">0</span> 건</div>
         </div>
     </div>
@@ -66,18 +68,13 @@
 
 <script>
     // 초기 변수
-    let currentPage = 0;
-    let totalPages = 0;
+    let currentPage = 1;
+    const COUNT_PER_PAGE = 10; // 페이지당 데이터 수
+    let totalItems = 0; // 총 데이터 수
 
-    // 페이지 로드 시 초기 데이터 가져오기
     document.addEventListener('DOMContentLoaded', () => {
         loadCategories(); // 카테고리 데이터 로드
-        fetchPlaces(); // 첫 페이지 데이터 로드
-
-        // 카테고리 변경 이벤트
-        document.getElementById('categorySelect').addEventListener('change', () => {
-            fetchPlaces(); // 카테고리 변경 시 데이터 로드
-        });
+        changePage(1); // 첫 페이지 로드
     });
 
     /**
@@ -85,36 +82,14 @@
      */
     function loadCategories() {
         const categorySelect = document.getElementById('categorySelect');
-
-        // 카테고리 API 호출
         fetch('/api/v1/place/category/all')
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch categories');
-                }
+                if (!response.ok) throw new Error('Failed to fetch categories');
                 return response.json();
             })
             .then(categories => {
-                // 기존 옵션 제거
                 categorySelect.innerHTML = '<option value="">카테고리를 선택하세요</option>';
-
-                // 가장 하위 카테고리만 추출
-                function extractLeafCategories(data) {
-                    const leafCategories = [];
-                    data.forEach(category => {
-                        if (category.children && category.children.length > 0) {
-                            leafCategories.push(...extractLeafCategories(category.children));
-                        } else {
-                            leafCategories.push(category);
-                        }
-                    });
-                    return leafCategories;
-                }
-
-                const leafCategories = extractLeafCategories(categories);
-
-                // 하위 카테고리를 select에 추가
-                leafCategories.forEach(category => {
+                categories.forEach(category => {
                     const option = document.createElement('option');
                     option.value = category.id;
                     option.textContent = category.name;
@@ -125,58 +100,130 @@
     }
 
     /**
-     * 서버에서 여행지 데이터를 가져와 테이블에 렌더링
-     * @param {string} query 검색어
-     * @param {number} page 현재 페이지
-     * @param {number} size 페이지 당 데이터 수
+     * 페이지 데이터 로드
      */
-    function fetchPlaces(query = '', page = 0, size = 10) {
-        const tableBody = document.querySelector('tbody');
-        const category = document.getElementById('categorySelect').value; // 선택된 카테고리 ID
-        if (size < 1) size = 10;
-
-        // API 호출 URL 생성
+    function fetchPlaces(page = 1, query = '', category = '') {
         const url = new URL('/api/v1/place', window.location.origin);
-        url.searchParams.append('page', page);
-        url.searchParams.append('size', size);
+        url.searchParams.append('page', page - 1);
+        url.searchParams.append('size', COUNT_PER_PAGE);
         if (query) url.searchParams.append('queryName', query);
-        if (category) url.searchParams.append('categoryId', category); // 카테고리 필터 추가 (선택된 경우만)
+        if (category) url.searchParams.append('categoryId', category);
 
-        // API 호출
-        fetch(url.toString())
+        return fetch(url.toString())
             .then(response => response.json())
-            .then(data => {
-                tableBody.innerHTML = '';
-                document.getElementById('totalPlaces').textContent = data.totalElements;
+            .catch(error => {
+                console.error('Error fetching places:', error);
+                return null;
+            });
+    }
 
-                data.content.forEach(place => {
-                    const row = `
+    /**
+     * 데이터 렌더링
+     */
+    async function renderData(page) {
+        const category = document.getElementById('categorySelect').value;
+        const query = document.getElementById('searchInput').value;
+
+        const data = await fetchPlaces(page, query, category);
+        if (!data) return;
+
+        totalItems = data.totalElements;
+        const tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = '';
+
+        data.content.forEach(place => {
+            const row = `
                 <tr>
                     <td>${place.id}</td>
                     <td>${place.name}</td>
-                    <td>${place.address}</td>
-                    <td>${place.categories.join(' / ')}</td>
-                    <td>${place.createTime}</td>
-                    <td>${place.updateTime}</td>
+                    <td>${place.address || '지역 없음'}</td>
+                    <td>${place.categories.join(' / ') || '카테고리 없음'}</td>
+                    <td>${place.createTime || '-'}</td>
+                    <td>${place.updateTime || '-'}</td>
                     <td>
                         <button class="btn btn-primary btn-sm" onclick="editPlace(${place.id})">수정</button>
                         <button class="btn btn-danger btn-sm" onclick="deletePlace(${place.id})">삭제</button>
                     </td>
-                </tr>
-            `;
-                    tableBody.insertAdjacentHTML('beforeend', row);
-                });
-            })
-            .catch(error => console.error('Error fetching places:', error));
+                </tr>`;
+            tableBody.insertAdjacentHTML('beforeend', row);
+        });
+
+        document.getElementById('totalPlaces').textContent = totalItems;
     }
 
     /**
-     * 검색어 입력 시 호출
+     * 페이지 버튼 렌더링
      */
-    function searchPlaces() {
-        const query = document.getElementById('searchInput').value;
-        fetchPlaces(query); // 검색어로 데이터 가져오기
+    function renderPaginationButtons() {
+        const totalPages = Math.ceil(totalItems / COUNT_PER_PAGE);
+        const numberButtonWrapper = document.querySelector('.number-button-wrapper');
+        numberButtonWrapper.innerHTML = '';
+
+        const maxVisiblePages = 5; // 한 번에 보여줄 최대 페이지 수
+        const startPage = Math.floor((currentPage - 1) / maxVisiblePages) * maxVisiblePages + 1;
+        const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+
+        // 현재 범위의 페이지 번호 버튼
+        for (let i = startPage; i <= endPage; i++) {
+            const button = document.createElement('button');
+            button.className = `btn btn-outline-secondary mx-1 number-button ${i === currentPage ? 'active' : ''}`;
+            button.textContent = i;
+            button.onclick = () => changePage(i);
+            numberButtonWrapper.appendChild(button);
+        }
+
+        // 이전/다음 버튼 활성화 상태 업데이트
+        document.querySelector('.prev-button').disabled = currentPage === 1;
+        document.querySelector('.next-button').disabled = currentPage === totalPages;
     }
+
+    /**
+     * 이전 그룹으로 이동 (현재 그룹의 첫 페이지 - 1)
+     */
+    function prevPage() {
+        const maxVisiblePages = 5; // 한 번에 보여줄 최대 페이지 수
+        const startPage = Math.floor((currentPage - 1) / maxVisiblePages) * maxVisiblePages + 1;
+
+        if (currentPage > 1) {
+            if (currentPage === startPage) {
+                // 그룹의 첫 페이지일 경우 이전 그룹으로 이동
+                changePage(startPage - 1);
+            } else {
+                // 그룹 내에서 이전 페이지로 이동
+                changePage(currentPage - 1);
+            }
+        }
+    }
+
+    /**
+     * 다음 그룹으로 이동 (현재 그룹의 마지막 페이지 + 1)
+     */
+    function nextPage() {
+        const totalPages = Math.ceil(totalItems / COUNT_PER_PAGE);
+        const maxVisiblePages = 5; // 한 번에 보여줄 최대 페이지 수
+        const startPage = Math.floor((currentPage - 1) / maxVisiblePages) * maxVisiblePages + 1;
+        const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+
+        if (currentPage < totalPages) {
+            if (currentPage === endPage) {
+                // 그룹의 마지막 페이지일 경우 다음 그룹으로 이동
+                changePage(endPage + 1);
+            } else {
+                // 그룹 내에서 다음 페이지로 이동
+                changePage(currentPage + 1);
+            }
+        }
+    }
+
+    /**
+     * 페이지 변경
+     */
+    async function changePage(page) {
+        currentPage = page;
+        await renderData(page);
+        renderPaginationButtons();
+    }
+
 
     /**
      * 여행지 추가
@@ -189,15 +236,14 @@
      * 여행지 수정
      */
     function editPlace(placeId) {
-        window.location.href = `/admin/place/update?placeId=${placeId}`
+        window.location.href = `/admin/place/update?placeId=${placeId}`;
     }
 
     /**
      * 여행지 삭제
      */
     function deletePlace(placeId) {
-        const memberId = prompt("삭제 권한을 확인하기 위해 사용자 ID를 입력하세요:"); // 사용자 ID 입력받기
-
+        const memberId = prompt('삭제 권한을 확인하기 위해 사용자 ID를 입력하세요:');
         if (!memberId) {
             alert('삭제하려면 사용자 ID가 필요합니다.');
             return;
@@ -206,16 +252,14 @@
         if (confirm(`ID ${placeId}를 삭제하시겠습니까?`)) {
             fetch(`/api/v1/place/${placeId}?memberId=${memberId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
             })
                 .then(response => {
                     if (response.ok) {
                         alert('삭제되었습니다.');
-                        fetchPlaces(); // 최신 데이터 다시 로드
+                        changePage(currentPage);
                     } else {
-                        return response.json().then(err => {
+                        response.json().then(err => {
                             alert(`삭제에 실패했습니다: ${err.message || '알 수 없는 에러'}`);
                         });
                     }
@@ -225,6 +269,13 @@
                     alert('서버와의 통신 중 문제가 발생했습니다.');
                 });
         }
+    }
+
+    /**
+     * 검색어로 필터링
+     */
+    function searchPlaces() {
+        changePage(1);
     }
 </script>
 </body>
