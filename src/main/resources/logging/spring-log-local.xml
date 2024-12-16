@@ -27,4 +27,14 @@
         <appender-ref ref="FILE"/>
     </logger>
 
+    <!-- Custom Kafka Appender 설정 -->
+    <appender name="CUSTOM_KAFKA" class="com.tripcok.tripcokserver.global.kafka.CustomKafkaAppender">
+        <maxRetries>3</maxRetries>  <!-- 최대 재시도 횟수 -->
+    </appender>
+
+    <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
+        <appender-ref ref="CUSTOM_KAFKA"/>
+    </logger>
+
+
 </configuration>

@@ -71,6 +71,8 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
 
         String message = eventObject.toString(); // 로그 메시지 변환
 
+        message = message.replaceAll("^\\[\\w+\\]\\s*", ""); // [INFO], [ERROR] 등 로그 레벨 제거
+
         System.out.println("CustomAppender invoked with event: " + message);
 
         boolean success = sendWithRetry(message, maxRetries);
