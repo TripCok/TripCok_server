@@ -11,9 +11,12 @@
 </head>
 <body>
 <div class="container">
+    <!-- Navigation -->
     <div class="navigation-container">
         <div style="height: 100%" th:insert="~{fragments/menu :: menu-list}"></div>
     </div>
+
+    <!-- Main Content -->
     <div class="content-container">
         <div class="content-header">
             <h1>View Members</h1>
@@ -22,16 +25,19 @@
                 <p style="color: #6DB777">Cok</p>
             </div>
         </div>
+
+        <!-- Search and Filter -->
         <div class="content-search">
             <div>
                 <p>All Members</p>
             </div>
             <label>
-                <input id="searchInput" class="member-search form-control" type="text"
-                       placeholder="사용자 이름 또는 이메일을 입력하세요." onkeyup="searchMembers()">
+                <input class="searchInput" onkeyup="searchMembers()" placeholder="사용자 이름 또는 이메일을 입력하세요."
+                       type="text">
             </label>
         </div>
 
+        <!-- Member Table -->
         <table class="table table-bordered text-center align-middle">
             <thead class="table-success">
             <tr>
@@ -51,18 +57,40 @@
             <!-- 초기 데이터와 검색 결과는 JavaScript로 업데이트 -->
             </tbody>
         </table>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center">
+            <div>총 <span id="totalMembers">0</span> 건</div>
+            <div class="page-container">
+                <div class="pagination-container">
+                    <button class="btn pagination-button prev-button" onclick="prevPage()">&lt;</button>
+                    <div class="number-button-wrapper"></div>
+                    <button class="btn pagination-button next-button" onclick="nextPage()">&gt;</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
 <script>
+    let currentPage = 1;
+    const COUNT_PER_PAGE = 10; // 페이지당 데이터 수
+    let totalItems = 0; // 총 데이터 수
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchMembers(); // 첫 데이터 로드
+    });
+
     /**
      * 서버에서 멤버 데이터를 가져와 테이블에 렌더링
      * @param {string} query 검색어 (기본값: 빈 문자열)
      */
     function fetchMembers(query = '') {
         const tableBody = document.querySelector('tbody'); // 테이블 바디 선택
+        const url = `/api/v1/member/finds?page=${currentPage - 1}&size=${COUNT_PER_PAGE}&email=${query}`;
 
         // AJAX 요청 보내기
-        fetch(`/api/v1/member/finds?page=0&size=10&email=${query}`)
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('네트워크 응답에 문제가 있습니다.');
@@ -70,27 +98,31 @@
                 return response.json(); // JSON 응답 처리
             })
             .then(data => {
+                // 총 건수 업데이트
+                totalItems = data.totalElements;
+                document.getElementById('totalMembers').textContent = totalItems;
+
                 // 테이블 초기화
                 tableBody.innerHTML = '';
 
                 // 테이블 데이터 추가
                 data.content.forEach(member => {
                     const row = `
-                        <tr>
-                            <td>${member.id}</td>
-                            <td>
-                                <img src="/images/profile/${member.id}" alt="profile" class="rounded-circle" width="40">
-                            </td>
-                            <td style="white-space: nowrap">${member.name}</td>
-                            <td>${member.email}</td>
-                            <td>${member.phone}</td>
-                            <td>${member.birthDay}</td>
-                            <td>${member.gender}</td>
-                            <td>${member.address}</td>
-                            <td>${member.createdDate || 'N/A'}</td>
-                            <td>${member.updatedDate || 'N/A'}</td>
-                        </tr>
-                    `;
+                    <tr>
+                        <td>${member.id}</td>
+                        <td>
+                            <img src="/images/profile/${member.id}" alt="profile" class="rounded-circle" width="40">
+                        </td>
+                        <td style="white-space: nowrap">${member.name}</td>
+                        <td>${member.email}</td>
+                        <td>${member.phone || 'N/A'}</td>
+                        <td>${member.birthDay || 'N/A'}</td>
+                        <td>${member.gender || 'N/A'}</td>
+                        <td>${member.address || 'N/A'}</td>
+                        <td>${member.createdDate || 'N/A'}</td>
+                        <td>${member.updatedDate || 'N/A'}</td>
+                    </tr>
+                `;
                     tableBody.insertAdjacentHTML('beforeend', row);
                 });
 
@@ -98,22 +130,66 @@
                 if (data.content.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="10">결과가 없습니다.</td></tr>';
                 }
+
+                // 페이지네이션 버튼 렌더링
+                renderPaginationButtons();
             })
             .catch(error => console.error('데이터 가져오는 중 오류 발생:', error));
     }
 
     /**
-     * 검색어 입력 시 호출
+     * 페이지 버튼 렌더링
      */
-    function searchMembers() {
-        const query = document.getElementById('searchInput').value; // 입력된 검색어 가져오기
-        fetchMembers(query); // 검색어로 데이터 가져오기
+    function renderPaginationButtons() {
+        const totalPages = Math.ceil(totalItems / COUNT_PER_PAGE);
+        const numberButtonWrapper = document.querySelector('.number-button-wrapper');
+        numberButtonWrapper.innerHTML = '';
+
+        const maxVisiblePages = 5; // 한 번에 보여줄 최대 페이지 수
+        const startPage = Math.floor((currentPage - 1) / maxVisiblePages) * maxVisiblePages + 1;
+        const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+
+        // 현재 범위의 페이지 번호 버튼
+        for (let i = startPage; i <= endPage; i++) {
+            const button = document.createElement('button');
+            button.className = `btn btn-outline-secondary mx-1 number-button ${i === currentPage ? 'active' : ''}`;
+            button.textContent = i;
+            button.onclick = () => changePage(i);
+            numberButtonWrapper.appendChild(button);
+        }
+
+        // 이전/다음 버튼 활성화 상태 업데이트
+        document.querySelector('.prev-button').disabled = currentPage === 1;
+        document.querySelector('.next-button').disabled = currentPage === totalPages;
     }
 
-    // 페이지 로드 시 초기 데이터 가져오기
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchMembers(); // 빈 검색어로 초기 데이터 가져오기
-    });
+    /**
+     * 이전 페이지로 이동
+     */
+    function prevPage() {
+        if (currentPage > 1) {
+            changePage(currentPage - 1);
+        }
+    }
+
+    /**
+     * 다음 페이지로 이동
+     */
+    function nextPage() {
+        const totalPages = Math.ceil(totalItems / COUNT_PER_PAGE);
+        if (currentPage < totalPages) {
+            changePage(currentPage + 1);
+        }
+    }
+
+    /**
+     * 페이지 변경
+     */
+    function changePage(page) {
+        currentPage = page;
+        fetchMembers(); // 새 페이지 데이터 가져오기
+    }
+
 </script>
 </body>
 </html>
