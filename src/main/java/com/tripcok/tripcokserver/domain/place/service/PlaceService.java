@@ -12,7 +12,6 @@ import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryMappingRep
 import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceImageRepository;
 import com.tripcok.tripcokserver.domain.place.repository.PlaceRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer;
@@ -29,7 +28,8 @@ import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -236,4 +236,14 @@ public class PlaceService {
         return ResponseEntity.ok("이미지를 성공적으로 삭제하였습니다.");
     }
 
+    public ResponseEntity<?> getPlaceInRegion(Double south, Double north, Double west, Double east) {
+
+        List<Place> byRegionInPlace = placeRepository.findByRegionInPlace(south, north, west, east);
+
+        List<PlaceResponse> placeResponseStream = byRegionInPlace.stream()
+                .map(place -> new PlaceResponse(place, place.getCategoryMappings()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(placeResponseStream);
+    }
 }

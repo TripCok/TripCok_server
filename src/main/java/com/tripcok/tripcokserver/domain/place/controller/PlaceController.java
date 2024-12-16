@@ -94,4 +94,13 @@ public class PlaceController {
     public ResponseEntity<?> deletePlace(@PathVariable Long placeId, @RequestParam Long memberId) throws AccessDeniedException {
         return placeService.deletePlace(placeId, memberId);
     }
+
+    /* 좌표 내의 여행지 찾기 */
+    @GetMapping("/placeInRegion")
+    public ResponseEntity<?> getPlaceInRegion(@RequestParam Double north,
+                                              @RequestParam Double south,
+                                              @RequestParam Double west,
+                                              @RequestParam Double east) {
+        return placeService.getPlaceInRegion(north,south,west,east);
+    }
 }
