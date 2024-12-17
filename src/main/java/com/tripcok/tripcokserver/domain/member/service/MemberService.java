@@ -7,6 +7,8 @@ import com.tripcok.tripcokserver.domain.member.dto.MemberRequestDto;
 import com.tripcok.tripcokserver.domain.member.dto.MemberResponseDto;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
+import com.tripcok.tripcokserver.global.interceptor.LoggingInterceptor;
+import com.tripcok.tripcokserver.global.interceptor.LoggingInterceptor.JMember;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -49,7 +51,7 @@ public class MemberService {
 
         Member saveMember = memberRepository.save(member);
 
-        session.setAttribute("member", saveMember);
+        session.setAttribute("member", new JMember(saveMember));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new MemberResponseDto.Info(saveMember));
     }
@@ -60,7 +62,7 @@ public class MemberService {
         if (findMember.isPresent()) {
             Member member = findMember.get();
             if (member.getPassword().equals(request.getPassword())) {
-                session.setAttribute("member", member);
+                session.setAttribute("member", new JMember(member));
                 return ResponseEntity.status(HttpStatus.OK).body(new MemberResponseDto.Info(member));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호를 다시 확인하세요.");

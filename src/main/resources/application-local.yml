@@ -24,6 +24,12 @@ spring:
       enabled: true
       additional-exclude: static/**,public/**
 
+  data:
+    redis:
+      host: tr-sv-1     # Redis 서버의 호스트 (Docker로 실행 시 localhost 또는 컨테이너 이름)
+      port: 6379          # Redis 서버의 포트
+      timeout: 3000       # Redis 연결 타임아웃 (ms)
+
 kafka:
   bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
 
@@ -56,5 +62,4 @@ cloud:
 
 server:
   port: 9090
-
 
