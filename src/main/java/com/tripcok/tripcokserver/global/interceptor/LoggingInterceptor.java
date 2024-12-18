@@ -2,6 +2,7 @@ package com.tripcok.tripcokserver.global.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
+import com.tripcok.tripcokserver.domain.member.entity.Role;
 import com.tripcok.tripcokserver.global.dto.LogDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -80,10 +81,12 @@ public class LoggingInterceptor implements HandlerInterceptor {
         private static final long serialVersionUID = 1L;
         private Long id;
         private String name;
+        private Role role;
 
         public JMember(Member member) {
             this.id = member.getId();
             this.name = member.getName();
+            this.role = member.getRole();
         }
     }
 }

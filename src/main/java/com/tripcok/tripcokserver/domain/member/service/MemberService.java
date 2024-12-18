@@ -243,7 +243,9 @@ public class MemberService {
     /* 회원 정보 수정 - 선호 카테고리 선택 건너 뛰기 */
     @Transactional
     public ResponseEntity<?> skipPreferCategory(HttpSession session) {
+
         JMember sessionMemberData = (JMember) session.getAttribute("member");
+
         try {
             Member member = memberRepository.findById(sessionMemberData.getId()).orElseThrow(() -> new EntityNotFoundException("옳바르지 않은 요청입니다."));
             member.skipPreferCategory();

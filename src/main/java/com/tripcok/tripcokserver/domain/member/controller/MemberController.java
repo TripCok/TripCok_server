@@ -64,15 +64,14 @@ public class MemberController {
 
     }
 
+    /* 회원 정보 수정 - 선호 카테고리 선택 */
     @PutMapping("/prefer/category")
     public ResponseEntity<?> savePreferCategory(
             @RequestParam List<Long> categoryIds, HttpSession session) {
         return memberService.setPreferCategory(categoryIds, session);
     }
 
-    /* TODO
-     * - prefer Skip 처리
-     * */
+    /* 회원 정보 수정 - 선호 카테고리 선택 건너 뛰기 */
     @PutMapping("/prefer/category/skip")
     public ResponseEntity<?> fetchPreferCategorySkip(
             HttpSession session
