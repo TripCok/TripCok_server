@@ -23,8 +23,8 @@ public class PlaceResponse {
     private LocalTime endTime;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
-    private List<PlaceCategory> categories;  // 부모-자식 포함한 카테고리 리스트
-    private List<PlaceImageResponse> images; // 이미지 리스트
+    private List<String> categoryNames;
+    private List<PlaceImageResponse> images;
 
     public PlaceResponse(Place place, List<PlaceCategoryMapping> mappings) {
         this.id = place.getId();
@@ -39,14 +39,14 @@ public class PlaceResponse {
         this.createTime = place.getCreateTime();
         this.updateTime = place.getUpdateTime();
 
-        // 부모 포함한 카테고리 리스트 구성
-        this.categories = mappings.stream()
-                .map(mapping -> buildCategoryHierarchy(mapping.getCategory()))
-                .toList(); // 부모 포함한 카테고리 리스트 변환
+        // 카테고리 이름만 추출
+        this.categoryNames = mappings.stream()
+                .map(mapping -> mapping.getCategory().getName())
+                .toList();
 
         this.images = place.getImages().stream()
                 .map(PlaceImageResponse::new)
-                .toList(); // 이미지 변환
+                .toList();
     }
 
     private String getThumbnail(List<PlaceImage> images) {
@@ -60,16 +60,23 @@ public class PlaceResponse {
      * 부모 포함한 카테고리 계층 구조를 구성
      */
     private PlaceCategory buildCategoryHierarchy(PlaceCategory category) {
+        // 필요한 깊이까지만 카테고리 계층 구성
         PlaceCategory current = category;
+        PlaceCategory topLevelCategory = null;
 
-        // 부모-자식 계층을 리스트로 구성
+        // 최상위 부모만 반환
         while (current.getParentCategory() != null) {
-            current = current.getParentCategory();
+            topLevelCategory = current.getParentCategory();
+            current = topLevelCategory;
         }
 
-        return category; // 최상위 부모를 반환
+        return topLevelCategory;
     }
+
 }
+
+
+
 
 
 

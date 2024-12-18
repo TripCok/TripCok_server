@@ -123,6 +123,7 @@ public class PlaceService {
             size = 10; // 기본 페이지 크기 설정
         }
         Pageable pageable = PageRequest.of(page, size);
+        
         Page<Place> places;
 
         if (categoryIds != null && !categoryIds.isEmpty() && placeName != null && !placeName.isBlank()) {
