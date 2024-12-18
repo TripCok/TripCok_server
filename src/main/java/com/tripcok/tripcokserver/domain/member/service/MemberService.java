@@ -207,12 +207,17 @@ public class MemberService {
     }
 
 
-
     /* 선호 카테고리 생성 */
     @Transactional
     public ResponseEntity<?> setPreferCategory(List<Long> categoryIds, HttpSession session) {
 
-        Member member = (Member) session.getAttribute("member");
+        JMember sMember = (JMember) session.getAttribute("member");
+
+        Member member = memberRepository.findById(sMember.getId()).orElseThrow(
+                () ->
+                        new EntityNotFoundException("옳바르지 않은 요청입니다.")
+        );
+
 
         List<Long> failedCategories = new ArrayList<>();
         categoryIds.forEach(
@@ -235,8 +240,15 @@ public class MemberService {
 
     /* 회원 정보 수정 - 선호 카테고리 선택 건너 뛰기 */
     @Transactional
-    public void skipPreferCategory(HttpSession session) {
-        Member sessionMemberData = (Member) session.getAttribute("member");
-        sessionMemberData.skipPreferCategory();
+    public ResponseEntity<?> skipPreferCategory(HttpSession session) {
+        JMember sessionMemberData = (JMember) session.getAttribute("member");
+        try {
+            Member member = memberRepository.findById(sessionMemberData.getId()).orElseThrow(() -> new EntityNotFoundException("옳바르지 않은 요청입니다."));
+            member.skipPreferCategory();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("옳바르지 않은 사용자의 요청입니다.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("정상적으로 사용자의 선호 카테고리 지정 상태 여부를 수정하였습니다.");
     }
+
 }
