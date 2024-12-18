@@ -230,9 +230,11 @@ public class MemberService {
                     }
                 }
         );
+
         if (!failedCategories.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body("등록 실패한 카테고리가 있습니다. : " + failedCategories);
         }
+        member.skipPreferCategory();
 
         return ResponseEntity.status(HttpStatus.OK).body("카테고리 등록에 성공하였습니다.");
 

@@ -73,7 +73,7 @@ public class MemberController {
     /* TODO
      * - prefer Skip 처리
      * */
-    @PutMapping("prefer/category/skip")
+    @PutMapping("/prefer/category/skip")
     public ResponseEntity<?> fetchPreferCategorySkip(
             HttpSession session
     ){
