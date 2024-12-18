@@ -53,7 +53,6 @@ public class MemberController {
     /* 로그인 */
     @PutMapping("/login")
     public ResponseEntity<?> login(@RequestBody MemberRequestDto.login request, HttpSession session) {
-
         log.info(request.toString());
         return memberService.loginMember(request, session);
     }
@@ -65,6 +64,16 @@ public class MemberController {
         return memberService.asyncLogin(id, email, session);
 
     }
+
+    @PutMapping("/prefer/category")
+    public ResponseEntity<?> login(
+            @RequestParam List<Long> categoryIds, HttpSession session) {
+        return memberService.setPreferCategory(categoryIds, session);
+    }
+
+    /* TODO
+    * - prefer Skip 처리
+    * */
 
     /* 회원 정보 조회 */
     @PostMapping("/find/{memberId}")

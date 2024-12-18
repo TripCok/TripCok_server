@@ -6,7 +6,11 @@ import com.tripcok.tripcokserver.domain.member.dto.MemberListResponseDto;
 import com.tripcok.tripcokserver.domain.member.dto.MemberRequestDto;
 import com.tripcok.tripcokserver.domain.member.dto.MemberResponseDto;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
+import com.tripcok.tripcokserver.domain.member.entity.MemberPreferenceCategory;
+import com.tripcok.tripcokserver.domain.member.repository.MemberPreferCategoryRepository;
 import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
+import com.tripcok.tripcokserver.domain.place.entity.PlaceCategory;
+import com.tripcok.tripcokserver.domain.place.repository.PlaceCategoryRepository;
 import com.tripcok.tripcokserver.global.interceptor.LoggingInterceptor;
 import com.tripcok.tripcokserver.global.interceptor.LoggingInterceptor.JMember;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +39,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final FileService fileService;
+    private final MemberPreferCategoryRepository memberPreferCategoryRepository;
+    private final PlaceCategoryRepository placeCategoryRepository;
 
     @Value("${save.location.user.profile}")
     private String savePathDir;
@@ -192,10 +199,44 @@ public class MemberService {
 
         if (byIdAndEmail.isPresent()) {
 
-            session.setAttribute("member", new MemberResponseDto.Info(byIdAndEmail.get()));
+            session.setAttribute("member", new JMember(byIdAndEmail.get()));
             return ResponseEntity.status(HttpStatus.OK).body(new MemberResponseDto.Info(byIdAndEmail.get()));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("옳바르지 않은 요청입니다.");
         }
+    }
+
+
+
+    /* 선호 카테고리 생성 */
+    @Transactional
+    public ResponseEntity<?> setPreferCategory(List<Long> categoryIds, HttpSession session) {
+
+        Member member = (Member) session.getAttribute("member");
+
+        List<Long> failedCategories = new ArrayList<>();
+        categoryIds.forEach(
+                categoryId -> {
+                    Optional<PlaceCategory> findCategory = placeCategoryRepository.findById(categoryId);
+                    if (findCategory.isEmpty()) {
+                        failedCategories.add(categoryId);
+                    } else {
+                        memberPreferCategoryRepository.save(new MemberPreferenceCategory(member, findCategory.get()));
+                    }
+                }
+        );
+        if (!failedCategories.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body("등록 실패한 카테고리가 있습니다. : " + failedCategories);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("카테고리 등록에 성공하였습니다.");
+
+    }
+
+    /* 회원 정보 수정 - 선호 카테고리 선택 건너 뛰기 */
+    @Transactional
+    public void skipPreferCategory(HttpSession session) {
+        Member sessionMemberData = (Member) session.getAttribute("member");
+        sessionMemberData.skipPreferCategory();
     }
 }

@@ -26,9 +26,9 @@ spring:
 
   data:
     redis:
-      host: tr-sv-1     # Redis 서버의 호스트 (Docker로 실행 시 localhost 또는 컨테이너 이름)
-      port: 6379          # Redis 서버의 포트
-      timeout: 3000       # Redis 연결 타임아웃 (ms)
+      host: tr-sv-1
+      port: 6379
+      timeout: 3000
 
 kafka:
   bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
