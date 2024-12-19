@@ -2,10 +2,12 @@ package com.tripcok.tripcokserver.global.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
+import com.tripcok.tripcokserver.domain.member.entity.Role;
 import com.tripcok.tripcokserver.global.dto.LogDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Component
@@ -22,58 +25,68 @@ public class LoggingInterceptor implements HandlerInterceptor {
     private static final String TRACE_ID = "TRACE_ID";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper objectMapper;
-    private final HttpSession httpSession;
 
-    public LoggingInterceptor(ObjectMapper objectMapper, HttpSession httpSession) {
-        this.objectMapper = objectMapper;
-        this.httpSession = httpSession;
+    public LoggingInterceptor(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper; // 이미 설정된 빈을 사용
     }
 
     /* traceId 추가 */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
-        //traceId(로그 고유 번호)
+        // traceId 생성 및 설정
         String traceId = UUID.randomUUID().toString();
         response.setHeader(TRACE_ID, traceId);
+        request.setAttribute(TRACE_ID, traceId);
         return true;
     }
 
     /* 로그를 파일로 변환 */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
-
-
-
-        ContentCachingRequestWrapper wrappedRequest;
-        ContentCachingResponseWrapper wrappedResponse;
-
-        // Request와 Response를 캐싱 가능한 래퍼로 감싸기
-        if (request instanceof ContentCachingRequestWrapper && response instanceof ContentCachingResponseWrapper) {
-            wrappedRequest = (ContentCachingRequestWrapper) request;
-            wrappedResponse = (ContentCachingResponseWrapper) response;
-            // 이후 로직 실행
-        } else {
+        if (!(request instanceof ContentCachingRequestWrapper) || !(response instanceof ContentCachingResponseWrapper)) {
+            logger.warn("Request or Response is not wrapped properly.");
             return;
         }
 
-        //memberId 추가
+        ContentCachingRequestWrapper wrappedRequest = (ContentCachingRequestWrapper) request;
+        ContentCachingResponseWrapper wrappedResponse = (ContentCachingResponseWrapper) response;
+
+        // 세션에서 memberId 가져오기
+        String memberId = null;
         try {
-            Member member = (Member) wrappedRequest.getSession().getAttribute("member");
-            String memberId = String.valueOf(member.getId());
-
-            wrappedRequest.setAttribute("memberId", memberId);
-        } catch (NullPointerException e) {
-            return;
+            HttpSession session = request.getSession(false); // 세션이 없으면 null 반환
+            if (session != null) {
+                JMember member = (JMember) session.getAttribute("member");
+                if (member != null) {
+                    memberId = String.valueOf(member.getId());
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to retrieve memberId from session.", e);
         }
 
-        //LogDto 생성
+        // LogDto 생성 및 로깅
         LogDto logDto = new LogDto(wrappedRequest, wrappedResponse);
+        logDto.setMemberId(memberId);
 
-        //LogDto를 String으로 저장
         String jsonResult = objectMapper.writeValueAsString(logDto);
-
         logger.info(jsonResult);
+
+        // 응답 본문 복사
+        wrappedResponse.copyBodyToResponse();
     }
 
+    @Getter
+    public static class JMember implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private Long id;
+        private String name;
+        private Role role;
+
+        public JMember(Member member) {
+            this.id = member.getId();
+            this.name = member.getName();
+            this.role = member.getRole();
+        }
+    }
 }

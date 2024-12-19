@@ -54,6 +54,13 @@ dependencies {
     // Spring Kafka (Producer/Consumer 기능 지원)
     implementation 'org.springframework.kafka:spring-kafka'
 
+    /* Data Redis */
+    implementation 'org.springframework.session:spring-session-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
+
+
 }
 
 tasks.named('test') {

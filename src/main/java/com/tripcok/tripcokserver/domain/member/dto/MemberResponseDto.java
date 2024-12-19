@@ -2,6 +2,7 @@ package com.tripcok.tripcokserver.domain.member.dto;
 
 import com.tripcok.tripcokserver.domain.member.entity.Gender;
 import com.tripcok.tripcokserver.domain.member.entity.Member;
+import com.tripcok.tripcokserver.domain.member.entity.PreferCategory;
 import com.tripcok.tripcokserver.domain.member.entity.Role;
 import lombok.Data;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class MemberResponseDto {
         private Gender gender;
         private String address;
         private Role role;
+        private PreferCategory isPreferCategory;
 
         /* 회원 정보 수정 */
         public Info(Member member) {
@@ -37,6 +39,7 @@ public class MemberResponseDto {
             this.gender = member.getGender();
             this.address = member.getAddress();
             this.role = member.getRole();
+            this.isPreferCategory = member.getIsPreferCategory();
         }
     }
 }

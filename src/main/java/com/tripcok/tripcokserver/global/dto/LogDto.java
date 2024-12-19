@@ -22,7 +22,7 @@ public class LogDto {
     String request;
     String response;
     String statusCode;
-    String time;
+    Long time;
 
     @JsonIgnore
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -35,7 +35,7 @@ public class LogDto {
         this.response = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
         this.statusCode = String.valueOf(responseWrapper.getStatus());
         this.clientIp = requestWrapper.getRemoteAddr();
-        this.time = String.valueOf(System.currentTimeMillis());
+        this.time = System.currentTimeMillis();
         this.memberId = (String) requestWrapper.getAttribute("memberId");
     }
 

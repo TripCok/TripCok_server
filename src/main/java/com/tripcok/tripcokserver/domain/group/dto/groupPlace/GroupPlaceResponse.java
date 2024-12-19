@@ -20,8 +20,8 @@ public class GroupPlaceResponse {
     private String placeAddress;
     private LocalTime placeStartTime;
     private LocalTime placeEndTime;
-    private String placeLatitude;
-    private String placeLongitude;
+    private Double placeLatitude;
+    private Double placeLongitude;
     private Integer orders;
     private List<PlaceCategoryResponse> placeCategories;
 

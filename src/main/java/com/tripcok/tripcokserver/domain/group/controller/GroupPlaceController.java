@@ -19,13 +19,13 @@ public class GroupPlaceController {
 
     private final GroupPlaceService groupPlaceService;
 
-    /* 그룹에 여행지 추가 */
+    /* 모임에 여행지 추가 */
     @PostMapping
     public ResponseEntity<?> groupAddPlace(@RequestBody GroupPlaceRequest groupPlaceRequest) {
         return groupPlaceService.groupAddPlace(groupPlaceRequest);
     }
 
-    /* 그룹의 여행지 조회 - 모두 조회 */
+    /* 모임의 여행지 조회 - 모두 조회 */
     @GetMapping("/{groupId}/all")
     public ResponseEntity<?> groupAllGroupInPlaces(
             @PathVariable("groupId") Long groupId,
@@ -35,7 +35,7 @@ public class GroupPlaceController {
         return groupPlaceService.getGroupInPlace(groupId, pageable);
     }
 
-    /* 그룹에 여행지 삭제 */
+    /* 모임에 여행지 삭제 */
     @DeleteMapping
     public ResponseEntity<?> groupRemovePlace(
             @RequestParam("placeId") Long placeId,
@@ -44,7 +44,7 @@ public class GroupPlaceController {
         return groupPlaceService.groupInPlaceRemove(placeId, groupId, memberId);
     }
 
-    /* 그룹에 여행지 순서 변경 */
+    /* 모임에 여행지 순서 변경 */
     @PutMapping("/orders")
     public ResponseEntity<?> groupInPlaceUpdateOrders(@RequestBody GroupPlaceUpdateRequest groupPlaceUpdateRequests) throws AccessDeniedException {
         return groupPlaceService.groupInPlaceUpdateOrders(groupPlaceUpdateRequests);

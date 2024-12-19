@@ -30,4 +30,15 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     // 이름으로만 필터링
     Page<Place> findByNameContaining(String name, Pageable pageable);
+
+
+    /* 좌표 내의 여행지 찾기 */
+    @Query(value = "SELECT * FROM place " +
+            "WHERE latitude BETWEEN :south AND :north " +
+            "AND longitude BETWEEN :west AND :east",
+            nativeQuery = true)
+    List<Place> findByRegionInPlace(Double south, Double north, Double west, Double east);
+
+
+
 }

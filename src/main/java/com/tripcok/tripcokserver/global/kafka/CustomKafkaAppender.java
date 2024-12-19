@@ -1,9 +1,14 @@
 package com.tripcok.tripcokserver.global.kafka;
 
 import ch.qos.logback.core.AppenderBase;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,11 +18,8 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 @Component
+@Slf4j
 public class CustomKafkaAppender<E> extends AppenderBase<E> {
 
     private KafkaProducer<String, String> producer;
@@ -29,16 +31,23 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
     @Setter
     private String fallbackFilePath = "./failed_logs.txt";
 
-    @Value("${kafka.bootstrap}")
-    private String KAFKA_BOOTSTRAP_SERVERS;
-
+    @Setter
+    private String kafkaBootstrapServers;
 
     @Override
     public void start() {
         super.start();
+
+        // KafkaProducer 설정
+        if (kafkaBootstrapServers == null || kafkaBootstrapServers.isEmpty()) {
+            addError("Kafka bootstrap servers are not configured.");
+            return;
+        }
+        log.info("Kafka bootstrap address: {}", kafkaBootstrapServers);
+
         // KafkaProducer 설정
         Properties props = new Properties();
-        props.put("bootstrap.servers", "172.31.29.197:19092,172.31.23.162:19092,172.31.24.68:19092");
+        props.put("bootstrap.servers", kafkaBootstrapServers);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
@@ -55,7 +64,7 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         props.put("delivery.timeout.ms", 1000);  // 배달 타임아웃 (밀리초)
 
         //메타데이터 갱신
-        props.put("metadata.max.age.ms", "1000"); // 메타데이터를 1초마다 갱신
+        props.put("metadata.max.age.ms", "10000"); // 메타데이터를 1초마다 갱신
 
         this.topic = "logs";
 
@@ -69,6 +78,8 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         }
 
         String message = eventObject.toString(); // 로그 메시지 변환
+
+        message = message.replaceAll("^\\[\\w+\\]\\s*", ""); // [INFO], [ERROR] 등 로그 레벨 제거
 
         System.out.println("CustomAppender invoked with event: " + message);
 

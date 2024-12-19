@@ -19,7 +19,7 @@ public class PlaceCategoryController {
 
     private final PlaceCategoryService pcs;
 
-    /* 여행지 카테고리 생성 */
+    /* 카테고리 생성 */
     @PostMapping
     @Operation(summary = "여행지 카테고리 생성", description = "새로운 카테고리를 생성합니다.")
     @ApiResponse(responseCode = "201", description = "카테고리가 생성 되었습니다.")
@@ -27,7 +27,7 @@ public class PlaceCategoryController {
         return pcs.createCategory(request);
     }
 
-    /* 여행지 카테고리 모두 조회 */
+    /* 카테고리 모두 조회 */
     @GetMapping("/all")
     @Operation(summary = "여행지 카테고리 모두 조회", description = "모든 카테고리를 조회 합니다.")
     @ApiResponse(responseCode = "200", description = "모든 카테고리가 조회 되었습니다.")
@@ -35,6 +35,7 @@ public class PlaceCategoryController {
         return pcs.findByAllCategory();
     }
 
+    /* 특정 카테고리 조회*/
     @GetMapping
     public ResponseEntity<?> getCategory(
             @RequestParam(value = "parentId", required = false) Long parentId,

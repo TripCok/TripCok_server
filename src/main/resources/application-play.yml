@@ -24,6 +24,12 @@ spring:
       enabled: true
       additional-exclude: static/**,public/**
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      timeout: 3000
+
 kafka:
   bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
 

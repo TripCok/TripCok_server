@@ -24,8 +24,15 @@ spring:
       enabled: true
       additional-exclude: static/**,public/**
 
+  data:
+    redis:
+      host: tr-sv-1
+      port: 6379
+      timeout: 3000
+
 kafka:
-  bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
+  bootstrap:
+    address: ${KAFKA_BOOTSTRAP_SERVERS:172.31.29.197:19092}
 
 mail:
   username: ${MAIL_USER_NAME}
@@ -56,5 +63,4 @@ cloud:
 
 server:
   port: 9090
-
 

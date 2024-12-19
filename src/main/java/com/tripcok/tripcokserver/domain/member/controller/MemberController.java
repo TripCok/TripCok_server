@@ -2,7 +2,6 @@ package com.tripcok.tripcokserver.domain.member.controller;
 
 import com.tripcok.tripcokserver.domain.member.dto.MemberRequestDto;
 import com.tripcok.tripcokserver.domain.member.dto.MemberResponseDto;
-import com.tripcok.tripcokserver.domain.member.repository.MemberRepository;
 import com.tripcok.tripcokserver.domain.member.service.MemberService;
 import com.tripcok.tripcokserver.global.service.EmailService;
 import jakarta.mail.MessagingException;
@@ -53,7 +52,6 @@ public class MemberController {
     /* 로그인 */
     @PutMapping("/login")
     public ResponseEntity<?> login(@RequestBody MemberRequestDto.login request, HttpSession session) {
-
         log.info(request.toString());
         return memberService.loginMember(request, session);
     }
@@ -66,8 +64,24 @@ public class MemberController {
 
     }
 
+    /* 회원 정보 수정 - 선호 카테고리 선택 */
+    @PutMapping("/prefer/category")
+    public ResponseEntity<?> savePreferCategory(
+            @RequestBody List<Long> categoryIds, HttpSession session) {
+        return memberService.setPreferCategory(categoryIds, session);
+    }
+
+    /* 회원 정보 수정 - 선호 카테고리 선택 건너 뛰기 */
+    @PutMapping("/prefer/category/skip")
+    public ResponseEntity<?> fetchPreferCategorySkip(
+            HttpSession session
+    ){
+        return memberService.skipPreferCategory(session);
+    }
+
     /* 회원 정보 조회 */
     @PostMapping("/find/{memberId}")
+
     public MemberResponseDto.Info getMemberInfo(@PathVariable("memberId") Long memberId) {
         return memberService.getMemberInfo(memberId);
     }

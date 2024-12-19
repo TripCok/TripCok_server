@@ -34,9 +34,9 @@ public class Place extends BaseEntity {
 
     private LocalTime endTime;
 
-    private String latitude;
+    private Double latitude;
 
-    private String longitude;
+    private Double longitude;
 
     private Integer mlMappingId;
 
