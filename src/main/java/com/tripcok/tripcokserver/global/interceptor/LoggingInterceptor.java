@@ -24,6 +24,8 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
     private static final String TRACE_ID = "TRACE_ID";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger_logDto = LoggerFactory.getLogger(this.getClass());
+
     private final ObjectMapper objectMapper;
 
     public LoggingInterceptor(ObjectMapper objectMapper) {
@@ -70,7 +72,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
         logDto.setMemberId(memberId);
 
         String jsonResult = objectMapper.writeValueAsString(logDto);
-        logger.info(jsonResult);
+        logger_logDto.info(jsonResult);
 
         // 응답 본문 복사
         wrappedResponse.copyBodyToResponse();
