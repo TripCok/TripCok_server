@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="menu-list" class="menu-list">
+
+    <div class="link-container">
+        <div class="menu-item">
+            <i class="bi bi-house-fill"></i>
+            <p>Main Board</p>
+        </div>
+        <div class="menu-item" onclick="window.location.href='/admin/member'">
+            <i class="bi bi-person-fill"></i>
+            <p>Members</p>
+        </div>
+        <div class="menu-item" onclick="window.location.href='/admin/place'">
+            <i class="bi bi-geo-fill"></i>
+            <p>Place</p>
+        </div>
+        <div class="menu-item" onclick="window.location.href='/admin/group'">
+            <i class="bi bi-people-fill"></i>
+            <p>Group</p>
+        </div>
+        <div class="menu-item">
+            <i class="bi bi-bell-fill"></i>
+            <p>Notice</p>
+        </div>
+    </div>
+    <!-- 로그아웃 메뉴 -->
+    <div class="menu-item">
+        <i class="bi bi-door-open-fill"></i>
+        <p>Logout</p>
+    </div>
+</div>

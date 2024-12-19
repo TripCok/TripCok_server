@@ -1,0 +1,23 @@
+services:
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    env_file:
+      - /spring/env/.env
+#    environment:
+#      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+#      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+#      - DB_HOST_IP=${DB_HOST_IP}
+#      - DB_HOST_PORT=${DB_HOST_PORT}
+#      - DB_HOST_DATABASE=${DB_HOST_DATABASE}
+#      - DB_HOST_USERNAME=${DB_HOST_USERNAME}
+#      - DB_HOST_PASSWORD=${DB_HOST_PASSWORD}
+#      - MAIL_USER_NAME=${MAIL_USER_NAME}
+#      - MAIL_USER_PASSWORD=${MAIL_USER_PASSWORD}
+    volumes:
+      - /app/logs:/app/logs
+#      - ./place-image:/place-image
+#      - ./user/profile:/user/profile

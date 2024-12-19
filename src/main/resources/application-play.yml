@@ -1,8 +1,13 @@
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
   datasource:
-    url: jdbc:mariadb://192.168.0.5:3306/tripcok_db
-    username: tripcok
-    password: tripcok1234
+    url: jdbc:mariadb://${DB_HOST_IP}:${DB_HOST_PORT}/${DB_HOST_DATABASE}
+    username: ${DB_HOST_USERNAME}
+    password: ${DB_HOST_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
@@ -11,3 +16,51 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
+        show_sql: false
+        format_sql: false
+
+  devtools:
+    restart:
+      enabled: true
+      additional-exclude: static/**,public/**
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      timeout: 3000
+
+kafka:
+  bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
+
+mail:
+  username: ${MAIL_USER_NAME}
+  password: ${MAIL_USER_PASSWORD}
+
+
+save:
+  location:
+    place: place/images
+    user:
+      profile: user/profile
+
+logging:
+  config: classpath:logging/spring-log-play.xml
+
+cloud:
+  aws:
+    s3:
+      bucket: tripcok
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+server:
+  port: 9090
+
+

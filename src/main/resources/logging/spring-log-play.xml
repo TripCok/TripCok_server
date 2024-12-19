@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%5level) %cyan(%logger) - %msg%n"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>/app/logs/application.log</file>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
+        <!--        <appender-ref ref="CONSOLE"/>&ndash;&gt;-->
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- Custom Kafka Appender 설정 -->
+    <appender name="CUSTOM_KAFKA" class="com.tripcok.tripcokserver.global.kafka.CustomKafkaAppender">
+        <maxRetries>3</maxRetries>  <!-- 최대 재시도 횟수 -->
+    </appender>
+
+    <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
+        <appender-ref ref="CUSTOM_KAFKA"/>
+    </logger>
+
+</configuration>

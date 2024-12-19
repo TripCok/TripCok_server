@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카테고리 탐색</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        async function fetchAllCategories() {
+            try {
+                // 카테고리 전체 조회 API 호출
+                const response = await fetch('/api/v1/place/category/all');
+                if (!response.ok) throw new Error("전체 카테고리를 가져오는데 실패했습니다.");
+                const data = await response.json();
+                console.log("Fetched categories:", data); // 디버깅용
+                return data;
+            } catch (error) {
+                console.error(error);
+                alert("카테고리 데이터를 가져오는 중 오류가 발생했습니다.");
+                return [];
+            }
+        }
+
+        function renderCategories(container, categories, onSelect) {
+            if (!categories || categories.length === 0) {
+                container.innerHTML = "<p>카테고리가 없습니다.</p>";
+                return;
+            }
+
+            const list = document.createElement("ul");
+            list.className = "space-y-2";
+
+            categories.forEach(category => {
+                const listItem = document.createElement("li");
+                listItem.textContent = category.name;
+                listItem.className = "p-2 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer";
+
+                listItem.addEventListener("click", () => onSelect(category));
+
+                list.appendChild(listItem);
+            });
+
+            container.innerHTML = ""; // 기존 내용 초기화
+            container.appendChild(list);
+        }
+
+        async function initCategoryView() {
+            const mainContainer = document.getElementById("categories");
+            const subContainer = document.getElementById("subcategories");
+            const detailContainer = document.getElementById("details");
+
+            // 1단계: 대분류 조회
+            const topLevelCategories = await fetchAllCategories();
+            renderCategories(mainContainer, topLevelCategories, (selectedCategory) => {
+                // 2단계: 중분류 조회
+                const subCategories = selectedCategory.children || [];
+                subContainer.innerHTML = `<h2 class="text-lg font-semibold mb-2">${selectedCategory.name}의 중분류</h2>`;
+                renderCategories(subContainer, subCategories, (subSelectedCategory) => {
+                    // 3단계: 소분류 조회
+                    const childCategories = subSelectedCategory.children || [];
+                    detailContainer.innerHTML = `<h2 class="text-lg font-semibold mb-2">${subSelectedCategory.name}의 소분류</h2>`;
+                    renderCategories(detailContainer, childCategories, () => {});
+                });
+            });
+        }
+
+        window.addEventListener("DOMContentLoaded", initCategoryView);
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen">
+<header class="bg-blue-600 text-white p-4 shadow-md">
+    <h1 class="text-xl font-bold">카테고리 조회하기</h1>
+</header>
+<main class="p-6">
+    <p class="mb-4 text-gray-700">대분류를 선택하면 하위 카테고리를 탐색할 수 있습니다:</p>
+    <div id="categories" class="bg-white p-4 rounded shadow mb-4">
+        <!-- 대분류가 로드될 영역 -->
+    </div>
+    <div id="subcategories" class="bg-white p-4 rounded shadow mb-4">
+        <!-- 중분류가 로드될 영역 -->
+        <p>대분류를 선택하면 중분류가 여기에 표시됩니다.</p>
+    </div>
+    <div id="details" class="bg-white p-4 rounded shadow">
+        <!-- 소분류가 로드될 영역 -->
+        <p>중분류를 선택하면 소분류가 여기에 표시됩니다.</p>
+    </div>
+</main>
+<!--<footer class="bg-blue-600 text-white text-center p-2 mt-4">
+    <p>&copy; 2024 Tripcok</p>
+</footer>-->
+</body>
+</html>

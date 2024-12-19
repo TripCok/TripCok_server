@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Tripcok - Admin</title>
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <div class="navigation-container">
+        <div style="height: 100%" th:insert="~{fragments/menu :: menu-list}"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <div class="content-header d-flex justify-content-between align-items-center">
+            <h1>DashBoard</h1>
+            <div class="logo-container">
+                <p>Trip</p>
+                <p style="color: #6DB777">Cok</p>
+            </div>
+        </div>
+
+        <!-- total chart-->
+        <div class="total-container">
+           <div class="left">
+               <div class="left-column">
+                   <i class="bi bi-person-fill"></i>
+                   <p>Members</p>
+               </div>
+               <div class="right-content">1,500</div>
+           </div>
+            <div class="left">
+                <div class="left-column">
+                    <i class="bi bi-people-fill"></i>
+                    <p>Groups</p>
+                </div>
+                <div class="right-content">80</div>
+            </div>
+        </div>
+
+
+
+        <!-- main chart -->
+        <div class="main-chart">
+            <div class="left-box">
+                <div class="main-column1">
+                    <p>카테고리별 성과</p>
+                    <canvas id="chart1" width="500" height="200"></canvas>
+                </div>
+                <div class="main-column2">
+                    <p>사용자 선호도</p>
+                    <canvas id="chart2" width="500" height="200"></canvas>
+                </div>
+            </div>
+            <div class="right-box">
+                <div class="main-column3">
+                    <p>월별 플랫폼 성과</p>
+                    <canvas id="chart3" width="500" height="200"></canvas>
+                </div>
+                <div class="main-column4">
+                    <p>사용자 리텐션 분석</p>
+                    <canvas id="chart4" width="500" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 차트를 생성하는 함수
+    function createChart(canvasId, chartType, labels, data, label) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: chartType, // 'bar', 'line', 'pie', etc.
+            data: {
+                labels: labels, // x축 라벨
+                datasets: [{
+                    label: label, // 데이터 라벨
+                    data: data, // 데이터 값
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // 데이터 및 설정 정의
+    createChart('chart1', 'bar', ['A', 'B', 'C'], [12, 19, 3], '카테고리별 성과');
+    createChart('chart2', 'pie', ['Option 1', 'Option 2', 'Option 3'], [10, 20, 30], '사용자 선호도');
+    createChart('chart3', 'line', ['Jan', 'Feb', 'Mar'], [30, 50, 40], '월별 플랫폼 성과');
+    createChart('chart4', 'doughnut', ['Active', 'Inactive'], [70, 30], '사용자 리텐션 분석');
+</script>
+
+
+
+</body>
+</html>
