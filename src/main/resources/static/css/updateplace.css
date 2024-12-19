@@ -24,7 +24,6 @@ p {
 }
 
 .navigation-container {
-
     padding: 50px 15px;
     width: 15%;
     height: 100vh;
@@ -114,11 +113,6 @@ p {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 35px;
-}
-
-.content-search > div {
-    padding: 15px 10px;
-    border-bottom: 3px solid #6DB777;
 }
 
 .content-search > div {
@@ -303,5 +297,5 @@ p {
     padding: 5px;
     font-size: 15px;
     font-weight: bold;
-    color: #333;
+    color: #6DB777;
 }
