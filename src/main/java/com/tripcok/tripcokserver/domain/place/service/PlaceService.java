@@ -238,7 +238,6 @@ public class PlaceService {
     }
 
     public ResponseEntity<?> getPlaceInRegion(Double south, Double north, Double west, Double east) {
-
         List<Place> byRegionInPlace = placeRepository.findByRegionInPlace(south, north, west, east);
 
         List<PlaceResponse> placeResponseStream = byRegionInPlace.stream()
@@ -247,4 +246,5 @@ public class PlaceService {
 
         return ResponseEntity.status(HttpStatus.OK).body(placeResponseStream);
     }
+
 }

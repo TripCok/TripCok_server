@@ -29,6 +29,7 @@
 
     <!-- Custom Kafka Appender 설정 -->
     <appender name="CUSTOM_KAFKA" class="com.tripcok.tripcokserver.global.kafka.CustomKafkaAppender">
+        <kafkaBootstrapServers>${KAFKA_BOOTSTRAP_SERVERS}</kafkaBootstrapServers>
         <maxRetries>3</maxRetries>  <!-- 최대 재시도 횟수 -->
     </appender>
 

@@ -97,10 +97,12 @@ public class PlaceController {
 
     /* 좌표 내의 여행지 찾기 */
     @GetMapping("/placeInRegion")
-    public ResponseEntity<?> getPlaceInRegion(@RequestParam Double north,
-                                              @RequestParam Double south,
-                                              @RequestParam Double west,
-                                              @RequestParam Double east) {
-        return placeService.getPlaceInRegion(north,south,west,east);
+    public ResponseEntity<?> getPlaceInRegion(
+            @RequestParam Double north,
+            @RequestParam Double south,
+            @RequestParam Double west,
+            @RequestParam Double east) {
+        return placeService.getPlaceInRegion(south, north, west, east);
     }
+
 }

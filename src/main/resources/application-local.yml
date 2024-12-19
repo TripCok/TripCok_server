@@ -31,7 +31,8 @@ spring:
       timeout: 3000
 
 kafka:
-  bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
+  bootstrap:
+    address: ${KAFKA_BOOTSTRAP_SERVERS:172.31.29.197:19092}
 
 mail:
   username: ${MAIL_USER_NAME}

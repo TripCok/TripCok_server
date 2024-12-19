@@ -39,4 +39,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             nativeQuery = true)
     List<Place> findByRegionInPlace(Double south, Double north, Double west, Double east);
 
+
+
 }
