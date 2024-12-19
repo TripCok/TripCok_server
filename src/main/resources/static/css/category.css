@@ -1,3 +1,4 @@
+/*
 * {
     margin: 0;
     padding: 0;
@@ -186,7 +187,7 @@ p {
 
 
 .category-content {
-    display: none; /* 기본적으로 숨김 */
+    display: none; !* 기본적으로 숨김 *!
     position: relative;
     border: 2px solid #6db777;
     border-radius: 10px;
@@ -197,7 +198,7 @@ p {
 }
 
 .category-content.active {
-    display: block; /* 활성화 시 표시 */
+    display: block; !* 활성화 시 표시 *!
 }
 
 .category-add-section {
@@ -233,3 +234,4 @@ p {
 .submit-button:hover {
     background-color: #5aa066;
 }
+*/
