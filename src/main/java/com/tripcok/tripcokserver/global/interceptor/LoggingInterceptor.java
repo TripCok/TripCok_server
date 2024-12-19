@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -20,11 +21,11 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Component
+@Slf4j
 public class LoggingInterceptor implements HandlerInterceptor {
 
     private static final String TRACE_ID = "TRACE_ID";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final Logger logger_logDto = LoggerFactory.getLogger(this.getClass());
 
     private final ObjectMapper objectMapper;
 
@@ -46,7 +47,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
         if (!(request instanceof ContentCachingRequestWrapper) || !(response instanceof ContentCachingResponseWrapper)) {
-            logger.warn("Request or Response is not wrapped properly.");
+            log.warn("Request or Response is not wrapped properly.");
             return;
         }
 
@@ -64,7 +65,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
                 }
             }
         } catch (Exception e) {
-            logger.warn("Failed to retrieve memberId from session.", e);
+            log.warn("Failed to retrieve memberId from session.", e);
         }
 
         // LogDto 생성 및 로깅
@@ -72,7 +73,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
         logDto.setMemberId(memberId);
 
         String jsonResult = objectMapper.writeValueAsString(logDto);
-        logger_logDto.info(jsonResult);
+        logger.info(jsonResult);
 
         // 응답 본문 복사
         wrappedResponse.copyBodyToResponse();
