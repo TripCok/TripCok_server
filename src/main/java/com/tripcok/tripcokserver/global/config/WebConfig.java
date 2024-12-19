@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/admin/login", "/admin/css/**", "/admin/js/**"); // 제외할 URL
 
         registry.addInterceptor(loggingInterceptor)
-                .addPathPatterns("/**")  // 인터셉터를 적용할 기본 URL 패턴
+                .addPathPatterns("/api/v1/**")  // 인터셉터를 적용할 기본 URL 패턴
                 .excludePathPatterns(
                         "/api/v1/member/login",      // 로그인 URL 제외
                         "/api/v1/member/login/*",      // 로그인 URL 제외
