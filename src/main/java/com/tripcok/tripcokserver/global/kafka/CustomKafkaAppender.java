@@ -63,8 +63,8 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
         props.put("request.timeout.ms", 500);  // 요청 타임아웃 (밀리초)
         props.put("delivery.timeout.ms", 1000);  // 배달 타임아웃 (밀리초)
 
-        //메타데이터 갱신
-        props.put("metadata.max.age.ms", "10000"); // 메타데이터를 1초마다 갱신
+//        //메타데이터 갱신
+//        props.put("metadata.max.age.ms", "10000"); // 메타데이터를 1초마다 갱신
 
         this.topic = "logs";
 

@@ -21,12 +21,11 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Component
-@Slf4j
 public class LoggingInterceptor implements HandlerInterceptor {
 
     private static final String TRACE_ID = "TRACE_ID";
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private final Logger logger = LoggerFactory.getLogger("com.tripcok.tripcokserver.global.interceptor.SystemLogger"); // 일반 로그용
+    private final Logger kafkaLogger = LoggerFactory.getLogger("com.tripcok.tripcokserver.global.interceptor.KafkaLogger"); // Kafka로 보낼 로그용
     private final ObjectMapper objectMapper;
 
     public LoggingInterceptor(ObjectMapper objectMapper) {
@@ -47,7 +46,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
         if (!(request instanceof ContentCachingRequestWrapper) || !(response instanceof ContentCachingResponseWrapper)) {
-            log.warn("Request or Response is not wrapped properly.");
+            logger.warn("Request or Response is not wrapped properly.");
             return;
         }
 
@@ -65,7 +64,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
                 }
             }
         } catch (Exception e) {
-            log.warn("Failed to retrieve memberId from session.", e);
+            logger.warn("Failed to retrieve memberId from session.", e);
         }
 
         // LogDto 생성 및 로깅
@@ -73,7 +72,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
         logDto.setMemberId(memberId);
 
         String jsonResult = objectMapper.writeValueAsString(logDto);
-        logger.info(jsonResult);
+        kafkaLogger.info(jsonResult);
 
         // 응답 본문 복사
         wrappedResponse.copyBodyToResponse();
