@@ -16,13 +16,7 @@ public class AdminInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        log.info("AdminInterceptor preHandle => " + request.getSession().getAttribute("member"));
-
-
-
         LoggingInterceptor.JMember member = (LoggingInterceptor.JMember) request.getSession().getAttribute("member");
-
-
 
         try {
             if (member.getRole().equals(Role.MANAGER)) {
