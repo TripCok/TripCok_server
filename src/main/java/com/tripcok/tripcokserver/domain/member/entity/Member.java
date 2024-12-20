@@ -105,6 +105,10 @@ public class Member extends BaseEntity {
         this.isPreferCategory = PreferCategory.SKIP;
     }
 
+    public void donePreferCategory() {
+        this.isPreferCategory = PreferCategory.DONE;
+    }
+
     /* 회원 프로필 이미지 업데이트 */
     public void updateProfileImage(String profileImage) {
         this.profileImage = profileImage;
