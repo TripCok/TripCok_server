@@ -23,16 +23,19 @@ import java.util.Queue;
 public class CustomKafkaAppender<E> extends AppenderBase<E> {
 
     private KafkaProducer<String, String> producer;
-    @Setter
-    private String topic;
+
     @Setter
     private int maxRetries = 3; // 최대 재시도 횟수
     private Queue<String> retryQueue = new LinkedList<>();
+
     @Setter
     private String fallbackFilePath = "./failed_logs.txt";
 
     @Setter
     private String kafkaBootstrapServers;
+
+    @Setter
+    private String topic;
 
     @Override
     public void start() {
@@ -65,8 +68,6 @@ public class CustomKafkaAppender<E> extends AppenderBase<E> {
 
         //메타데이터 갱신
         props.put("metadata.max.age.ms", "10000"); // 메타데이터를 1초마다 갱신
-
-        this.topic = "logs";
 
         producer = new KafkaProducer<>(props);
     }

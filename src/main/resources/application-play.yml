@@ -32,6 +32,7 @@ spring:
 
 kafka:
   bootstrap: ${KAFKA_BOOTSTRAP_SERVER}
+  topic: ${KAFKA_TOPIC}
 
 mail:
   username: ${MAIL_USER_NAME}
