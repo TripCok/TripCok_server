@@ -23,7 +23,10 @@ import java.util.UUID;
 public class LoggingInterceptor implements HandlerInterceptor {
 
     private static final String TRACE_ID = "TRACE_ID";
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private final Logger logger = LoggerFactory.getLogger("CUSTOM_KAFKA");
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     private final ObjectMapper objectMapper;
 
     public LoggingInterceptor(ObjectMapper objectMapper) {
@@ -44,7 +47,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
         if (!(request instanceof ContentCachingRequestWrapper) || !(response instanceof ContentCachingResponseWrapper)) {
-            logger.warn("Request or Response is not wrapped properly.");
+            log.warn("Request or Response is not wrapped properly.");
             return;
         }
 
@@ -62,7 +65,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
                 }
             }
         } catch (Exception e) {
-            logger.warn("Failed to retrieve memberId from session.", e);
+            log.warn("Failed to retrieve memberId from session.", e);
         }
 
         // LogDto 생성 및 로깅

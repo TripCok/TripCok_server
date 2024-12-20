@@ -11,21 +11,17 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>./app/logs/application.log</file>
-        <encoder>
-            <pattern>%msg%n</pattern>
-        </encoder>
-    </appender>
+    <!--    <appender name="FILE" class="ch.qos.logback.core.FileAppender">-->
+    <!--        <file>/app/logs/application.log</file>-->
+    <!--        <encoder>-->
+    <!--            <pattern>%msg%n</pattern>-->
+    <!--        </encoder>-->
+    <!--    </appender>-->
 
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-    </root>
-
-    <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
-        <!--        <appender-ref ref="CONSOLE"/>&ndash;&gt;-->
-        <appender-ref ref="FILE"/>
-    </logger>
+    <!--    <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">-->
+    <!--        &lt;!&ndash;        <appender-ref ref="CONSOLE"/>&ndash;&gt;&ndash;&gt;-->
+    <!--        <appender-ref ref="FILE"/>-->
+    <!--    </logger>-->
 
     <!-- Custom Kafka Appender 설정 -->
     <appender name="CUSTOM_KAFKA" class="com.tripcok.tripcokserver.global.kafka.CustomKafkaAppender">
@@ -33,9 +29,12 @@
         <maxRetries>3</maxRetries>  <!-- 최대 재시도 횟수 -->
     </appender>
 
-    <logger name="com.tripcok.tripcokserver.global.interceptor" level="INFO">
+    <logger name="CUSTOM_KAFKA" level="INFO">
         <appender-ref ref="CUSTOM_KAFKA"/>
     </logger>
 
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
 
 </configuration>

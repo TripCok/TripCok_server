@@ -8,6 +8,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 
@@ -22,6 +23,7 @@ public class LogDto {
     String request;
     String response;
     String statusCode;
+    LocalDateTime requestTime;
     Long time;
 
     @JsonIgnore
@@ -35,6 +37,7 @@ public class LogDto {
         this.response = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
         this.statusCode = String.valueOf(responseWrapper.getStatus());
         this.clientIp = requestWrapper.getRemoteAddr();
+        this.requestTime = LocalDateTime.now();
         this.time = System.currentTimeMillis();
         this.memberId = (String) requestWrapper.getAttribute("memberId");
     }
