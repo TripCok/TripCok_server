@@ -4,6 +4,8 @@ FROM openjdk:17-jdk-slim
 # 작업 디렉터리 설정
 WORKDIR /app
 
+ENV TZ=Asia/Seoul
+
 # JAR 파일 복사
 COPY ./build/libs/tripcok-server-0.0.1-SNAPSHOT.jar app.jar
 
