@@ -26,9 +26,9 @@ public class GroupPlaceController {
     }
 
     /* 모임의 여행지 조회 - 모두 조회 */
-    @GetMapping("/{groupId}/all")
+    @GetMapping("/all")
     public ResponseEntity<?> groupAllGroupInPlaces(
-            @PathVariable("groupId") Long groupId,
+            @RequestParam("groupId") Long groupId,
             @RequestParam("size") Integer pageSize,
             @RequestParam("page") Integer pageNum) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
