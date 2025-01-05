@@ -34,8 +34,92 @@ TripCokServer는 확장성과 안정성을 고려하여 설계되었으며, 향�
 
 ## 핵심 기능
 
-### 집계를 위한 Logging System
-- 추후 기입
+### **집계를 위한 Logging System**
+
+Spring Intercepter과 Logback Appender를 활용한 로그 생성
+
+- Spring Intercetper
+    - 로그 처리에 적합한 Intercepter를 활용하여 모든 요청과 응답 데이터를 포함한 로그 처리
+    - 서비스 코드와 분리하여 로깅 관리가 가능 → 코드 간결성 향상, 로깅 유연성 확보
+- Logback Appender
+    - Appender를 통해 발생된 로그를 Kafka로 전송하는 역할 담당
+    - Kafka Appender 구현
+
+**로깅 시 추가한 정보**
+
+```python
+    String traceId;
+    String memberId;
+    String clientIp;
+    String url;
+    String method;
+    String requestParam;
+    String request;
+    String response;
+    String statusCode;
+    LocalDateTime requestTime;
+    Long time;
+```
+
+- traceId 정보  → 중복 제거 시에 사용
+- MembeId 정보 → 회원 정보 확인 가능
+- ClientTip 정보 → 회원  정보 확인 가능
+- method, requestParam, request, response → 사용자의 요청과 응답 정보
+- requestTime, Time 정보 → 중복 제거 시, 데이터 생성 정보의 기준이 됨
+
+**Appender 구현 및 등록**
+
+```python
+   """
+   xml 파일 
+   """
+    <!-- Custom Kafka Appender 설정 -->
+    <appender name="CUSTOM_KAFKA" class="com.tripcok.tripcokserver.global.kafka.CustomKafkaAppender">
+        <kafkaBootstrapServers>${KAFKA_BOOTSTRAP_SERVERS}</kafkaBootstrapServers>
+        <topic>${KAFKA_TOPIC}</topic>
+        <maxRetries>3</maxRetries>  <!-- 최대 재시도 횟수 -->
+    </appender>
+
+    <logger name="CUSTOM_KAFKA" level="INFO">
+        <appender-ref ref="CUSTOM_KAFKA"/>
+    </logger>
+    
+   """
+   클래스 안에서 등록
+   """
+   
+   private final Logger logger = LoggerFactory.getLogger("CUSTOM_KAFKA");
+   .
+   .
+   .
+   logger.info(jsonResult);
+   .
+```
+
+**Intercepter 등록**
+
+```python
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    private final LoggingInterceptor loggingInterceptor;
+
+    public WebConfig(AdminInterceptor adminInterceptor, LoggingInterceptor loggingInterceptor) {
+        this.loggingInterceptor = loggingInterceptor;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loggingInterceptor)
+                .addPathPatterns("/api/**")              // 인터셉터를 적용할 기본 URL 패턴
+                .excludePathPatterns(
+                        "/api/v1/member/login",         // 로그인 URL 제외
+                        "/api/v1/member/login/**",       // 로그인 URL 제외
+                        "/api/v1/member/register",      // 회원가입 URL 제외
+                        "/api/v1/member/register/**"
+                );
+    }
+}
+```
 
 ## API 명세
 
